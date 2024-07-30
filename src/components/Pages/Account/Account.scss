@@ -1,0 +1,88 @@
+.account__container {
+  display: flex;
+  background-color: #f9fafc;
+  min-width: 1280px;
+}
+.account__content-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.account__main-container {
+  width: 1000px;
+  padding: 64px 24px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 32px;
+}
+.account__title {
+  font-size: 32px;
+  font-weight: bold;
+}
+.account__tab-container {
+  display: flex;
+  column-gap: 32px;
+  border-bottom: 1.5px solid #e6e8f0;
+}
+.account__tab {
+  font-size: 15px;
+  height: 48px;
+  cursor: pointer;
+
+  a{
+    display: inline-block;
+    height: 100%;
+    color: #9ca3af;
+  }
+  a:visited{
+    color:#9ca3af; 
+  }
+  a:hover{
+    color: #5048e5;
+  }
+  &:hover {
+    border-bottom: 2px solid #5048e5;
+  
+  }
+}
+.account__tab.clickedTabMenu{
+  border-bottom: 2px solid #5048e5;
+  a{
+    color: #5048e5 
+  }
+  a:visited{
+    color:#5048e5 
+  }
+}
+.account__detail-container {
+  display: flex;
+  background-color: white;
+  border-radius: 8px;
+  column-gap: 24px;
+  padding: 32px 24px;
+  box-shadow: #D1D5DB 0px 1px 2px;
+}
+.account__detail-title {
+  font-size: 18px;
+  font-weight: bold;
+  width: 300px;
+}
+.account__detail-wrapper {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  row-gap: 24px;
+}
+.account__detail{
+    display: flex;
+    column-gap: 16px;
+    align-items: center;
+}
+.account__detail-input-container{
+  flex-grow: 1;
+}
+.account__detail-text{
+    font-size: 16px;
+    font-weight: bold;
+}

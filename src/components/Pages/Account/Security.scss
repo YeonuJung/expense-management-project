@@ -1,0 +1,28 @@
+.account__detail-table-header-loginType,
+.account__detail-table-header-ipAddress,
+.account__detail-table-header-client {
+    width: 33.3%;
+    padding: 10px 16px;
+    font-size: 12px;
+    font-weight: bold;
+}
+.account__detail-table-loginType,.account__detail-table-ipAddress, .account__detail-table-client{
+    width: 33.3%;
+    padding: 16px 16px;
+    display: flex;
+    align-items: center;
+    
+}
+.account__detail-table-loginType-info-container{
+    display: flex;
+    flex-direction: column;
+    row-gap: 3px;
+}
+.account__detail-table-loginType-type{
+    font-size: 14px;
+    font-weight: bold;
+}
+.account__detail-table-loginType-time, .account__detail-table-ipAddress, .account__detail-table-client{
+    font-size: 14px;
+    color: #6B7280;
+}

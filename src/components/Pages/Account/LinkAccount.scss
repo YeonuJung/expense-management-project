@@ -1,0 +1,49 @@
+.account__detail-subTitle{
+    font-size: 14px;
+    color: #6B7280;
+}
+.account__detail-table{
+    display: flex;
+    flex-direction: column;
+}
+.account__detail-table-header{
+    height: 50px;
+    background-color: #F3F4F6;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.account__detail-table-header-member,.account__detail-table-header-role {
+    width: 45%;
+    padding: 10px 16px;
+    font-size: 12px;
+    font-weight: bold;
+}
+.account__detail-table-header-blank{
+    width: 10%;
+    padding: 10px 16px;
+}
+.account__detail-table-data{
+    display: flex;
+}
+.account__detail-table-member, .account__detail-table-role {
+    display: flex;
+    align-items: center;
+    column-gap: 8px;
+    width: 45%;
+    padding: 16px 16px;
+}
+
+.account__detail-table-more{
+    display: flex;
+    align-items: center;
+    width: 10%;
+}
+.account__detail-table-member-name{
+    font-size: 14px;
+    font-weight: bold;
+}
+.account__detail-table-member-email{
+    font-size: 14px;
+    color: #6B7280;
+}

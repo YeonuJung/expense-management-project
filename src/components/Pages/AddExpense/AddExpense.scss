@@ -1,0 +1,77 @@
+.addExpense__container {
+  display: flex;
+  background-color: #f9fafc;
+  min-width: 1280px;
+}
+//flex item 들은 명확하게 크기를 지녀야 한다.
+//height는 거의 주지 않는다고 생각. 만약 주지 않는다면 자식을 따라가거나 본인의 기본값을 따라감
+//본인의 자식보다 좀 더 크게 설정하고 싶거나 기본값보다 크게 설정하고 싶을 때만 높이 주기. 
+//width도 처음에는 우선 주지 않는 쪽으로 생각하기.
+//-> width를 안쪽(자식)부터 바깥으로 주는 방식으로 시도하면 좀 더 쉬울 수도 있다.
+//대부분 자식의 크기를 따라가는게 자연스럽다.
+//min-width 정할때는 고정값들을 더한 크기로 고려하기
+.addExpense__content-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.addExpense__main-container {
+  width: 1000px;
+  padding: 64px 24px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 32px;
+}
+
+.addExpense__title-container {
+  padding-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 8px;
+}
+
+.addExpense__title {
+  font-size: 24px;
+  font-weight: bold;
+}
+.addExpense__subTitle {
+  font-size: 14px;
+  font-weight: bold;
+  color: #5048e5;
+}
+
+.addExpense__name-container,
+.addExpense__price-container,
+.addExpense__category-container,
+.addExpense__date-container {
+  display: flex;
+  column-gap: 24px;
+  padding: 32px 24px;
+  border-radius: 8px;
+  box-shadow: #D1D5DB 0px 1px 2px;
+  background-color: white;
+}
+.addExpense__name-title,
+.addExpense__price-title,
+.addExpense__category-title,
+.addExpense__date-title {
+  font-size: 18px;
+  width: 300px;
+  font-weight: bold;
+}
+.addExpense__input-container{
+  flex-grow: 1;
+}
+
+.addExpense__action-container {
+  display: flex;
+  justify-content: space-between;
+}
+.addExpense__action {
+  display: flex;
+  column-gap: 16px;
+}
+
+
+

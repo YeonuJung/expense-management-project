@@ -1,0 +1,82 @@
+.register__container{
+    display: flex;
+    justify-content: center;
+}
+.register__main-container{
+    width: 600px;
+    padding-top: 120px;
+    padding-bottom: 64px;
+}
+.register__card-container{
+    display: flex;
+    flex-direction: column;
+    row-gap: 24px;
+    padding: 32px;
+    box-shadow: rgb(100, 116, 139, 25%) 0px 10px 15px ;
+}
+.register__title-container{
+    display: flex;
+    flex-direction: column;
+    row-gap: 16px;
+
+    .register__title-logo-container{
+        font-size: 42px;
+        color: #5048e5;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .register__title-text{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .register__title-text-main{
+        font-size: 24px;
+        font-weight: bold;
+    }
+    .register__title-text-sub{
+        font-size: 14px;
+        color: #6B7280;
+    }
+}
+.register__form-container{
+    display: flex;
+    flex-direction: column;
+    row-gap: 24px;
+}
+.register__form-checkbox-container{
+    display: flex;
+    align-items: center;
+    column-gap: 9px;
+
+    .register__form-checkbox{
+        accent-color:  #5048e5;
+        padding: 9px;
+        width: 18px;
+        height:18px;
+    }
+    a{
+        font-size: 16px;
+        color: #3832A0;
+        text-decoration: underline;
+        &:visited{
+            color:#3832A0;
+        }
+        &:hover{
+            color: #90949d;
+        }
+    }
+}
+.register__form-link-container{
+    display: flex;
+    column-gap: 16px;
+    a{
+        font-size: 16px;
+        color: #5048e5;
+        text-decoration: underline;
+        &:hover{
+            color: #90949d;
+        }
+    }
+}

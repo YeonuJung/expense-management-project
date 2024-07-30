@@ -1,0 +1,28 @@
+.Input__container {
+    position: relative;
+}
+.Input{
+    width: 100%;
+    height: 56px;
+    color: #6b7280;
+    font-size: 16px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    &:focus{
+        outline: 1.5px solid #5048e5;
+    }
+}
+.Input__label {
+  position: absolute;
+  top: -8px;
+  left: 14px;
+  font-size: 12px;
+  background-color: white;
+  color: #111827;
+  font-weight: bold;
+  padding: 0px 4px;
+}
+.Input__date {
+    font-weight: bold;
+}

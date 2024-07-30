@@ -1,0 +1,117 @@
+.cs__container {
+  display: flex;
+  background-color: #f9fafc;
+  min-width: 1280px;
+}
+.cs__content-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.cs__main-container {
+  width: 1000px;
+  padding: 64px 24px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 32px;
+}
+.cs__title {
+  font-size: 32px;
+  font-weight: bold;
+}
+.cs__tab-container {
+  display: flex;
+  column-gap: 32px;
+  border-bottom: 1.5px solid #e6e8f0;
+}
+.cs__tab {
+    font-size: 15px;
+    height: 48px;
+    cursor: pointer;
+  
+    a{
+      display: inline-block;
+      height: 100%;
+      color: #9ca3af;
+    }
+    a:visited{
+      color:#9ca3af; 
+    }
+    a:hover{
+      color: #5048e5;
+    }
+    &:hover {
+      border-bottom: 2px solid #5048e5;
+    
+    }
+}
+.cs__tab.clickedTabMenu{
+  border-bottom: 2px solid #5048e5;
+  a{
+    color: #5048e5 
+  }
+  a:visited{
+    color:#5048e5 
+  }
+}
+.cs__detail-container {
+    display: flex;
+    background-color: white;
+    border-radius: 8px;
+    column-gap: 24px;
+    padding: 32px 24px;
+    box-shadow: #D1D5DB 0px 1px 2px;
+  }
+  .cs__detail-wrapper {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 24px;
+  }
+  .cs__aboutUs-title{
+    font-size: 52px;
+    font-weight: bold;
+    width: 100%;
+    height: 205px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    row-gap: 20px;
+    background-image: url(../../../../public/aboutUs.jpg);
+    background-size: cover;
+}
+.cs__aboutUs-title-underline{
+    width: 150px;
+    border: 5px solid #5048e5;
+  }
+  .cs__aboutUs-description{
+    font-size: 18px;
+    color:#6B7280;
+    letter-spacing: 1px;
+    line-height: 28px;
+    padding: 15px 25px;
+  }
+  .cs__aboutUs-contact{
+    display: flex;
+    align-items: center;
+    column-gap: 5px;
+    font-size: 17px;
+    font-weight: bold;
+    padding: 5px;
+    
+
+  }
+  .cs__aboutUs-contact-icon{
+    color: #5048e5;
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+  }
+  .cs__aboutUs-contact-address{
+    font-size: 18px;
+    font-weight: bold;
+  }
+ 

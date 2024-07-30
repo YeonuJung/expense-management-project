@@ -1,0 +1,13 @@
+.list__items{
+    width: 100%;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    
+    &:hover{
+        background-color: rgb(255,255,255,0.04);
+    }
+
+      
+}

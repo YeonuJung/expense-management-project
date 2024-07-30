@@ -1,0 +1,35 @@
+.alert__container {
+  column-gap: 8px;
+  height: 56px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+}
+.alert__logo{
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+}
+.alert__content{
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  color: #111827;
+}
+.alert-warning {
+  background-color: #FFF7E8;
+  color: #66460D
+}
+.alert-info {
+  background-color: #EFF8FE;
+  color: #284963;
+}
+.alert-success {
+  background-color: #E7F8F6;
+  color:#084A4E
+}
+.alert-error {
+  background-color: #FAECEC;
+  color: #541B1B
+}
