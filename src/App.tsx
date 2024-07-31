@@ -7,7 +7,7 @@ import Register from "./components/Pages/Register/Register";
 import Account from "./components/Pages/Account/Account"
 import LinkAccount from "./components/Pages/Account/LinkAccount";
 import Security from "./components/Pages/Account/Security";
-import AboutUs from "./components/Pages/AboutUs/AboutUs";
+import AboutUs from "./components/Pages/CustomerService/AboutUs";
 
 function App() {
   return (

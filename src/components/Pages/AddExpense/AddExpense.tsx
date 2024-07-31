@@ -5,6 +5,7 @@ import Button from "../../Atoms/Button/Button";
 import Input from "../../Atoms/Input/Input";
 import { useInputRef } from "../../../hooks/useInputRef";
 import { AddExpenseInputValue } from "../../../types/auth";
+import Select from "../../Atoms/Select/Select";
 
 function AddExpense() {
   const [_, handleInputValue] = useInputRef<AddExpenseInputValue>({
@@ -55,11 +56,9 @@ function AddExpense() {
           <div className="addExpense__category-container">
             <div className="addExpense__category-title">Category</div>
             <div className="addExpense__input-container">
-              <Input
+              <Select
                 title="Category"
-                type="text"
                 name="category"
-                placeholder="Enter your expense category"
                 handleInputValue={handleInputValue}
               />
             </div>

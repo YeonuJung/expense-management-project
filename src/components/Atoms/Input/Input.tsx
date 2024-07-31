@@ -13,7 +13,7 @@ function Input(props: InputProps) {
   const { title, type, placeholder, name, step, handleInputValue} = props;
   return (
     <div className="Input__container">
-      <label htmlFor={title} className="Input__label">
+      <label htmlFor={name} className="Input__label">
         {title}
       </label>
       <input
@@ -21,7 +21,7 @@ function Input(props: InputProps) {
         type={type}
         name={name}
         onChange={(e) => handleInputValue(e, name)}
-        id={title}
+        id={name}
         placeholder={placeholder}
         step={step}
       ></input>

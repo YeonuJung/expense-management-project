@@ -8,12 +8,13 @@ export const useInputRef = <T>(initialValue: T) => {
   const inputValueRef = useRef<T>(initialValue);
 
   const handleInputValue = (
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>,
     name: string
   ) => {
     inputValueRef.current[name as keyof T] = e.target.value as T[keyof T];
     console.log(inputValueRef.current);
   };
+ 
 
   return [inputValueRef, handleInputValue] as [typeof inputValueRef, typeof handleInputValue];
 };

@@ -1,0 +1,28 @@
+.select__container {
+    z-index: 999;
+    position: relative;
+   
+}
+.select{
+    width: 100%;
+    height: 56px;
+    color: #6b7280;
+    font-size: 16px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    background: url(../../../../public/dropdown.png) no-repeat 97% 50% / 15px auto;
+    &:focus{
+        outline: 1.5px solid #5048e5;
+    }
+}
+.select__label {
+  position: absolute;
+  top: -8px;
+  left: 14px;
+  font-size: 12px;
+  background-color: white;
+  color: #111827;
+  font-weight: bold;
+  padding: 0px 4px;
+}
