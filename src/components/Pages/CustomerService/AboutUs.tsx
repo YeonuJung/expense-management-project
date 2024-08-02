@@ -62,7 +62,6 @@ function AboutUs() {
               <div className="cs__aboutUs-contact-address">
                 👉gsh95214@naver.com👈
               </div>
-              <div className="cs__aboutUs-contact-address-underline"></div>
             </div>
           </div>
         </div>

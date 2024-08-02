@@ -122,10 +122,10 @@ function ExpenseList() {
     Date: false,
   });
   const [checkedFilterMenuValue, setCheckedFilterMenuValue] =
-  useState<CheckedFilterMenuValue>({ category: [], rating: [] });
+    useState<CheckedFilterMenuValue>({ category: [], rating: [] });
   const [filteredData, setFilteredData] = useState<Data[]>([...data]);
   const inputDataRef = useRef<string>("");
-  const inputRef = useRef<HTMLInputElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // useRef사용 왜? 처음에 state로 상태를 정의했으나 렌더링이 필요하지 않은 데이터임에도 불구하고
   // useState훅을 사용해서 상태를 저장했다. 그래서 값이 변경될 때마다 불필요한 렌더링이 발생했다.
@@ -154,7 +154,9 @@ function ExpenseList() {
   const filterMenu: FilterMenu = {
     title: [{ category: "Category" }, { rating: "Rating" }, { date: "Date" }],
     list: [
-      { category: ["식당", "카페", "쇼핑", "문화생활", "숙박", "교통", "기타"] },
+      {
+        category: ["식당", "카페", "쇼핑", "문화생활", "숙박", "교통", "기타"],
+      },
       { rating: ["Good", "Okay", "Bad"] },
       { date: ["최신순", "늦은순"] },
     ],
@@ -256,8 +258,8 @@ function ExpenseList() {
         setSearchKeyword([...searchKeyword, inputDataRef.current]);
       }
       inputDataRef.current = "";
-      if(inputRef.current){
-        inputRef.current.value = ""
+      if (inputRef.current) {
+        inputRef.current.value = "";
       }
       // 옵셔널체이닝의 우측에 값을 할당하면 오류가 나니깐 이럴 경우 if문과 같이 조건문을 사용해주기
       // 만약 값이 null일 경우 null에다가 우측에 있는 값을 대입하게 되는 문제가 생길 수도 있으니깐
@@ -265,9 +267,11 @@ function ExpenseList() {
   };
 
   // 인풋창 눌렀을 때 인풋데이터 리셋시켜서 인풋창 깨끗하게.
-  const resetInputData = (e: React.MouseEvent<HTMLInputElement, MouseEvent>): void => {
+  const resetInputData = (
+    e: React.MouseEvent<HTMLInputElement, MouseEvent>
+  ): void => {
     inputDataRef.current = "";
-    e.currentTarget.value = ""
+    e.currentTarget.value = "";
   };
 
   // 엔터키 눌렀을 때 이벤트의 키를 감지해서 클릭 안하더라도 handleInputData함수 호출
@@ -301,7 +305,7 @@ function ExpenseList() {
   const filterOnClick = (): void => {
     setCheckedFilterMenuValue(calculateCheckedFilterMenuValue());
   };
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   return (
     <div className="expenseList__container">
       <Sidebar />
@@ -312,7 +316,12 @@ function ExpenseList() {
             <div className="expenseList__title-wrapper">
               <div className="expenseList__title">Expenses</div>
               <div className="expenseList__addButton">
-                <Button variant="filled" color="primary" size="large" onClick={() => navigate("/addExpense")}>
+                <Button
+                  variant="filled"
+                  color="primary"
+                  size="large"
+                  onClick={() => navigate("/addExpense")}
+                >
                   <FaPlus />
                   Add
                 </Button>
@@ -345,7 +354,7 @@ function ExpenseList() {
                   onChange={(e) => {
                     const { value } = e.target;
                     inputDataRef.current = value;
-                    console.log(inputDataRef.current)
+                    console.log(inputDataRef.current);
                   }}
                   onClick={resetInputData}
                   onKeyDown={(e) => activeEnter(e)}

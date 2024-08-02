@@ -3,9 +3,7 @@ import List from "./List/List";
 import ListItem from "./List/ListItem";
 import ListTitle from "./List/ListTitle";
 import Button from "../../Atoms/Button/Button";
-import {
-  IoLogoBuffer,
-} from "react-icons/io";
+import { IoLogoBuffer } from "react-icons/io";
 import { TbFileDescription } from "react-icons/tb";
 import {
   RiExpandUpDownLine,
@@ -15,13 +13,16 @@ import {
 import { TiHome } from "react-icons/ti";
 import { SiSimpleanalytics } from "react-icons/si";
 import { BsFillCalendar2WeekFill } from "react-icons/bs";
-import {
-  FaShoppingBag,
-  FaMapMarkerAlt
-} from "react-icons/fa";
+import { FaShoppingBag, FaMapMarkerAlt } from "react-icons/fa";
 import { MdError } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 function Sidebar() {
+  const navigate = useNavigate();
+  const onClick = (): void => {
+    navigate("/customerService/contact");
+    return window.scrollTo({ top: 0, behavior: "smooth" });
+  };
   return (
     <div className="sidebar__container">
       <div className="sidebar__logo-container">
@@ -59,7 +60,7 @@ function Sidebar() {
             <FaShoppingBag />
             Spent History
           </ListItem>
-          <ListItem>
+          <ListItem path="/calendar">
             <BsFillCalendar2WeekFill />
             Calendar
           </ListItem>
@@ -68,16 +69,16 @@ function Sidebar() {
             Visited Places
           </ListItem>
         </List>
-        <List listTitle={ <ListTitle listTitle="CUSTOMER SERVICE"></ListTitle>}>
+        <List listTitle={<ListTitle listTitle="CUSTOMER SERVICE"></ListTitle>}>
           <ListItem path="/customerService/aboutUs">
             <TbFileDescription />
             About us
           </ListItem>
-          <ListItem>
+          <ListItem path="/customerService/contact">
             <RiMailOpenFill />
-            1:1 Contact 
+            1:1 Contact
           </ListItem>
-          <ListItem >
+          <ListItem path="/customerService/faq">
             <MdError />
             FAQ
           </ListItem>
@@ -86,10 +87,14 @@ function Sidebar() {
       <div className="divider" />
       <div className="sidebar__documentation-container">
         <div className="sidebar__documentation-text">
-            <div>Need More Service?</div>
-            <div>We would appreciate if you could support us by clicking here</div>
+          <div>Need More Service?</div>
+          <div>
+            We would appreciate if you could support us by clicking here
+          </div>
         </div>
-        <Button color="success" variant="filled">Suggest</Button>
+        <Button color="success" variant="filled" onClick={onClick}>
+          Talk
+        </Button>
       </div>
     </div>
   );

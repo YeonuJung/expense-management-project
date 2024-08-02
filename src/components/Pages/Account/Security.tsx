@@ -54,7 +54,7 @@ function Security() {
               </div>
               <div className="account__detail-table">
               <div className="account__detail-table-header">
-                    <div className="account__detail-table-header-loginType">LOGIN TYPES</div>
+                    <div className="account__detail-table-header-loginType">LOGIN TIME</div>
                     <div className="account__detail-table-header-ipAddress">IP ADDRESS</div>
                     <div className="account__detail-table-header-client">CLIENT</div>
                 </div>

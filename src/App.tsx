@@ -1,4 +1,3 @@
-import "./App.css";
 import { Routes, Route } from "react-router-dom";
 import AddExpense from './components/Pages/AddExpense/AddExpense'
 import ExpenseList from './components/Pages/ExpenseList/ExpenseList'
@@ -8,6 +7,9 @@ import Account from "./components/Pages/Account/Account"
 import LinkAccount from "./components/Pages/Account/LinkAccount";
 import Security from "./components/Pages/Account/Security";
 import AboutUs from "./components/Pages/CustomerService/AboutUs";
+import Contact from "./components/Pages/CustomerService/Contact";
+import Faq from "./components/Pages/CustomerService/Faq";
+import ExpenseCalendar from "./components/Pages/ExpenseCalendar/ExpenseCalendar";
 
 function App() {
   return (
@@ -21,6 +23,9 @@ function App() {
         <Route path="account/linkAccount" element={<LinkAccount/>}/>
         <Route path="account/security" element={<Security/>}/>
         <Route path="customerService/aboutUs" element={<AboutUs/>}/>
+        <Route path="customerService/contact" element={<Contact/>}/>
+        <Route path="customerService/faq" element={<Faq/>}/>
+        <Route path="calendar" element={<ExpenseCalendar/>}/>
         
         {/* component 설계할 때 관련된 코드들을 최대한 가깝게 모아두는 응집성을 고려하기
         예를 들어 프롭스를 보낼때 객체로 만들어서 스프레드로 보낸다면 스프레드만 사용하고 

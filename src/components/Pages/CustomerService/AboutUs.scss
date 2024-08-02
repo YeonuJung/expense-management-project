@@ -23,12 +23,13 @@
 .cs__tab-container {
   display: flex;
   column-gap: 32px;
-  border-bottom: 1.5px solid #e6e8f0;
+  border-bottom: 2px solid #e6e8f0;
 }
 .cs__tab {
     font-size: 15px;
     height: 48px;
     cursor: pointer;
+    margin-bottom: -2px;
   
     a{
       display: inline-block;
@@ -67,7 +68,6 @@
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    align-items: center;
     row-gap: 24px;
   }
   .cs__aboutUs-title{
@@ -94,11 +94,11 @@
     line-height: 28px;
     padding: 15px 25px;
     text-align: justify;
-    text-justify: inter-word;
   }
   .cs__aboutUs-contact{
     display: flex;
     align-items: center;
+    justify-content: center;
     column-gap: 5px;
     font-size: 17px;
     font-weight: bold;
@@ -113,6 +113,8 @@
     align-items: center;
   }
   .cs__aboutUs-contact-address{
+    display: flex;
+    justify-content: center;
     font-size: 18px;
     font-weight: bold;
   }
