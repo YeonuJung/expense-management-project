@@ -304,6 +304,11 @@ function ExpenseList() {
   // 적용하기 클릭했을 때 checkedFilterMenuValue state에 계산된 값 할당
   const filterOnClick = (): void => {
     setCheckedFilterMenuValue(calculateCheckedFilterMenuValue());
+    setopenFilterMenu({
+      Category: false,
+      Rating: false,
+      Date: false,
+    });
   };
   const navigate = useNavigate();
   return (

@@ -4,7 +4,7 @@ import { IoClose } from "react-icons/io5";
 
 export interface DialogProps {
   title: string;
-  content: string;
+  content?: string;
   buttons: ReactNode;
   layout?: "default" | "center" | "reverse";
 }
@@ -25,15 +25,6 @@ function Dialog(props: DialogProps) {
             }`}
           >
             <div className="dialog__title-content-text">{title}</div>
-            <div
-              className={`${
-                layout === "reverse"
-                  ? "dialog__close-button-reverse"
-                  : "dialog__close-button"
-              }`}
-            >
-              <IoClose style={{ cursor: "pointer" }} />
-            </div>
           </div>
         </div>
         <div className="dialog__content-container">

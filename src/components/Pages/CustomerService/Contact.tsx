@@ -71,7 +71,7 @@ function Contact() {
               <div className="cs__detail">
                 <div className="cs__detail-input-container">
                   <Input
-                    title="Phonenumber *"
+                    title="Phonenumber"
                     type="text"
                     name="phonenumber"
                     placeholder={`Enter your phonenumber with " - " `}

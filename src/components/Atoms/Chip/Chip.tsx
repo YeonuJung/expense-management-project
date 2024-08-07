@@ -21,7 +21,7 @@ function Chip(props: ChipProps) {
           color === "grey" ? "text-black" : `text-${color}`
         }`}
       >
-        {label}
+        <span className="chip__label">{label}</span>
         {onDelete && <Close color={color} variant={variant} onDelete={onDelete} />}
         {/* undefined를 태그로 뱉어도 리액트는 undefined를 제거해버림 */}
       </div>
@@ -35,7 +35,7 @@ function Chip(props: ChipProps) {
           onDelete ? "chip__container-with-delete" : ""
         } bg-${color} ${color === "grey" ? "text-black" : "text-white"}`}
       >
-        {label}
+        <span className="chip__label">{label}</span>
         {onDelete && <Close color={color} variant={variant} onDelete={onDelete}/>}
         {/* undefined를 태그로 뱉어도 리액트는 undefined를 제거해버림 */}
       </div>

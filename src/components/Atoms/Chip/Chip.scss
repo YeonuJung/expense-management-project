@@ -1,18 +1,25 @@
-.chip__container{
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 13px;
-    line-height: 24px;
-    letter-spacing: 0.07px;
-    font-weight: 600;
-    min-width: 53px;
-    height: 32px;
-    // box-sizing borderbox로 해야 패딩 및 마진이 추가되어도 width height 동일
-    border-radius: 16px;
-    column-gap: 8px;
-    padding: 4px 12px;
+.chip__container {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 13px;
+  line-height: 24px;
+  letter-spacing: 0.07px;
+  font-weight: 600;
+  min-width: 53px;
+  height: 32px;
+  // box-sizing borderbox로 해야 패딩 및 마진이 추가되어도 width height 동일
+  border-radius: 16px;
+  column-gap: 8px;
+  padding: 4px 12px;
+  white-space: nowrap;
+  //ellipsis는 부모가 블록요소여야 함.
+  max-width: 100%;
 }
-.chip__container-with-delete{
-    padding: 4px 4px 4px 12px;
+.chip__container-with-delete {
+  padding: 4px 4px 4px 12px;
+}
+.chip__label{
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

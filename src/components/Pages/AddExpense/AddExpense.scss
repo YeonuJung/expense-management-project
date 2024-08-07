@@ -42,8 +42,10 @@
 }
 
 .addExpense__name-container,
+.addExpense__place-container,
 .addExpense__price-container,
 .addExpense__category-container,
+.addExpense__rating-container,
 .addExpense__date-container {
   display: flex;
   column-gap: 24px;
@@ -53,8 +55,10 @@
   background-color: white;
 }
 .addExpense__name-title,
+.addExpense__place-title,
 .addExpense__price-title,
 .addExpense__category-title,
+.addExpense__rating-title,
 .addExpense__date-title {
   font-size: 18px;
   width: 300px;
@@ -66,7 +70,7 @@
 
 .addExpense__action-container {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
 }
 .addExpense__action {
   display: flex;

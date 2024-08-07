@@ -10,6 +10,7 @@ import AboutUs from "./components/Pages/CustomerService/AboutUs";
 import Contact from "./components/Pages/CustomerService/Contact";
 import Faq from "./components/Pages/CustomerService/Faq";
 import ExpenseCalendar from "./components/Pages/ExpenseCalendar/ExpenseCalendar";
+import VisitedPlace from "./components/Pages/VisitedPlace/VisitedPlace";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="customerService/contact" element={<Contact/>}/>
         <Route path="customerService/faq" element={<Faq/>}/>
         <Route path="calendar" element={<ExpenseCalendar/>}/>
+        <Route path="visitedPlaces" element={<VisitedPlace/>}/>
         
         {/* component 설계할 때 관련된 코드들을 최대한 가깝게 모아두는 응집성을 고려하기
         예를 들어 프롭스를 보낼때 객체로 만들어서 스프레드로 보낸다면 스프레드만 사용하고 

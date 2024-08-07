@@ -17,7 +17,7 @@ function Input(props: InputProps) {
         {title}
       </label>
       <input
-        className={`Input ${title === "Date" ? "Input__date" : ""}`}
+        className={`Input`}
         type={type}
         name={name}
         onChange={(e) => handleInputValue(e, name)}

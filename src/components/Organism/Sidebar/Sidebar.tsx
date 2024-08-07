@@ -64,7 +64,7 @@ function Sidebar() {
             <BsFillCalendar2WeekFill />
             Calendar
           </ListItem>
-          <ListItem>
+          <ListItem path="/visitedPlaces">
             <FaMapMarkerAlt />
             Visited Places
           </ListItem>
