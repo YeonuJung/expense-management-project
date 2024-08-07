@@ -18,45 +18,45 @@ function Security() {
         <Appbar />
         <div className="account__main-container">
           <div className="account__title-container">
-            <div className="account__title">Security</div>
+            <div className="account__title">보안</div>
           </div>
           <div className="account__tab-container">
             <div className="account__tab">
-              <Link to="/account">General</Link>
+              <Link to="/account">일반</Link>
             </div>
             <div className="account__tab">
-              <Link to="/account/linkAccount">Significant other</Link>
+              <Link to="/account/linkAccount">파트너</Link>
             </div>
-            <div className={`account__tab clickedTabMenu`}><Link to="/account/security">Security</Link></div>
+            <div className={`account__tab clickedTabMenu`}><Link to="/account/security">보안</Link></div>
           </div>
           <div className="account__detail-container">
-            <div className="account__detail-title">Change password</div>
+            <div className="account__detail-title">비밀번호 변경</div>
             <div className="account__detail-wrapper">
               <div className="account__detail">
                 <div className="account__detail-input-container">
                   <Input
-                    title="Password"
+                    title="비밀번호"
                     type="password"
                     name="password"
-                    placeholder="Enter your password"
+                    placeholder="비밀번호를 입력하세요"
                     handleInputValue={handleInputValue}
                   ></Input>
                 </div>
-                <Button>Edit</Button>
+                <Button>수정</Button>
               </div>
             </div>
           </div>
           <div className="account__detail-container">
             <div className="account__detail-wrapper">
-              <div className="account__detail-title">Login history</div>
+              <div className="account__detail-title">로그인 기록</div>
               <div className="account__detail-subTitle">
-                Your recent login activity:
+                최근 로그인 활동:
               </div>
               <div className="account__detail-table">
               <div className="account__detail-table-header">
-                    <div className="account__detail-table-header-loginType">LOGIN TIME</div>
-                    <div className="account__detail-table-header-ipAddress">IP ADDRESS</div>
-                    <div className="account__detail-table-header-client">CLIENT</div>
+                    <div className="account__detail-table-header-loginType">로그인 시간</div>
+                    <div className="account__detail-table-header-ipAddress">IP 주소</div>
+                    <div className="account__detail-table-header-client">클라이언트</div>
                 </div>
                 <div className="account__detail-table-data">
                     <div className="account__detail-table-loginType">

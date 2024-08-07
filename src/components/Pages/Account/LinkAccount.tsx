@@ -21,42 +21,42 @@ function LinkAccount() {
         <Appbar />
         <div className="account__main-container">
           <div className="account__title-container">
-            <div className="account__title">Significant other</div>
+            <div className="account__title">파트너</div>
           </div>
           <div className="account__tab-container">
             <div className="account__tab">
-              <Link to="/account">General</Link>
+              <Link to="/account">일반</Link>
             </div>
             <div className={`account__tab clickedTabMenu`}>
-                <Link to="/account/linkAccount">Significant other</Link>
+                <Link to="/account/linkAccount">파트너</Link>
             </div>
-            <div className="account__tab"><Link to="/account/security">Security</Link></div>
+            <div className="account__tab"><Link to="/account/security">보안</Link></div>
           </div>
           <div className="account__detail-container">
             <div className="account__detail-wrapper">
               <div className="account__detail-title">
-                Link your partner!
+                파트너와 연결하세요!
               </div>
               <div className="account__detail-subTitle">
-              Send an email to your partner and establish a connection with each other.
+              파트너와 함께 가계부를 공유하고, 관리하세요!
               </div>
               <Divider />
               <div className="account__detail">
                 <div className="account__detail-input-container">
                 <Input
-                  title="Email address"
+                  title="이메일"
                   type="email"
                   name="email"
-                  placeholder="✉️ Enter your partners email address here!"
+                  placeholder="✉️ 파트너의 이메일 주소를 입력하세요!"
                   handleInputValue={handleInputValue}
                 ></Input>
                 </div>
-                <Button variant="filled" size="large">Send Link</Button>
+                <Button variant="filled" size="large">링크 보내기</Button>
               </div>
               <div className="account__detail-table">
                 <div className="account__detail-table-header">
-                    <div className="account__detail-table-header-member">MEMBER</div>
-                    <div className="account__detail-table-header-role">ROLE</div>
+                    <div className="account__detail-table-header-member">멤버</div>
+                    <div className="account__detail-table-header-role">역할</div>
                     <div className="account__detail-table-header-blank"></div>
                 </div>
                 <div className="account__detail-table-data">
@@ -68,7 +68,7 @@ function LinkAccount() {
                         </div>
                     </div>
                     <div className="account__detail-table-role">
-                        <Chip label="Owner" variant="filled" color="success"></Chip>
+                        <Chip label="소유자" variant="filled" color="success"></Chip>
                     </div>
                     <div className="account__detail-table-more">
                         <IoMdMore className="table__more-button"/>
@@ -83,7 +83,7 @@ function LinkAccount() {
                         </div>
                     </div>
                     <div className="account__detail-table-role">
-                        <Chip label="Partner" variant="filled" color="primary"></Chip>
+                        <Chip label="파트너" variant="filled" color="primary"></Chip>
                     </div>
                     <div className="account__detail-table-more">
                         <IoMdMore className="table__more-button"/>

@@ -23,64 +23,64 @@ function Account() {
         <Appbar />
         <div className="account__main-container">
           <div className="account__title-container">
-            <div className="account__title">Account</div>
+            <div className="account__title">계정</div>
           </div>
           <div className="account__tab-container">
             <div className={`account__tab clickedTabMenu`}>
-              <Link to="/account">General</Link>
+              <Link to="/account">일반</Link>
             </div>
             <div className="account__tab">
-              <Link to="/account/linkAccount">Significant other</Link>
+              <Link to="/account/linkAccount">파트너</Link>
             </div>
-            <div className="account__tab"><Link to="/account/security" >Security</Link></div>
+            <div className="account__tab"><Link to="/account/security" >보안</Link></div>
           </div>
           <div className="account__detail-container">
-            <div className="account__detail-title">Basic details</div>
+            <div className="account__detail-title">기본 정보</div>
             <div className="account__detail-wrapper">
               <div className="account__detail">
                 <Avatar shape="circular" />
                 <Button color="success" size="small">
-                  Change
+                  변경
                 </Button>
               </div>
               <div className="account__detail">
                 <div className="account__detail-input-container">
                   <Input
-                    title="Full name"
+                    title="이름"
                     name="name"
                     type="text"
-                    placeholder="Enter your name"
+                    placeholder="이름을 입력하세요"
                     handleInputValue={handleInputValue}
                   />
                 </div>
-                <Button size="small">Save</Button>
+                <Button size="small">저장</Button>
               </div>
               <div className="account__detail">
                 <div className="account__detail-input-container">
                   <Input
-                    title="Email address"
+                    title="이메일"
                     name="email"
                     type="email"
                     placeholder="example@example.com"
                     handleInputValue={handleInputValue}
                   />
                 </div>
-                <Button size="small">Edit</Button>
+                <Button size="small">수정</Button>
               </div>
             </div>
           </div>
           <div className="account__detail-container">
-            <div className="account__detail-title">Extra details</div>
+            <div className="account__detail-title">추가 정보</div>
             <div className="account__detail-wrapper">
               <div className="account__detail">
                 <div className="account__detail-text">
-                  Enter your expense limit here! It can help you save money.
+                  지출 한도를 여기에 입력하세요! 저축에 도움이 될 수 있습니다.
                 </div>
               </div>
               <div className="account__detail">
                 <div className="account__detail-input-container">
                 <Input
-                  title="Expense limit"
+                  title="지출 한도"
                   name="limit"
                   type="number"
                   step={100}
@@ -88,22 +88,21 @@ function Account() {
                   handleInputValue={handleInputValue}
                 ></Input>
                 </div>
-                <Button size="small">Save</Button>
+                <Button size="small">저장</Button>
               </div>
             </div>
           </div>
           <div className="account__detail-container">
-            <div className="account__detail-title">Delete Account</div>
+            <div className="account__detail-title">계정 삭제</div>
             <div className="account__detail-wrapper">
               <div className="account__detail">
                 <div className="account__detail-text">
-                  Delete your account and all of your source data. This is
-                  irreversible
+                  계정과 모든 소스 데이터를 삭제합니다. 이는 되돌릴 수 없습니다.
                 </div>
               </div>
               <div className="account__detail">
                 <Button variant="outlined" color="error">
-                  Delete account
+                  계정 삭제
                 </Button>
               </div>
             </div>

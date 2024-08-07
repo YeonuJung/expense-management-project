@@ -1,5 +1,5 @@
 import "./Input.scss";
-
+import { forwardRef } from "react";
 interface InputProps {
   title: string;
   type: string;
@@ -9,8 +9,8 @@ interface InputProps {
   handleInputValue: (e: React.ChangeEvent<HTMLInputElement>, name: string) => void;
 }
 
-function Input(props: InputProps) {
-  const { title, type, placeholder, name, step, handleInputValue} = props;
+const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
+  const { title, type, placeholder, name, step, handleInputValue } = props;
   return (
     <div className="Input__container">
       <label htmlFor={name} className="Input__label">
@@ -24,9 +24,11 @@ function Input(props: InputProps) {
         id={name}
         placeholder={placeholder}
         step={step}
-      ></input>
+        ref={ref}
+      />
     </div>
   );
-}
+});
+
 
 export default Input;

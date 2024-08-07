@@ -27,7 +27,7 @@ function Select(props: SelectProps) {
         {name === "category" ? (
           <>
             <option value="category" disabled>
-              Select your Category
+              카테고리를 골라주세요
             </option>
             <option value="식당">식당</option>
             <option value="카페">카페</option>
@@ -40,11 +40,11 @@ function Select(props: SelectProps) {
         ) : (
           <>
             <option value="rating" disabled>
-              Rate your Expense
+              평가해주세요
             </option>
-            <option value="good">Good 😊</option>
-            <option value="okay">Okay 🤔</option>
-            <option value="bad">Bad 😤</option>
+            <option value="good">좋아요 😊</option>
+            <option value="okay">보통이에요 🤔</option>
+            <option value="bad">별로에요 😤</option>
           </>
         )}
       </select>

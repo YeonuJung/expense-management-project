@@ -12,6 +12,7 @@ interface AccountInputValue {
   email: string;
   limit: string;
 }
+
 interface AddExpenseInputValue {
   name: string; 
   place: string; 

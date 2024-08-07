@@ -40,13 +40,12 @@ function ExpenseCalendar({ data }: ExpenseCalendarProps) {
         <div className="expenseCalendar__main-container">
           <div className="expenseCalendar__detail-container">
             <div className="expenseCalendar__detail-wrapper">
-              <div className="expenseCalendar__title">Calendar</div>
+              <div className="expenseCalendar__title">캘린더</div>
               <div className="expenseCalendar__subTitle">
-                &nbsp;Manage your spending history through the Calendar!
+                &nbsp;캘린더를 통해 지출내역을 관리하세요!
               </div>
               <div className="expenseCalendar__notice">
-                ℹ️<span style={{ color: "#10b981a6" }}>Green box</span> indicates
-                todayℹ️
+                ℹ️<span style={{ color: "#10b981a6" }}>초록색 박스는</span> 오늘을 나타냅니다!ℹ️
               </div>
               <div className="expenseCalendar__calendar-container">
                 <Calendar

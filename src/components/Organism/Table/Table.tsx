@@ -43,16 +43,16 @@ function Table(props: TableProps) {
                   <td>{data.place}</td>
                   <td>{data.price}</td>
                   <td>
-                    {data.rating === "Good" ? (
+                    {data.rating === "좋아요" ? (
                       <Chip
                         color="success"
                         variant="filled"
-                        label="GOOD 😊"
+                        label="좋아요 😊"
                       />
-                    ) : data.rating === "Okay"? (
-                      <Chip color="grey" variant="filled" label="Okay 🤔" />
+                    ) : data.rating === "보통이에요"? (
+                      <Chip color="grey" variant="filled" label="보통이에요 🤔" />
                     ) : (
-                      <Chip color="error" variant="filled" label="BAD 😤" />
+                      <Chip color="error" variant="filled" label="별로에요 😤" />
                     )}
                   </td>
                   <td>{data.date}</td>

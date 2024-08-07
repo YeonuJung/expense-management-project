@@ -41,59 +41,59 @@ function Sidebar() {
       </div>
       <div className="divider" />
       <div className="sidebar__list-container">
-        <List listTitle={<ListTitle listTitle="GENERAL"></ListTitle>}>
+        <List listTitle={<ListTitle listTitle="개인 허브"></ListTitle>}>
           <ListItem path="/">
             <TiHome />
-            Home
-          </ListItem>
-          <ListItem>
-            <SiSimpleanalytics />
-            Analytics
+            홈
           </ListItem>
           <ListItem path="/account">
             <RiAccountCircleFill />
-            Account
+            계정
           </ListItem>
         </List>
-        <List listTitle={<ListTitle listTitle="MANAGEMENT"></ListTitle>}>
+        <List listTitle={<ListTitle listTitle="지출 내역 관리"></ListTitle>}>
           <ListItem path="/expenseList">
             <FaShoppingBag />
-            Spent History
+            지출 내역
+          </ListItem>
+          <ListItem>
+            <SiSimpleanalytics />
+            지출 그래프 
           </ListItem>
           <ListItem path="/calendar">
             <BsFillCalendar2WeekFill />
-            Calendar
+            캘린더
           </ListItem>
           <ListItem path="/visitedPlaces">
             <FaMapMarkerAlt />
-            Visited Places
+            방문한 장소들
           </ListItem>
         </List>
-        <List listTitle={<ListTitle listTitle="CUSTOMER SERVICE"></ListTitle>}>
+        <List listTitle={<ListTitle listTitle="고객 서비스"></ListTitle>}>
           <ListItem path="/customerService/aboutUs">
             <TbFileDescription />
-            About us
+            회사 소개
           </ListItem>
           <ListItem path="/customerService/contact">
             <RiMailOpenFill />
-            1:1 Contact
+            1:1 문의
           </ListItem>
           <ListItem path="/customerService/faq">
             <MdError />
-            FAQ
+            자주 묻는 질문
           </ListItem>
         </List>
       </div>
       <div className="divider" />
       <div className="sidebar__documentation-container">
         <div className="sidebar__documentation-text">
-          <div>Need More Service?</div>
+          <div>더 많은 서비스를 원하시나요?</div>
           <div>
-            We would appreciate if you could support us by clicking here
+            서비스에 대한 제안사항이 있으시면 여기를 눌러 건의해주세요. 큰 도움이 됩니다.
           </div>
         </div>
         <Button color="success" variant="filled" onClick={onClick}>
-          Talk
+          건의하기
         </Button>
       </div>
     </div>

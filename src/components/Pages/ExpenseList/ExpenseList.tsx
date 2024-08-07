@@ -47,13 +47,14 @@ interface CheckedFilterMenuValue {
   // date: string[]
 }
 //데이터요청으로 가져왔다고 가정
+// place는 null허용으로
 const data: Data[] = [
   {
     name: "카페 데이트",
     category: "카페",
     place: "송리단길",
     price: "$23.99",
-    rating: "Good",
+    rating: "좋아요",
     date: "2024.07.13",
   },
   {
@@ -61,7 +62,7 @@ const data: Data[] = [
     category: "식당",
     place: "이태원",
     price: "$23.99",
-    rating: "Good",
+    rating: "좋아요",
     date: "2024.07.13",
   },
   {
@@ -69,7 +70,7 @@ const data: Data[] = [
     category: "문화생활",
     place: "코엑스",
     price: "$23.99",
-    rating: "Good",
+    rating: "좋아요",
     date: "2024.07.14",
   },
   {
@@ -77,7 +78,7 @@ const data: Data[] = [
     category: "쇼핑",
     place: "역삼점",
     price: "$23.99",
-    rating: "Okay",
+    rating: "보통이에요",
     date: "2024.07.15",
   },
   {
@@ -85,7 +86,7 @@ const data: Data[] = [
     category: "교통",
     place: "잠실한강",
     price: "$23.99",
-    rating: "Bad",
+    rating: "별로에요",
     date: "2024.07.16",
   },
   {
@@ -93,7 +94,7 @@ const data: Data[] = [
     category: "교통",
     place: "오사카",
     price: "$23.99",
-    rating: "Bad",
+    rating: "별로에요",
     date: "2024.07.18",
   },
   {
@@ -101,7 +102,7 @@ const data: Data[] = [
     category: "숙박",
     place: "오사카",
     price: "$70.99",
-    rating: "Good",
+    rating: "좋아요",
     date: "2024.07.19",
   },
   {
@@ -109,7 +110,7 @@ const data: Data[] = [
     category: "기타",
     place: "양평",
     price: "$50.99",
-    rating: "Okay",
+    rating: "보통이에요",
     date: "2024.07.15",
   },
 ];
@@ -157,7 +158,7 @@ function ExpenseList() {
       {
         category: ["식당", "카페", "쇼핑", "문화생활", "숙박", "교통", "기타"],
       },
-      { rating: ["Good", "Okay", "Bad"] },
+      { rating: ["좋아요", "보통이에요", "별로에요"] },
       { date: ["최신순", "늦은순"] },
     ],
   };
@@ -319,7 +320,7 @@ function ExpenseList() {
         <div className="expenseList__main-container">
           <div className="expenseList__title-container">
             <div className="expenseList__title-wrapper">
-              <div className="expenseList__title">Expenses</div>
+              <div className="expenseList__title">지출내역</div>
               <div className="expenseList__addButton">
                 <Button
                   variant="filled"
@@ -328,7 +329,7 @@ function ExpenseList() {
                   onClick={() => navigate("/addExpense")}
                 >
                   <FaPlus />
-                  Add
+                  추가
                 </Button>
               </div>
             </div>
@@ -340,7 +341,7 @@ function ExpenseList() {
                 onClick={() => resetExpenseData()}
               >
                 <MdAutorenew style={{ fontSize: "24px" }} />
-                소비내역 초기화
+                지출내역 초기화
               </Button>
             </div>
           </div>
@@ -354,7 +355,7 @@ function ExpenseList() {
                 <input
                   className="expenseList__card-input"
                   type="text"
-                  placeholder="Enter a keyword"
+                  placeholder="검색어를 입력하세요"
                   name="searchKeyword"
                   onChange={(e) => {
                     const { value } = e.target;

@@ -19,40 +19,39 @@ function Contact() {
         <Appbar />
         <div className="cs__main-container">
           <div className="cs__title-container">
-            <div className="cs__title">1:1 Contact</div>
+            <div className="cs__title">1:1 문의</div>
           </div>
           <div className="cs__tab-container">
             <div className="cs__tab">
-              <Link to="/customerService/aboutUs">About us</Link>
+              <Link to="/customerService/aboutUs">회사 소개</Link>
             </div>
             <div className="cs__tab clickedTabMenu">
-              <Link to="/customerService/contact">1:1 Contact</Link>
+              <Link to="/customerService/contact">1:1 문의</Link>
             </div>
             <div className="cs__tab">
-              <Link to="/customerService/faq">FAQ</Link>
+              <Link to="/customerService/faq">자주 묻는 질문</Link>
             </div>
           </div>
           <div className="cs__detail-container">
             <div className="cs__detail-wrapper">
               <div className="cs__contact-title-container">
                 <div className="cs__contact-title">
-                  Talk to us if you need help
+                  도움이 필요하시면 말씀해 주세요
                 </div>
                 <div className="cs__contact-subTitle">
-                  Any suggestions? Fill out the form and i will be in touch
-                  shortly.
+                 제안하실 아이디어가 있으신가요? 양식을 작성해 주시면 빠른시일 내 답변드리겠습니다.
                 </div>
                 <div className="cs__contact-subTitle2">
-                  Feel free to share good ideas.
+                  좋은 아이디어가 있으면 자유롭게 말씀해 주세요!
                 </div>
               </div>
               <div className="cs__detail">
                 <div className="cs__detail-input-container">
                   <Input
-                    title="Full Name *"
+                    title="이름 *"
                     type="text"
                     name="name"
-                    placeholder="Enter your name"
+                    placeholder="이름을 입력하세요"
                     handleInputValue={handleInputValue}
                   />
                 </div>
@@ -60,7 +59,7 @@ function Contact() {
               <div className="cs__detail">
                 <div className="cs__detail-input-container">
                   <Input
-                    title="Email address *"
+                    title="이메일 *"
                     type="email"
                     name="email"
                     placeholder="example@example.com"
@@ -71,10 +70,10 @@ function Contact() {
               <div className="cs__detail">
                 <div className="cs__detail-input-container">
                   <Input
-                    title="Phonenumber"
+                    title="휴대폰 번호"
                     type="text"
                     name="phonenumber"
-                    placeholder={`Enter your phonenumber with " - " `}
+                    placeholder={`"-"를 포함하여 휴대폰 번호를 입력하세요`}
                     handleInputValue={handleInputValue}
                   />
                 </div>
@@ -82,7 +81,7 @@ function Contact() {
               <div className="cs__detail">
                 <div className="cs__detail-input-container">
                   <label htmlFor="detail" className="cs__detail-textarea-label">
-                    More Details *
+                    자세한 내용 *
                   </label>
                   <textarea
                     className="cs__detail-textarea"
@@ -94,7 +93,7 @@ function Contact() {
               </div>
               <div className="cs__detail-submit">
                 <Button variant="filled" size="large">
-                  Let's Talk
+                 문의하기
                 </Button>
               </div>
             </div>
