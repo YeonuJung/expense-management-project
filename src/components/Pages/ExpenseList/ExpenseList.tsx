@@ -148,7 +148,7 @@ function ExpenseList() {
   const handleCheckedFilterMenu = (key: string, idx: number) => {
     checkedFilterMenuRef.current[key as keyof CheckedFilterMenu][idx] =
       !checkedFilterMenuRef.current[key as keyof CheckedFilterMenu][idx];
-  };
+  }; 
 
   // 필터메뉴를 객체로 만들어서 조금은 복잡하지만 각각의 경우에 따른 값을 나눴다.
   // 각각의 데이터가 같이 쓰이는지, 의존적인지에 따라서 객체로 감쌀지 배열로 감쌀지 정할 수 있다.

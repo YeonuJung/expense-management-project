@@ -1,8 +1,9 @@
 import "./Table.scss";
-import { IoMdMore } from "react-icons/io";
 import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
 import Chip from "../../Atoms/Chip/Chip";
 import { Data } from "../../Pages/ExpenseList/ExpenseList"
+import { RiDeleteBin3Line } from "react-icons/ri";
+import {useNavigate } from "react-router-dom";
 
 interface TableProps {
   data: Data[]
@@ -11,6 +12,13 @@ interface TableProps {
 function Table(props: TableProps) {
   const {data} = props
   const headers: string[] = ["", "NAME", "PLACE", "PRICE", "RATING", "DATE", ""];
+
+  const navigate = useNavigate();
+
+  const handleUpdateButton = () => {
+    navigate("/updateExpense")
+    console.log("update")
+  }
   
   return (
     <div className="table__container">
@@ -29,7 +37,7 @@ function Table(props: TableProps) {
                 <tr key={idx} className="tbody-row">
                   <td>
                     <div className="arrow__container">
-                      <IoIosArrowForward />
+                      <IoIosArrowForward onClick={handleUpdateButton} className="table__update-button"/>
                     </div>
                   </td>
                   <td>
@@ -58,7 +66,7 @@ function Table(props: TableProps) {
                   <td>{data.date}</td>
                  
                   <td>
-                    <IoMdMore className="table__more-button"/>
+                  <RiDeleteBin3Line  className="table__delete-button"/>
                   </td>
                 </tr>
               </>

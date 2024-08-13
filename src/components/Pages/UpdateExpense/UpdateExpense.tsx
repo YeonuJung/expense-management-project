@@ -1,6 +1,5 @@
 import Appbar from "../../Organism/Appbar/Appbar";
 import Sidebar from "../../Organism/Sidebar/Sidebar";
-import "./AddExpense.scss";
 import Button from "../../Atoms/Button/Button";
 import Input from "../../Atoms/Input/Input";
 import { useInputRef } from "../../../hooks/useInputRef";
@@ -13,7 +12,7 @@ import { LoadScriptNext, Autocomplete, Libraries } from "@react-google-maps/api"
 
 const libraries: Libraries = ["places"];
 
-function AddExpense() {
+function UpdateExpense() {
   const [_, handleInputValue] = useInputRef<AddExpenseInputValue>({
     name: "",
     place: "",
@@ -59,7 +58,7 @@ function AddExpense() {
           <div className="addExpense__main-container">
             <div className="addExpense__title-container">
               <div className="addExpense__title">
-                지출 세부정보 추가
+                지출 세부정보 수정
               </div>
               <div className="addExpense__subTitle">신중하게 입력하세요!</div>
             </div>
@@ -146,7 +145,7 @@ function AddExpense() {
                 <Button variant="outlined" onClick={cancleOnClick}>
                   취소
                 </Button>
-                <Button variant="filled">추가</Button>
+                <Button variant="filled">수정</Button>
               </div>
             </div>
           </div>
@@ -167,4 +166,4 @@ function AddExpense() {
   );
 }
 
-export default AddExpense;
+export default UpdateExpense;

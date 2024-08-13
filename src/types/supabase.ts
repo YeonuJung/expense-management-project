@@ -9,36 +9,175 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      countries: {
+      contact: {
         Row: {
+          detail: string
+          email: string
           id: number
           name: string
+          phone_number: string | null
         }
         Insert: {
-          id?: number
+          detail: string
+          email: string
+          id: number
           name: string
+          phone_number?: string | null
         }
         Update: {
+          detail?: string
+          email?: string
           id?: number
           name?: string
+          phone_number?: string | null
         }
         Relationships: []
       }
-      User: {
+      expensebook: {
         Row: {
-          created_at: string
+          expense_limit: number
           id: number
-          name: string | null
         }
         Insert: {
-          created_at?: string
-          id?: number
-          name?: string | null
+          expense_limit: number
+          id: number
         }
         Update: {
+          expense_limit?: number
+          id?: number
+        }
+        Relationships: []
+      }
+      expenserecord: {
+        Row: {
+          category: string
+          date: string
+          expense_book_id: number
+          id: number
+          name: string
+          place: Json | null
+          price: number
+          rating: string
+        }
+        Insert: {
+          category: string
+          date: string
+          expense_book_id: number
+          id: number
+          name: string
+          place?: Json | null
+          price: number
+          rating: string
+        }
+        Update: {
+          category?: string
+          date?: string
+          expense_book_id?: number
+          id?: number
+          name?: string
+          place?: Json | null
+          price?: number
+          rating?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_4"
+            columns: ["expense_book_id"]
+            isOneToOne: false
+            referencedRelation: "expensebook"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      expenserecordmember: {
+        Row: {
+          expense_book_id: number
+          id: number
+          is_active: boolean
+          member_id: number
+          role: string
+        }
+        Insert: {
+          expense_book_id: number
+          id: number
+          is_active: boolean
+          member_id: number
+          role: string
+        }
+        Update: {
+          expense_book_id?: number
+          id?: number
+          is_active?: boolean
+          member_id?: number
+          role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_2"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "member"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_3"
+            columns: ["expense_book_id"]
+            isOneToOne: false
+            referencedRelation: "expensebook"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      loginhistory: {
+        Row: {
+          browser: string
+          created_at: string
+          id: number
+          ip: string
+          member_id: number
+        }
+        Insert: {
+          browser: string
+          created_at: string
+          id: number
+          ip: string
+          member_id: number
+        }
+        Update: {
+          browser?: string
           created_at?: string
           id?: number
-          name?: string | null
+          ip?: string
+          member_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_1"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "member"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      member: {
+        Row: {
+          email: string
+          id: number
+          name: string
+          profile_img: string | null
+        }
+        Insert: {
+          email: string
+          id: number
+          name: string
+          profile_img?: string | null
+        }
+        Update: {
+          email?: string
+          id?: number
+          name?: string
+          profile_img?: string | null
         }
         Relationships: []
       }

@@ -75,7 +75,12 @@
     border-bottom: 1px solid #E6E8F0;
     height: 80px;
 }
-.table__more-button{
+.table__update-button{
+    cursor: pointer;
+    font-size: 22px;
+    color: #6B7280;
+}
+.table__delete-button{
     cursor: pointer;
     font-size: 24px;
     color: #6B7280;
