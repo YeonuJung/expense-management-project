@@ -15,7 +15,7 @@ export interface Data {
   name: string;
   category: string;
   place: string;
-  price: string;
+  price: number;
   rating: string;
   date: string;
 }
@@ -53,7 +53,7 @@ const data: Data[] = [
     name: "카페 데이트",
     category: "카페",
     place: "송리단길",
-    price: "$23.99",
+    price: 32000,
     rating: "좋아요",
     date: "2024.07.13",
   },
@@ -61,7 +61,7 @@ const data: Data[] = [
     name: "프렌치 레스토랑",
     category: "식당",
     place: "이태원",
-    price: "$23.99",
+    price: 50000,
     rating: "좋아요",
     date: "2024.07.13",
   },
@@ -69,7 +69,7 @@ const data: Data[] = [
     name: "영화",
     category: "문화생활",
     place: "코엑스",
-    price: "$23.99",
+    price: 24000,
     rating: "좋아요",
     date: "2024.07.14",
   },
@@ -77,7 +77,7 @@ const data: Data[] = [
     name: "롯데마트 쇼핑",
     category: "쇼핑",
     place: "역삼점",
-    price: "$23.99",
+    price: 29000,
     rating: "보통이에요",
     date: "2024.07.15",
   },
@@ -85,7 +85,7 @@ const data: Data[] = [
     name: "따릉이",
     category: "교통",
     place: "잠실한강",
-    price: "$23.99",
+    price: 5000,
     rating: "별로에요",
     date: "2024.07.16",
   },
@@ -93,7 +93,7 @@ const data: Data[] = [
     name: "일본 비행기",
     category: "교통",
     place: "오사카",
-    price: "$23.99",
+    price: 200000,
     rating: "별로에요",
     date: "2024.07.18",
   },
@@ -101,7 +101,7 @@ const data: Data[] = [
     name: "호텔",
     category: "숙박",
     place: "오사카",
-    price: "$70.99",
+    price: 90000,
     rating: "좋아요",
     date: "2024.07.19",
   },
@@ -109,7 +109,7 @@ const data: Data[] = [
     name: "차량수리",
     category: "기타",
     place: "양평",
-    price: "$50.99",
+    price: 50000,
     rating: "보통이에요",
     date: "2024.07.15",
   },
@@ -170,7 +170,7 @@ function ExpenseList() {
   // 오픈필터메뉴의 스테이트를 다시 초기화 시켜서 각 필터메뉴들이 중복되어 열리는 것을 방지한다.
 
   const handleopenFilterMenu = (filter: string): void => {
-    const openFilterMenuKeys = Object.keys(openFilterMenu);
+    const openFilterMenuKeys : string[] = Object.keys(openFilterMenu);
 
     if (
       openFilterMenuKeys.some((key) => {
@@ -287,9 +287,9 @@ function ExpenseList() {
   // 그럼 checkedFilterMenuValue에 이 ret배열을 할당한다.
   const calculateCheckedFilterMenuValue = (): CheckedFilterMenuValue => {
     const ret: CheckedFilterMenuValue = { category: [], rating: [] };
-    let listIdx = 0;
+    let listIdx : number = 0;
     for (const key in checkedFilterMenuRef.current) {
-      const items =
+      const items : boolean[] =
         checkedFilterMenuRef.current[key as keyof CheckedFilterMenu];
       for (let i = 0; i < items.length; i++) {
         if (items[i] === true) {

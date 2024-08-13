@@ -56,7 +56,7 @@ function Sidebar() {
             <FaShoppingBag />
             지출 내역
           </ListItem>
-          <ListItem>
+          <ListItem path="/expenseChart">
             <SiSimpleanalytics />
             지출 그래프 
           </ListItem>

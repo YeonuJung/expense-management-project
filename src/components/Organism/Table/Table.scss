@@ -45,11 +45,6 @@
     }
         td{
             padding: 16px 16px;
-
-            img{
-                width: 48px;
-                height: 48px;
-            }
         }
 }
 .arrow__container{
@@ -66,6 +61,16 @@
     display: flex;
     align-items: center;
     column-gap: 16px;
+}
+.table__name-icon{
+    font-size: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #10b98197;
+    color:  #10B981;
+    padding: 5px;
+    margin-right: 5px;
 }
 .table__name-text-container{
     display: flex;
