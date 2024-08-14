@@ -28,31 +28,31 @@ ChartJS.register(
 
 const groupByMonth = (data: Data[]) => {
   const acc: {
-    "2023-01": number;
-    "2023-02": number;
-    "2023-03": number;
-    "2023-04": number;
-    "2023-05": number;
-    "2023-06": number;
-    "2023-07": number;
-    "2023-08": number;
-    "2023-09": number;
-    "2023-10": number;
-    "2023-11": number;
-    "2023-12": number;
+    "01": number;
+    "02": number;
+    "03": number;
+    "04": number;
+    "05": number;
+    "06": number;
+    "07": number;
+    "08": number;
+    "09": number;
+    "10": number;
+    "11": number;
+    "12": number;
   } = {
-    "2023-01": 0,
-    "2023-02": 0,
-    "2023-03": 0,
-    "2023-04": 0,
-    "2023-05": 0,
-    "2023-06": 0,
-    "2023-07": 0,
-    "2023-08": 0,
-    "2023-09": 0,
-    "2023-10": 0,
-    "2023-11": 0,
-    "2023-12": 0,
+    "01": 0,
+    "02": 0,
+    "03": 0,
+    "04": 0,
+    "05": 0,
+    "06": 0,
+    "07": 0,
+    "08": 0,
+    "09": 0,
+    "10": 0,
+    "11": 0,
+    "12": 0,
   };
 
   return data.reduce((acc, item) => {
@@ -85,7 +85,7 @@ const ChartData = {
   datasets: [
     {
       type: "line" as const,
-      label: "소비내역 피크",
+      label: "지출내역 피크",
       borderColor: "#10B981",
       borderWidth: 2.5,
       fill: false,
@@ -96,7 +96,7 @@ const ChartData = {
     },
     {
       type: "bar" as const,
-      label: "월별 소비내역",
+      label: "월별 지출내역",
       backgroundColor: "#5048e5",
       data: [
         650000, 590000, 800000, 810000, 560000, 550000, 400000, 300000, 0,

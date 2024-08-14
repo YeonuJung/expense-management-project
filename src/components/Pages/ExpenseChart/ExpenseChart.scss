@@ -40,3 +40,62 @@
     font-weight: bold;
     margin-top: -22px;
   }
+  .expenseChart__toggle-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: -15px;
+  }
+  .expenseChart__toggle-wrapper{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .expenseChart__toggle-button{
+    width: 100px;
+    border: 1px solid white;
+    border-radius: 2px;
+    display: flex;
+    justify-content: center;
+    padding: 2px;
+    background-color: #10B981;
+    color: white;
+    cursor: pointer;
+  }
+  .toggle-left{
+    &:hover{
+      background-color: #0a6f4dc0;
+    }
+}
+  .toggle-right{
+    &:hover{
+      background-color: #0a6f4dc0;
+      
+    }
+  }
+  .toggle-active{
+    background-color: #0a6f4e;
+    transition: background-color 0.3s linear;
+  }
+  .expenseChart__date-selector-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: -20px;
+    margin-top: 20px;
+  }
+  .expenseChart__date-selector{
+    width: 65px;
+    padding: 2px;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 2px solid #5048e5;
+    background-color: #5048e5;
+    cursor: pointer;
+    &:focus{
+      outline: none;
+    }
+  }

@@ -10,7 +10,7 @@ import { FaShoppingCart } from "react-icons/fa";
 import { GiTheater } from "react-icons/gi";
 import { FaHotel } from "react-icons/fa";
 import { MdOutlineDirectionsBus } from "react-icons/md";
-import { MdOutlineSettingsSuggest } from "react-icons/md";
+import { TbCategoryPlus } from "react-icons/tb";
 import { ReactNode } from "react";
 interface TableProps {
   data: Data[];
@@ -50,7 +50,7 @@ function Table(props: TableProps) {
       case "교통":
         return  <MdOutlineDirectionsBus />
       case "기타":
-        return  <MdOutlineSettingsSuggest />
+        return  <TbCategoryPlus />
     }
   };
   return (

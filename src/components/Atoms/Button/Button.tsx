@@ -4,7 +4,7 @@ import "./Button.scss";
 interface ButtonProps {
   children: ReactNode;
   variant?: "outlined" | "filled" | "text-only";
-  color?: "primary" | "success" | "error" | "black" | "grey";
+  color?: "primary" | "success" | "error" | "black" | "grey" | "darkGrey";
   size?: "large" | "medium" | "small";
   onClick?: () => void;
 }
