@@ -6,9 +6,15 @@ import { useInputRef } from "../../../hooks/useInputRef";
 import { AddExpenseInputValue } from "../../../types/auth";
 import Select from "../../Atoms/Select/Select";
 import { useNavigate } from "react-router-dom";
-import { useState} from "react";
+import { useEffect, useState } from "react";
 import Dialog from "../../Organism/Dialog/Dialog";
-import { LoadScriptNext, Autocomplete, Libraries } from "@react-google-maps/api";
+import {
+  LoadScriptNext,
+  Autocomplete,
+  Libraries,
+} from "@react-google-maps/api";
+import supabase from "../../../api/base";
+import { ExpenseRecord } from "../../../types/model";
 
 const libraries: Libraries = ["places"];
 
@@ -16,7 +22,7 @@ function UpdateExpense() {
   const [_, handleInputValue] = useInputRef<AddExpenseInputValue>({
     name: "",
     place: "",
-    price: "",
+    price: 0,
     category: "",
     rating: "",
     date: "",
@@ -25,6 +31,7 @@ function UpdateExpense() {
   const [openModal, setOpenModal] = useState(false);
   const [autocomplete, setAutocomplete] =
     useState<google.maps.places.Autocomplete | null>(null);
+  const [data, setData] = useState<ExpenseRecord | null>(null);
 
   const cancleOnClick = () => {
     setOpenModal(!openModal);
@@ -49,6 +56,27 @@ function UpdateExpense() {
       }
     }
   };
+  const handleUpdateData = () => {};
+  // 여러 컬럼을 select할 때는 필드를 쉼표로 구분하여 하나의 문자열로 전달
+  useEffect(() => {
+    selectExepenseRecord();
+  }, []);
+
+  const selectExepenseRecord = async (): Promise<void> => {
+    const { data } = await supabase
+      .from("expenserecord")
+      .select("id, name, place, price, category, rating, date, expense_book_id")
+      .eq("id", "2");
+    if (data !== null) {
+      setData(data[0]);
+      
+    }
+  };
+  console.log(data)
+  // const updateExpenseRecord = async () : Promise<void> => {
+  //   const {data, error} = await supabase.from('expenserecord').update("name, place, price, category, rating, date").eq('id', '4')
+  // }
+
   return (
     <>
       <div className="addExpense__container">
@@ -57,9 +85,7 @@ function UpdateExpense() {
           <Appbar />
           <div className="addExpense__main-container">
             <div className="addExpense__title-container">
-              <div className="addExpense__title">
-                지출 세부정보 수정
-              </div>
+              <div className="addExpense__title">지출 세부정보 수정</div>
               <div className="addExpense__subTitle">신중하게 입력하세요!</div>
             </div>
             <div className="addExpense__name-container">
@@ -71,6 +97,7 @@ function UpdateExpense() {
                   name="name"
                   placeholder="구체적인 행위를 적어주시면 더 좋습니다."
                   handleInputValue={handleInputValue}
+                  defaultValue={data?.name}
                 />
               </div>
             </div>
@@ -91,6 +118,7 @@ function UpdateExpense() {
                       name="place"
                       placeholder="정해진 물리적 장소가 없는 경우 입력하지 않으셔도 됩니다."
                       handleInputValue={handleInputValue}
+                      defaultValue={data?.place}
                     />
                   </Autocomplete>
                 </LoadScriptNext>
@@ -106,6 +134,7 @@ function UpdateExpense() {
                   placeholder="0"
                   handleInputValue={handleInputValue}
                   step={100}
+                  defaultValue={data?.price}
                 />
               </div>
             </div>
@@ -116,6 +145,7 @@ function UpdateExpense() {
                   title="카테고리"
                   name="category"
                   handleInputValue={handleInputValue}
+                  defaultValue={data?.category}
                 />
               </div>
             </div>
@@ -126,6 +156,7 @@ function UpdateExpense() {
                   title="평가"
                   name="rating"
                   handleInputValue={handleInputValue}
+                  defaultValue={data?.rating}
                 />
               </div>
             </div>
@@ -137,6 +168,7 @@ function UpdateExpense() {
                   type="Date"
                   name="date"
                   handleInputValue={handleInputValue}
+                  defaultValue={data?.date}
                 />
               </div>
             </div>

@@ -6,12 +6,26 @@ import Divider from "../../Atoms/Divider/Divider";
 import { Link } from "react-router-dom";
 import { useInputRef } from "../../../hooks/useInputRef";
 import { RegisterInputValue } from "../../../types/auth";
+import supabase from "../../../api/base";
 
 function Register() {
-  const [_, handleInputValue] = useInputRef<RegisterInputValue>({
+  const [inputValueRef, handleInputValue] = useInputRef<RegisterInputValue>({
     email: "",
     password: "",
   })
+
+  const handlerRegisterButtonClick = async () => {
+    const { data, error } = await supabase.auth.signUp({
+      email: inputValueRef.current.email,
+      password: inputValueRef.current.password,
+      options: {
+        emailRedirectTo: 'http://localhost:3000/',
+      },
+    })
+    
+    console.log(data, error)
+  }
+  
   return (
     <div className="register__container">
       <div className="register__main-container">
@@ -44,7 +58,7 @@ function Register() {
               <span>I have read the</span>
               <Link to={"/register"}>Terms and Conditions</Link>
             </div>
-            <Button variant="filled" size="large">
+            <Button variant="filled" size="large" onClick={handlerRegisterButtonClick}>
               Register
             </Button>
             <Divider />

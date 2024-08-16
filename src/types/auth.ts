@@ -16,7 +16,7 @@ interface AccountInputValue {
 interface AddExpenseInputValue {
   name: string; 
   place: string; 
-  price: string;
+  price: number;
   category: string; 
   rating: string; 
   date: string;

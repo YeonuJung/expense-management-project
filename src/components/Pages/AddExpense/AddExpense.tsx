@@ -10,14 +10,15 @@ import { useNavigate } from "react-router-dom";
 import { useState} from "react";
 import Dialog from "../../Organism/Dialog/Dialog";
 import { LoadScriptNext, Autocomplete, Libraries } from "@react-google-maps/api";
+import supabase from "../../../api/base";
 
 const libraries: Libraries = ["places"];
 
 function AddExpense() {
-  const [_, handleInputValue] = useInputRef<AddExpenseInputValue>({
+  const [inputValueRef, handleInputValue] = useInputRef<AddExpenseInputValue>({
     name: "",
     place: "",
-    price: "",
+    price: 0,
     category: "",
     rating: "",
     date: "",
@@ -50,6 +51,33 @@ function AddExpense() {
       }
     }
   };
+  const handleInsertData = () => {
+    insertExpenseRecord();
+    alert("지출이 추가되었습니다.");
+    navigate("/expenseList");
+  }
+  const insertExpenseRecord = async () : Promise<void> => {
+    const { data, error } = await supabase
+      .from("expenserecord")
+      .insert([
+        {
+          name: inputValueRef.current.name,
+          place: inputValueRef.current.place,
+          price: inputValueRef.current.price,
+          rating: inputValueRef.current.rating,
+          date: inputValueRef.current.date,
+          category: inputValueRef.current.category,
+          expense_book_id: 3,
+        },
+      ])
+      .select();
+    if (error) {
+      console.error("데이터 추가 오류: ", error.message);
+      return;
+    }
+    console.log(data);
+  }
+  
   return (
     <>
       <div className="addExpense__container">
@@ -146,7 +174,7 @@ function AddExpense() {
                 <Button variant="outlined" onClick={cancleOnClick}>
                   취소
                 </Button>
-                <Button variant="filled">추가</Button>
+                <Button variant="filled" onClick={handleInsertData}>추가</Button>
               </div>
             </div>
           </div>

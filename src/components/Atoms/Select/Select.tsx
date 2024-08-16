@@ -8,10 +8,11 @@ interface SelectProps {
     e: React.ChangeEvent<HTMLSelectElement>,
     name: string
   ) => void;
+  defaultValue?: string
 }
 
 function Select(props: SelectProps) {
-  const { title, name, handleInputValue } = props;
+  const { title, name, handleInputValue, defaultValue } = props;
 
   return (
     <div className="select__container">
@@ -20,13 +21,14 @@ function Select(props: SelectProps) {
       </label>
       <select
         className="select"
+        defaultValue={defaultValue}
         name={name}
         onChange={(e) => handleInputValue(e, name)}
         id={name}
       >
         {name === "category" ? (
           <>
-            <option value="category" disabled>
+            <option value="notice" disabled selected={!defaultValue}>
               카테고리를 골라주세요
             </option>
             <option value="식당">식당</option>
@@ -39,7 +41,7 @@ function Select(props: SelectProps) {
           </>
         ) : (
           <>
-            <option value="rating" disabled>
+            <option value="notice" disabled selected={!defaultValue}>
               평가해주세요
             </option>
             <option value="good">좋아요 😊</option>

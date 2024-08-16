@@ -7,10 +7,11 @@ interface InputProps {
   placeholder?: string;
   step?: number;
   handleInputValue: (e: React.ChangeEvent<HTMLInputElement>, name: string) => void;
+  defaultValue?: string | number | null;
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
-  const { title, type, placeholder, name, step, handleInputValue } = props;
+  const { title, type, placeholder, name, step, handleInputValue, defaultValue } = props;
   return (
     <div className="Input__container">
       <label htmlFor={name} className="Input__label">
@@ -25,6 +26,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         placeholder={placeholder}
         step={step}
         ref={ref}
+        defaultValue={defaultValue?? undefined}
       />
     </div>
   );

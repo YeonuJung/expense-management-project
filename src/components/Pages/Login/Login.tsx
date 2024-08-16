@@ -9,6 +9,7 @@ import Divider from "../../Atoms/Divider/Divider";
 import { Link } from "react-router-dom";
 import { useInputRef} from "../../../hooks/useInputRef";
 import { LoginInputValue } from "../../../types/auth";
+import supabase from "../../../api/base";
 
 
 function Login() {
@@ -16,7 +17,14 @@ function Login() {
     email: "",
     password: "",
   })
-  console.log(inputValueRef.current)
+  const handleLoginButtonClick = async () => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: inputValueRef.current.email,
+      password: inputValueRef.current.password,
+    })
+    console.log(data, error)
+  }
+
   return (
     <div className="login__container">
       <div className="login__main-container">
@@ -31,7 +39,7 @@ function Login() {
           <div className="login__form-container">
             <Input title="Email address" type="email" name="email" placeholder="example@example.com" handleInputValue={handleInputValue}/>
             <Input title="Password" type="password" name="password" placeholder="Enter your password" handleInputValue={handleInputValue}/>
-            <Button variant="filled" size="large">Log in</Button>
+            <Button variant="filled" size="large" onClick={handleLoginButtonClick}>Log in</Button>
             <Alert type="warning" content="아이디와 비밀번호를 제대로 입력해주세요!"/>
             <Divider/>
             <div className="login__form-link-container">

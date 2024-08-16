@@ -26,10 +26,7 @@ function Button(props: ButtonProps) {
             ? `bg-${color} text-white button__filled`
             : `text-${color} button__text-only`
         }`}
-        onClick={(e) => {
-          onClick?.();
-          return e.preventDefault;
-        }}
+        onClick={onClick}
       >
         <div className="button__children-container">{children}</div>
       </button>

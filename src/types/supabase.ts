@@ -55,7 +55,7 @@ export type Database = {
           expense_book_id: number
           id: number
           name: string
-          place: Json | null
+          place: string | null
           price: number
           rating: string
         }
@@ -63,9 +63,9 @@ export type Database = {
           category: string
           date: string
           expense_book_id: number
-          id: number
+          id?: number
           name: string
-          place?: Json | null
+          place?: string | null
           price: number
           rating: string
         }
@@ -75,7 +75,7 @@ export type Database = {
           expense_book_id?: number
           id?: number
           name?: string
-          place?: Json | null
+          place?: string | null
           price?: number
           rating?: string
         }

@@ -32,7 +32,6 @@ function Table(props: TableProps) {
 
   const handleUpdateButton = () => {
     navigate("/updateExpense");
-    console.log("update");
   };
 
   const getCategoryIcon = (category: string) : ReactNode => {
