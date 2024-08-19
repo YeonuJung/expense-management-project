@@ -7,6 +7,8 @@ import "./Account.scss";
 import { useInputRef } from "../../../hooks/useInputRef";
 import { AccountInputValue } from "../../../types/auth";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../../hooks/useAuth";
+import supabase from "../../../api/base";
 
 function Account() {
   const [_, handleInputValue] = useInputRef<AccountInputValue>({
@@ -14,6 +16,11 @@ function Account() {
     email: "",
     limit: "",
   });
+const sessionValue = useAuth()
+// const fetchAccountData = async () => {
+//   const {data, error} = await supabase.from('member').select('email, name').eq('user_id',sessionValue?.user.id )
+//   console.log(data)
+// }
 
   // useEffect + sub routing 사용해서 더 간결하게 바꿔보기
   return (

@@ -26,7 +26,7 @@ function Sidebar() {
   return (
     <div className="sidebar__container">
       <div className="sidebar__logo-container">
-        <IoLogoBuffer />
+        <img src="/로고.png" className="sidebar__logo" alt="logo"></img>
       </div>
       <div className="sidebar__expense-container">
         <div className="sidebar__expense-wrapper">

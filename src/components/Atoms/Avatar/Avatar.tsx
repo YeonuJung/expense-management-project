@@ -4,17 +4,18 @@ interface AvatarProps {
   shape: "circular" | "rounded" | "square";
   type?: "img" | "text" | "icon";
   label?: string
+  src?: string
   //label 설정 이유는 content가 텍스트일 때 텍스트를 받기 위해서
 }
 function Avatar(props: AvatarProps) {
-  const { shape, type = "icon", label} = props;
+  const { shape, type = "icon", label, src} = props;
 
   //컨텐츠가 이미지인 경우 -> 이미지 태그에도 아바타 쉐입 넣어줌
   //그래야 컨테이너의 border-radius를 무시하지 않고 이미지를 넣을 수 있음
   const AvatarWithImg = () => {
     return (
     <div className={`avatar__container avatar__${shape}`}>
-      <img className={`avatar__${type} avatar__${shape}`} alt="avatar__img" src={process.env.PUBLIC_URL + '/avatar-image.png'} />    
+      <img className={`avatar__${type} avatar__${shape}`} alt="avatar__img" src={src} />    
     </div>
     )
   }

@@ -20,7 +20,7 @@ export type Database = {
         Insert: {
           detail: string
           email: string
-          id: number
+          id?: number
           name: string
           phone_number?: string | null
         }
@@ -40,7 +40,7 @@ export type Database = {
         }
         Insert: {
           expense_limit: number
-          id: number
+          id?: number
         }
         Update: {
           expense_limit?: number
@@ -96,13 +96,15 @@ export type Database = {
           is_active: boolean
           member_id: number
           role: string
+          user_id: string
         }
         Insert: {
           expense_book_id: number
-          id: number
+          id?: number
           is_active: boolean
           member_id: number
           role: string
+          user_id: string
         }
         Update: {
           expense_book_id?: number
@@ -110,13 +112,14 @@ export type Database = {
           is_active?: boolean
           member_id?: number
           role?: string
+          user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "fk_2"
-            columns: ["member_id"]
+            foreignKeyName: "expenserecordmember_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "member"
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
           {
@@ -134,28 +137,28 @@ export type Database = {
           created_at: string
           id: number
           ip: string
-          member_id: number
+          user_id: string
         }
         Insert: {
           browser: string
           created_at: string
-          id: number
+          id?: number
           ip: string
-          member_id: number
+          user_id: string
         }
         Update: {
           browser?: string
           created_at?: string
           id?: number
           ip?: string
-          member_id?: number
+          user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "fk_1"
-            columns: ["member_id"]
+            foreignKeyName: "loginhistory_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "member"
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -166,20 +169,31 @@ export type Database = {
           id: number
           name: string
           profile_img: string | null
+          user_id: string
         }
         Insert: {
           email: string
-          id: number
+          id?: number
           name: string
           profile_img?: string | null
+          user_id: string
         }
         Update: {
           email?: string
           id?: number
           name?: string
           profile_img?: string | null
+          user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "member_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

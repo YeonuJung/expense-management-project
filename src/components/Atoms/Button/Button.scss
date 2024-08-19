@@ -5,6 +5,10 @@
     line-height: 24px;
     cursor: pointer;
     position: relative;
+    &:disabled{
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
 }
 .button__children-container{
     display: flex;

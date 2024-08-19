@@ -6,6 +6,7 @@ interface ButtonProps {
   variant?: "outlined" | "filled" | "text-only";
   color?: "primary" | "success" | "error" | "black" | "grey" | "darkGrey";
   size?: "large" | "medium" | "small";
+  disabled?: boolean;
   onClick?: () => void;
 }
 function Button(props: ButtonProps) {
@@ -14,6 +15,7 @@ function Button(props: ButtonProps) {
     variant = "text-only",
     color = "primary",
     size = "medium",
+    disabled,
     onClick,
   } = props;
   return (
@@ -27,6 +29,7 @@ function Button(props: ButtonProps) {
             : `text-${color} button__text-only`
         }`}
         onClick={onClick}
+        disabled={disabled}
       >
         <div className="button__children-container">{children}</div>
       </button>

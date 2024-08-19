@@ -13,12 +13,18 @@ import ExpenseCalendar from "./components/Pages/ExpenseCalendar/ExpenseCalendar"
 import VisitedPlace from "./components/Pages/VisitedPlace/VisitedPlace";
 import UpdateExpense from "./components/Pages/UpdateExpense/UpdateExpense";
 import ExpenseChart from "./components/Pages/ExpenseChart/ExpenseChart";
+import Home from "./components/Pages/Home/Home";
+import PasswordFind from "./components/Pages/Login/PasswordFind";
+import PasswordReset from "./components/Pages/Login/PasswordReset";
 
 function App() {
   return (
     <>
       <Routes>
+        <Route path="/" element={<Home/>}/>
         <Route path="login" element={<Login />}/>
+        <Route path="passwordFind" element={<PasswordFind />}/>
+        <Route path="passwordReset" element={<PasswordReset />}/>
         <Route path="expenseList" element={<ExpenseList />}/>
         <Route path="addExpense" element={<AddExpense/>}/>
         <Route path="register" element={<Register/>}/>

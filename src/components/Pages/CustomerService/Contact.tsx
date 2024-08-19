@@ -1,17 +1,32 @@
 import "./Contact.scss";
-import { Link } from "react-router-dom";
+import { Link , useNavigate} from "react-router-dom";
 import Sidebar from "../../Organism/Sidebar/Sidebar";
 import Appbar from "../../Organism/Appbar/Appbar";
 import Input from "../../Atoms/Input/Input";
 import { useInputRef } from "../../../hooks/useInputRef";
-import { AccountInputValue } from "../../../types/auth";
+import { ContactInputValue } from "../../../types/auth";
 import Button from "../../Atoms/Button/Button";
+import supabase from "../../../api/base";
+
 
 function Contact() {
-  const [_, handleInputValue] = useInputRef<Omit<AccountInputValue, "limit">>({
+  const [inputValueRef, handleInputValue] = useInputRef<ContactInputValue>({
     name: "",
     email: "",
+    phonenumber: "",
+    detail: ""
   });
+  const navigate = useNavigate();
+  const insertContactData = async () => {
+    const {error} = await supabase.from('contact').insert([{name: inputValueRef.current.name, email: inputValueRef.current.email, phonenumber: inputValueRef.current.phonenumber, detail: inputValueRef.current.detail}])
+    if(error){
+      alert("문의하기에 실패했습니다. 다시 시도해주세요!")
+      return;
+    }
+    alert("문의하기가 완료되었습니다.")
+    navigate("/")
+  }
+  
   return (
     <div className="cs__container">
       <Sidebar />
@@ -88,11 +103,12 @@ function Contact() {
                     id="detail"
                     name="detail"
                     maxLength={200}
+                    onChange={(e) => handleInputValue(e, "detail")}
                   ></textarea>
                 </div>
               </div>
               <div className="cs__detail-submit">
-                <Button variant="filled" size="large">
+                <Button variant="filled" size="large" onClick={insertContactData}>
                  문의하기
                 </Button>
               </div>

@@ -7,6 +7,10 @@
     padding-top: 120px;
     padding-bottom: 64px;
 }
+.register__logo{
+    width: 60px;
+     cursor: pointer;
+}
 .register__card-container{
     display: flex;
     flex-direction: column;
@@ -79,4 +83,10 @@
             color: #90949d;
         }
     }
+}
+.register__terms{
+    color: #5048e5;
+    text-decoration: underline;
+    font-weight: bold;
+    cursor: pointer;
 }
