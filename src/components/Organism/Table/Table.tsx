@@ -33,8 +33,8 @@ function Table(props: TableProps) {
 
   const navigate = useNavigate();
 
-  const handleUpdateButton = () => {
-    navigate("/updateExpense");
+  const handleUpdateButton = (id: number) => {
+    navigate("/updateExpense", { state: { id } });
   };
 
   const getCategoryIcon = (category: string) : ReactNode => {
@@ -75,11 +75,11 @@ function Table(props: TableProps) {
           {data.map((data, idx) => {
             return (
               <>
-                <tr key={idx} className="tbody-row">
+                <tr key={data.id} className="tbody-row">
                   <td>
                     <div className="arrow__container">
                       <IoIosArrowForward
-                        onClick={handleUpdateButton}
+                        onClick={() => handleUpdateButton(data.id)}
                         className="table__update-button"
                       />
                     </div>

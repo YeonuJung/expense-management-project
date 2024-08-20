@@ -12,6 +12,8 @@ import {
 } from "chart.js";
 import { Chart } from "react-chartjs-2";
 import moment from "moment";
+import { ExpenseRecordForChart } from "../../../types/auth";
+import { useMemo } from "react";
 
 ChartJS.register(
   LinearScale,
@@ -25,44 +27,41 @@ ChartJS.register(
   BarController
 );
 
-// const groupByMonth = (data: Data[]) => {
-//   const acc: {
-//     "01": number;
-//     "02": number;
-//     "03": number;
-//     "04": number;
-//     "05": number;
-//     "06": number;
-//     "07": number;
-//     "08": number;
-//     "09": number;
-//     "10": number;
-//     "11": number;
-//     "12": number;
-//   } = {
-//     "01": 0,
-//     "02": 0,
-//     "03": 0,
-//     "04": 0,
-//     "05": 0,
-//     "06": 0,
-//     "07": 0,
-//     "08": 0,
-//     "09": 0,
-//     "10": 0,
-//     "11": 0,
-//     "12": 0,
-//   };
-
-//   return data.reduce((acc, item) => {
-//     const month: string = moment(item.date).format("YYYY-MM");
-//     acc[month as (keyof typeof acc)] += item.price ;
-//     return acc;
-//   }, acc);
-// };
-
-//   const monthlyExpenditures : { [key: string]: number }  = groupByMonth(data);
-//   console.log(monthlyExpenditures);
+const groupByMonth = (expenseRecord: ExpenseRecordForChart[]) => {
+  const acc: {
+    "01": number;
+    "02": number;
+    "03": number;
+    "04": number;
+    "05": number;
+    "06": number;
+    "07": number;
+    "08": number;
+    "09": number;
+    "10": number;
+    "11": number;
+    "12": number;
+  } = {
+    "01": 0,
+    "02": 0,
+    "03": 0,
+    "04": 0,
+    "05": 0,
+    "06": 0,
+    "07": 0,
+    "08": 0,
+    "09": 0,
+    "10": 0,
+    "11": 0,
+    "12": 0,
+  };
+  console.log(expenseRecord);
+  return expenseRecord.reduce((acc, data) => {
+    const month: string = moment(data.date).format("MM");
+    acc[month as keyof typeof acc] += data.price;
+    return acc;
+  }, acc);
+};
 
 const labels: string[] = [
   "1월",
@@ -79,39 +78,12 @@ const labels: string[] = [
   "12월",
 ];
 
-const ChartData = {
-  labels,
-  datasets: [
-    {
-      type: "line" as const,
-      label: "지출내역 피크",
-      borderColor: "#10B981",
-      borderWidth: 2.5,
-      fill: false,
-      data: [
-        650000, 590000, 800000, 810000, 560000, 550000, 400000, 300000, 0,
-        100000, 50000, 100000,
-      ],
-    },
-    {
-      type: "bar" as const,
-      label: "월별 지출내역",
-      backgroundColor: "#5048e5",
-      data: [
-        650000, 590000, 800000, 810000, 560000, 550000, 400000, 300000, 0,
-        100000, 50000, 100000,
-      ],
-      borderColor: "white",
-      borderWidth: 2,
-    },
-  ],
-};
 const options = {
   scales: {
     y: {
       beginAtZero: true,
       min: 0,
-      max: 1200000,
+      max: 1600000,
       ticks: {
         stepSize: 100000,
         callback: function (tickValue: string | number): string {
@@ -180,8 +152,42 @@ const options = {
     },
   },
 };
-function MontlyChart() {
-  return <Chart type="bar" data={ChartData} options={options} />;
+interface MontlyChartProps {
+  expenseRecord: ExpenseRecordForChart[];
+}
+function MontlyChart(props: MontlyChartProps) {
+  const { expenseRecord } = props;
+  
+  const monthlyExpenditures: { [key: string]: number } =
+    groupByMonth(expenseRecord);
+  
+  const chartData = useMemo(() => ({
+      labels,
+      datasets: [
+        {
+          type: "line" as const,
+          label: "지출내역 피크",
+          borderColor: "#10B981",
+          borderWidth: 2.5,
+          fill: false,
+          data: Object.keys(monthlyExpenditures)
+            .sort()
+            .map((key) => monthlyExpenditures[key]),
+        },
+        {
+          type: "bar" as const,
+          label: "월별 지출내역",
+          backgroundColor: "#5048e5",
+          data: Object.keys(monthlyExpenditures)
+            .sort()
+            .map((key) => monthlyExpenditures[key]),
+          borderColor: "white",
+          borderWidth: 2,
+        },
+      ],
+  }), [monthlyExpenditures]);
+
+  return <Chart type="bar" data={chartData} options={options} />;
 }
 
 export default MontlyChart;

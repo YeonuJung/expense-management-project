@@ -23,7 +23,6 @@ function ExpenseCalendar({ data }: ExpenseCalendarProps) {
   const handleDateChange = (newDate: Value) => {
     setDate(newDate)
   };
-  console.log(date)
   const session = useAuth();
 
   const fetchExpenseRecord = useCallback(async (): Promise<void> => {

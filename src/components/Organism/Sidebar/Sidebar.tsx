@@ -3,10 +3,8 @@ import List from "./List/List";
 import ListItem from "./List/ListItem";
 import ListTitle from "./List/ListTitle";
 import Button from "../../Atoms/Button/Button";
-import { IoLogoBuffer } from "react-icons/io";
 import { TbFileDescription } from "react-icons/tb";
 import {
-  RiExpandUpDownLine,
   RiAccountCircleFill,
   RiMailOpenFill,
 } from "react-icons/ri";
@@ -18,8 +16,14 @@ import { MdError } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../hooks/useAuth";
 import { Session } from "@supabase/supabase-js";
+import supabase from "../../../api/base";
+import { useEffect, useState} from "react";
+import { totalPrice } from "../../../types/auth";
+import moment from "moment";
 
 function Sidebar() {
+  const [expenseLimit, setExpenseLimit] = useState<number | null>(0);
+  const [totalExpense, setTotalExpense] = useState<number| null>(null);
   const navigate = useNavigate();
   const onClick = (): void => {
     navigate("/customerService/contact");
@@ -27,6 +31,33 @@ function Sidebar() {
   };
   const session: Session | null = useAuth();
 
+  useEffect(() => {
+    if(session){
+    const fetchMemberLimit = async (): Promise<void> => {
+        const { data } = await supabase
+          .from("member")
+          .select("expense_limit")
+          .eq("user_id", session.user.id);
+        if (data && data.length > 0) {
+          setExpenseLimit(data[0].expense_limit);
+        }
+    }
+    const fetchTotalExpense = async (): Promise<void> => {
+      const startDate: string = moment().startOf('month').format('YYYY-MM-DD')
+      const endDate: string = moment().endOf('month').format('YYYY-MM-DD')
+        const {data} = await supabase.from("expenserecord").select("price").eq('user_id', session.user.id).gte('date', startDate).lte('date', endDate)
+         if(data && data.length > 0){
+          const totalExpense : number = data.reduce((acc : number, cur : totalPrice) => acc + cur.price, 0)
+          setTotalExpense(totalExpense)
+      }
+    }
+  
+    fetchMemberLimit()
+    fetchTotalExpense()
+  }
+  }, [session]);
+  
+  
   return (
     <div className="sidebar__container">
       <div className="sidebar__logo-container">
@@ -37,13 +68,13 @@ function Sidebar() {
           <div className="sidebar__expense-wrapper">
             <div className="sidebar__expense-text">
               <div className="sidebar__expense-amount">
-                설정한도 : 300,000원
+                설정한도 : {expenseLimit?.toLocaleString()}원
               </div>
               <div className="sidebar__expense-amount">
-                지출금액 : 200,000원
+                지출금액 : {totalExpense?.toLocaleString()}원
               </div>
               <div className="expenseDivider" />
-              <div className="sidebar__expense-title">잔여한도 : 100,000원</div>
+              <div className="sidebar__expense-title">잔여한도 : {(expenseLimit !== null && totalExpense !== null) ? (expenseLimit - totalExpense).toLocaleString() : null}원</div>
             </div>
           </div>
         </div>

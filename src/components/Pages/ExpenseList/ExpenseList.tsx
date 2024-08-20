@@ -106,9 +106,16 @@ function ExpenseList() {
         } else if (checkedFilterMenuValue.date[0] === "늦은순") {
           query = query.order("date", { ascending: true });
         }
-      } 
+      }
 
       const { data, count, error } = await query;
+
+      // searchKeyword가 존재하고 결과가 없는 경우 빈 배열 반환
+      if (searchKeyword.length > 0 && (!data || data.length === 0)) {
+        setFilteredData([]);
+        setEndPage(0);
+        return;
+      }
 
       if (!error && count) {
         setFilteredData(data);
@@ -193,13 +200,6 @@ function ExpenseList() {
   // 본래 목적에서 벗어난 부가적인 기능은 아래처럼 분리해서 따로 정리하는 것이 좋다.
   // 연산자 여러개 사용할 때는 우선순위 고려해서 사용하기. 소괄호로 묶어줄 경우 우선순위 가장 높아짐
 
-  // 초기화 눌렀을 때 칩이랑 보여주는 데이터 모두 초기화 하는 로직
-  const resetExpenseData = (): void => {
-    setSearchKeyword([]);
-    setFilteredData([]);
-    setCheckedFilterMenuValue({ category: [], rating: [], date: [] });
-  };
-
   // 인풋데이터가 없을때 누르면 칩이 아무 데이터 없이 생겨날 수 있음
   // 그래서 인풋데이터가 없으면 알림창을 띄우고, 있으면 키워드 배열에 추가 및 map으로 chip보여줌
   // 서치키워드도 마찬가지로 6개로 제한하고 6개가 넘어가면 알림창 띄워주고 마지막 요소 삭제
@@ -213,6 +213,7 @@ function ExpenseList() {
         alert("최대 6개까지만 적용가능합니다!");
       } else {
         setSearchKeyword([...searchKeyword, inputDataRef.current]);
+        setStartPage(1);
       }
       if (inputRef.current) {
         inputRef.current.value = "";
@@ -220,6 +221,13 @@ function ExpenseList() {
       // 옵셔널체이닝의 우측에 값을 할당하면 오류가 나니깐 이럴 경우 if문과 같이 조건문을 사용해주기
       // 만약 값이 null일 경우 null에다가 우측에 있는 값을 대입하게 되는 문제가 생길 수도 있으니깐
     }
+  };
+
+  // 초기화 눌렀을 때 칩이랑 보여주는 데이터 모두 초기화 하는 로직
+  const resetExpenseData = (): void => {
+    setSearchKeyword([]);
+    setFilteredData([]);
+    setCheckedFilterMenuValue({ category: [], rating: [], date: [] });
   };
 
   // 인풋창 눌렀을 때 인풋데이터 리셋시켜서 인풋창 깨끗하게.
@@ -265,158 +273,157 @@ function ExpenseList() {
       Rating: false,
       Date: false,
     });
+    setStartPage(1);
   };
   const navigate = useNavigate();
   return (
-    
-        <div className="expenseList__main-container">
-          <div className="expenseList__title-container">
-            <div className="expenseList__title-wrapper">
-              <div className="expenseList__title">지출내역</div>
-              <div className="expenseList__addButton">
-                <Button
-                  variant="filled"
-                  color="primary"
-                  size="large"
-                  onClick={() => navigate("/addExpense")}
-                >
-                  <FaPlus />
-                  추가
-                </Button>
-              </div>
-            </div>
-            <div className="expenseList__title-actions">
-              <Button
-                variant="text-only"
-                color="primary"
-                size="large"
-                onClick={() => resetExpenseData()}
-              >
-                <MdAutorenew style={{ fontSize: "24px" }} />
-                지출내역 초기화
-              </Button>
-            </div>
-          </div>
-          <div className="expenseList__card-container">
-            <div className="expenseList__card">
-              <div className="expenseList__card-input-container">
-                <HiSearch
-                  className="expenseList__card-search-icon"
-                  onClick={handleInputData}
-                />
-                <input
-                  className="expenseList__card-input"
-                  type="text"
-                  placeholder="검색어를 입력하세요"
-                  name="searchKeyword"
-                  onChange={(e) => {
-                    const { value } = e.target;
-                    inputDataRef.current = value;
-                    console.log(inputDataRef.current);
-                  }}
-                  onClick={resetInputData}
-                  onKeyDown={(e) => activeEnter(e)}
-                  ref={inputRef}
-                />
-              </div>
-              <div className="expenseList__card-chip-container">
-                {searchKeyword.map((keyword, idx) => {
-                  return (
-                    <Chip
-                      label={keyword}
-                      color="grey"
-                      variant="outlined"
-                      onDelete={() => onDelete(idx)}
-                      key={idx}
-                    />
-                  );
-                })}
-              </div>
-              <div className="expenseList__card-filter-container">
-                {filterMenu.title.map((filter, idx) => {
-                  const filterMenuValueKeys: (keyof CheckedFilterMenu)[] = [
-                    "category",
-                    "rating",
-                    "date",
-                  ] as (keyof CheckedFilterMenu)[];
-                  return (
-                    //큰 div로 감싸주는 이유 -> position relative를 줘서 자식에 absolute를 주려고.
-                    // expenseList__card-filter-list 리스트가 absolute가 되면 결국 Button만 position에 남기때문에
-                    // div는 Button 컴포넌트를 기준으로 크기가 정해진다.
-                    <div className="expenseList__card-filter" key={idx}>
-                      <Button
-                        color="primary"
-                        onClick={() => {
-                          return handleopenFilterMenu(
-                            filter[filterMenuValueKeys[idx]]
-                          );
-                        }}
-                      >
-                        {filter[filterMenuValueKeys[idx]]}
-                        <FaChevronDown />
-                      </Button>
-                      <div className="expenseList__card-filter-wrapper">
-                        {openFilterMenu[
-                          filter[
-                            filterMenuValueKeys[idx]
-                          ] as keyof OpenFilterMenu
-                        ] && (
-                          <div>
-                            {filterMenu.list[idx][filterMenuValueKeys[idx]].map(
-                              (filterMenu, idx2) => {
-                                return (
-                                  <div
-                                    key={idx2}
-                                    className="expenseList__card-filter-list-container"
-                                  >
-                                    <input
-                                      type="checkbox"
-                                      className="expenseList__card-filter-checkbox"
-                                      onChange={() =>
-                                        handleCheckedFilterMenu(
-                                          filterMenuValueKeys[idx],
-                                          idx2
-                                        )
-                                      }
-                                      defaultChecked={
-                                        checkedFilterMenuRef.current[
-                                          filterMenuValueKeys[idx]
-                                        ][idx2]
-                                      }
-                                    ></input>
-
-                                    <button className="expenseList__card-filter-list">
-                                      {filterMenu}
-                                    </button>
-                                  </div>
-                                );
-                              }
-                            )}
-                            <div className="expenseList__card-filter-adjust-container">
-                              <Button
-                                variant="outlined"
-                                size="small"
-                                onClick={() => filterOnClick()}
-                              >
-                                적용하기
-                              </Button>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-            <Table
-              data={filteredData}
-              setStartPage={setStartPage}
-              startPage={startPage}
-              endPage={endPage}
-            />
+    <div className="expenseList__main-container">
+      <div className="expenseList__title-container">
+        <div className="expenseList__title-wrapper">
+          <div className="expenseList__title">지출내역</div>
+          <div className="expenseList__addButton">
+            <Button
+              variant="filled"
+              color="primary"
+              size="large"
+              onClick={() => navigate("/addExpense")}
+            >
+              <FaPlus />
+              추가
+            </Button>
           </div>
         </div>
+        <div className="expenseList__title-actions">
+          <Button
+            variant="text-only"
+            color="primary"
+            size="large"
+            onClick={() => resetExpenseData()}
+          >
+            <MdAutorenew style={{ fontSize: "24px" }} />
+            지출내역 초기화
+          </Button>
+        </div>
+      </div>
+      <div className="expenseList__card-container">
+        <div className="expenseList__card">
+          <div className="expenseList__card-input-container">
+            <HiSearch
+              className="expenseList__card-search-icon"
+              onClick={handleInputData}
+            />
+            <input
+              className="expenseList__card-input"
+              type="text"
+              placeholder="검색어를 입력하세요"
+              name="searchKeyword"
+              onChange={(e) => {
+                const { value } = e.target;
+                inputDataRef.current = value;
+                console.log(inputDataRef.current);
+              }}
+              onClick={resetInputData}
+              onKeyDown={(e) => activeEnter(e)}
+              ref={inputRef}
+            />
+          </div>
+          <div className="expenseList__card-chip-container">
+            {searchKeyword.map((keyword, idx) => {
+              return (
+                <Chip
+                  label={keyword}
+                  color="grey"
+                  variant="outlined"
+                  onDelete={() => onDelete(idx)}
+                  key={idx}
+                />
+              );
+            })}
+          </div>
+          <div className="expenseList__card-filter-container">
+            {filterMenu.title.map((filter, idx) => {
+              const filterMenuValueKeys: (keyof CheckedFilterMenu)[] = [
+                "category",
+                "rating",
+                "date",
+              ] as (keyof CheckedFilterMenu)[];
+              return (
+                //큰 div로 감싸주는 이유 -> position relative를 줘서 자식에 absolute를 주려고.
+                // expenseList__card-filter-list 리스트가 absolute가 되면 결국 Button만 position에 남기때문에
+                // div는 Button 컴포넌트를 기준으로 크기가 정해진다.
+                // 이게 싫으면 Button컴포넌트의 자식으로 넣으면 되지만 불가능 또는 너무 귀찮다.
+                <div className="expenseList__card-filter" key={idx}>
+                  <Button
+                    color="primary"
+                    onClick={() => {
+                      return handleopenFilterMenu(
+                        filter[filterMenuValueKeys[idx]]
+                      );
+                    }}
+                  >
+                    {filter[filterMenuValueKeys[idx]]}
+                    <FaChevronDown />
+                  </Button>
+                  <div className="expenseList__card-filter-wrapper">
+                    {openFilterMenu[
+                      filter[filterMenuValueKeys[idx]] as keyof OpenFilterMenu
+                    ] && (
+                      <div>
+                        {filterMenu.list[idx][filterMenuValueKeys[idx]].map(
+                          (filterMenu, idx2) => {
+                            return (
+                              <div
+                                key={idx2}
+                                className="expenseList__card-filter-list-container"
+                              >
+                                <input
+                                  type="checkbox"
+                                  className="expenseList__card-filter-checkbox"
+                                  onChange={() =>
+                                    handleCheckedFilterMenu(
+                                      filterMenuValueKeys[idx],
+                                      idx2
+                                    )
+                                  }
+                                  defaultChecked={
+                                    checkedFilterMenuRef.current[
+                                      filterMenuValueKeys[idx]
+                                    ][idx2]
+                                  }
+                                ></input>
+
+                                <button className="expenseList__card-filter-list">
+                                  {filterMenu}
+                                </button>
+                              </div>
+                            );
+                          }
+                        )}
+                        <div className="expenseList__card-filter-adjust-container">
+                          <Button
+                            variant="outlined"
+                            size="small"
+                            onClick={() => filterOnClick()}
+                          >
+                            적용하기
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        <Table
+          data={filteredData}
+          setStartPage={setStartPage}
+          startPage={startPage}
+          endPage={endPage}
+        />
+      </div>
+    </div>
   );
 }
 

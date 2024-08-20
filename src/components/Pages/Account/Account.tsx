@@ -7,20 +7,68 @@ import { AccountInputValue } from "../../../types/auth";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../../hooks/useAuth";
 import supabase from "../../../api/base";
+import { useEffect, useState, useCallback } from "react";
+
 
 function Account() {
-  const [_, handleInputValue] = useInputRef<AccountInputValue>({
+  const [MemberRecord, setMemberRecord] = useState<AccountInputValue[] | null>(null);
+  const [inputValueRef, handleInputValue] = useInputRef<Omit<AccountInputValue, "email">>({
     name: "",
-    email: "",
-    limit: "",
+    expense_limit: 0,
   });
-const sessionValue = useAuth()
-// const fetchAccountData = async () => {
-//   const {data, error} = await supabase.from('member').select('email, name').eq('user_id',sessionValue?.user.id )
-//   console.log(data)
-// }
+const session = useAuth()
 
-  // useEffect + sub routing 사용해서 더 간결하게 바꿔보기
+const fetchMemberRecord = useCallback(async (): Promise<void> => {
+  if(session){
+    const {data} = await supabase.from('member').select('name, email, expense_limit').eq('user_id',session.user.id)
+    if(data && data.length > 0){
+      setMemberRecord(data)
+  }
+}
+}, [session])
+
+useEffect(() => {
+  fetchMemberRecord()
+}, [fetchMemberRecord]);
+
+const updateMemberName = async (): Promise<void> => {
+  if(session){
+    if(inputValueRef.current.name === ""){
+      alert("이름을 입력해주세요.")
+      return
+    }
+    const {error} = await supabase.from('member').update({name: inputValueRef.current.name}).eq('user_id',session.user.id)
+    if(error){
+      alert("이름 변경에 실패했습니다. 다시 시도해주세요!")
+  }else{
+      alert("이름 변경이 완료되었습니다.")
+      window.location.reload()
+  }
+
+  }else{
+    alert("로그인이 필요합니다.")
+  }
+}
+
+const updateMemberLimit = async (): Promise<void> => {
+  if(session){
+    if(inputValueRef.current.expense_limit === 0){
+      alert("한도를 입력해주세요.")
+      return
+    }
+    const {error} = await supabase.from('member').update({expense_limit: inputValueRef.current.expense_limit}).eq('user_id',session.user.id)
+    if(error){
+      alert("한도 변경에 실패했습니다. 다시 시도해주세요!")
+  }else{
+      alert("한도 변경이 완료되었습니다.")
+      window.location.reload()
+  }
+
+  }else{
+    alert("로그인이 필요합니다.")
+  }
+}
+console.log(inputValueRef.current.expense_limit)
   return (
             <div className="account__main-container">
           <div className="account__title-container">
@@ -49,9 +97,10 @@ const sessionValue = useAuth()
                     type="text"
                     placeholder="이름을 입력하세요. 프로필 옆에 표시됩니다."
                     handleInputValue={handleInputValue}
+                    defaultValue={MemberRecord? MemberRecord[0].name : null}
                   />
                 </div>
-                <Button size="small">저장</Button>
+                <Button size="small" onClick={updateMemberName}>저장</Button>
               </div>
               <div className="account__detail">
                 <div className="account__detail-input-container">
@@ -61,9 +110,11 @@ const sessionValue = useAuth()
                     type="email"
                     placeholder="example@example.com"
                     handleInputValue={handleInputValue}
+                    defaultValue={MemberRecord? MemberRecord[0].email : null}
+                    readOnly={true}
                   />
                 </div>
-                <Button size="small">수정</Button>
+                <Button size="small" disabled={true}>변경</Button>
               </div>
             </div>
           </div>
@@ -79,14 +130,15 @@ const sessionValue = useAuth()
                 <div className="account__detail-input-container">
                 <Input
                   title="지출 한도"
-                  name="limit"
+                  name="expense_limit"
                   type="number"
                   step={100}
                   placeholder="0"
                   handleInputValue={handleInputValue}
+                  defaultValue={MemberRecord? MemberRecord[0].expense_limit : null}
                 ></Input>
                 </div>
-                <Button size="small">저장</Button>
+                <Button size="small" onClick={updateMemberLimit}>저장</Button>
               </div>
             </div>
           </div>

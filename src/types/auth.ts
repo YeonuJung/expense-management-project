@@ -6,11 +6,18 @@ interface RegisterInputValue extends LoginInputValue {}
 
 type LinkedEmail = Pick<LoginInputValue, 'email'>
 type SecurityPassword = Pick<LoginInputValue, 'password'>
-
+type totalPrice = Pick<AddExpenseInputValue, 'price'>
+interface ExpenseRecordForChart {
+  date: string;
+  price: number;
+}
+interface MontlyExpenseRecord extends ExpenseRecordForChart {
+  category: string;
+}
 interface AccountInputValue {
   name: string;
   email: string;
-  limit: string;
+  expense_limit: number | null;
 }
 interface ContactInputValue {
   name: string;
@@ -20,7 +27,7 @@ interface ContactInputValue {
 }
 interface AddExpenseInputValue {
   name: string; 
-  place: string; 
+  place: string | null; 
   price: number;
   category: string; 
   rating: string; 
@@ -30,11 +37,14 @@ interface AddExpenseInputValue {
 export type{
     LoginInputValue,
     RegisterInputValue,
+    ExpenseRecordForChart,
+    MontlyExpenseRecord,
     AccountInputValue,
     ContactInputValue,
     AddExpenseInputValue,
     LinkedEmail,
-    SecurityPassword
+    SecurityPassword,
+    totalPrice
     
 }
 
