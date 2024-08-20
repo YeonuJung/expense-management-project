@@ -1,5 +1,3 @@
-import Appbar from "../../Organism/Appbar/Appbar";
-import Sidebar from "../../Organism/Sidebar/Sidebar";
 import "./AddExpense.scss";
 import Button from "../../Atoms/Button/Button";
 import Input from "../../Atoms/Input/Input";
@@ -11,6 +9,8 @@ import { useState} from "react";
 import Dialog from "../../Organism/Dialog/Dialog";
 import { LoadScriptNext, Autocomplete, Libraries } from "@react-google-maps/api";
 import supabase from "../../../api/base";
+import { useAuth } from "../../../hooks/useAuth"
+import moment from "moment";
 
 const libraries: Libraries = ["places"];
 
@@ -28,6 +28,8 @@ function AddExpense() {
   const [autocomplete, setAutocomplete] =
     useState<google.maps.places.Autocomplete | null>(null);
 
+  const session = useAuth();
+  
   const cancleOnClick = () => {
     setOpenModal(!openModal);
   };
@@ -53,11 +55,17 @@ function AddExpense() {
   };
   const handleInsertData = () => {
     insertExpenseRecord();
-    alert("지출이 추가되었습니다.");
-    navigate("/expenseList");
   }
   const insertExpenseRecord = async () : Promise<void> => {
-    const { data, error } = await supabase
+    if(session){
+      const today = moment(new Date()).format("YYYY-MM-DD")
+      
+      if(inputValueRef.current.date > today){
+        alert("오늘 이후의 날짜는 추가할 수 없습니다.")
+        return;
+      }
+
+      const { error } = await supabase
       .from("expenserecord")
       .insert([
         {
@@ -67,24 +75,26 @@ function AddExpense() {
           rating: inputValueRef.current.rating,
           date: inputValueRef.current.date,
           category: inputValueRef.current.category,
-          expense_book_id: 3,
+          user_id: session.user.id,
         },
       ])
       .select();
     if (error) {
-      console.error("데이터 추가 오류: ", error.message);
+      alert("지출내역 추가에 실패했습니다. 다시 시도해주세요!");
       return;
+    }else{
+      alert("지출내역 추가가 완료되었습니다.");
+      navigate("/expenseList");
     }
-    console.log(data);
+    }else{
+      alert("로그인이 필요합니다.");
+    }
+
   }
   
   return (
     <>
-      <div className="addExpense__container">
-        <Sidebar />
-        <div className="addExpense__content-container">
-          <Appbar />
-          <div className="addExpense__main-container">
+               <div className="addExpense__main-container">
             <div className="addExpense__title-container">
               <div className="addExpense__title">
                 지출 세부정보 추가
@@ -178,9 +188,7 @@ function AddExpense() {
               </div>
             </div>
           </div>
-        </div>
-      </div>
-      {openModal && (
+          {openModal && (
         <Dialog
           title="정말로 취소하시겠습니까?"
           buttons={

@@ -48,10 +48,10 @@ function PasswordReset() {
           </div>
           <div className="login__form-container">
           <Input
-              title="Password"
+              title="비밀번호"
               type="password"
               name="password"
-              placeholder="Enter your password"
+              placeholder="새로운 비밀번호를 입력하세요"
               handleInputValue={handleInputValue}
             />
             <Button variant="filled" size="large" onClick={handlePasswordResetButtonClick}>

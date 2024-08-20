@@ -21,11 +21,16 @@ function Login() {
       email: inputValueRef.current.email,
       password: inputValueRef.current.password,
     });
-    if (error) {
+    console.log(error)
+    if (error?.message === 'Invalid login credentials') {
+      console.log(error)
+      alert("아이디나 비밀번호가 틀렸습니다. 다시 시도해주세요!");
+      return;
+    }else if(error){
       alert("로그인에 실패했습니다. 다시 시도해주세요!");
       return;
     }
-    alert("로그인에 성공했습니다!");
+
    const checkMember = await supabase
       .from("member")
       .select("email")
@@ -41,6 +46,12 @@ function Login() {
         });
       }
       navigate("/")
+  };
+  const activeEnter = (e: React.KeyboardEvent): void => {
+    console.log("Key pressed:", e.key);
+    if (e.key === "Enter") {
+      handleLoginButtonClick();
+    }
   };
 
   return (
@@ -60,25 +71,27 @@ function Login() {
           </div>
           <div className="login__form-container">
             <Input
-              title="Email address"
+              title="이메일"
               type="email"
               name="email"
               placeholder="example@example.com"
               handleInputValue={handleInputValue}
+              onKeyDown={activeEnter}
             />
             <Input
-              title="Password"
+              title="비밀번호"
               type="password"
               name="password"
-              placeholder="Enter your password"
+              placeholder="비밀번호를 입력하세요"
               handleInputValue={handleInputValue}
+              onKeyDown={activeEnter}
             />
             <Button
               variant="filled"
               size="large"
               onClick={handleLoginButtonClick}
             >
-              Log in
+              로그인
             </Button>
             <Alert
               type="warning"

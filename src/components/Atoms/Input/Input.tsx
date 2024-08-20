@@ -8,10 +8,11 @@ interface InputProps {
   step?: number;
   handleInputValue: (e: React.ChangeEvent<HTMLInputElement>, name: string) => void;
   defaultValue?: string | number | null;
+  onKeyDown?: (e: React.KeyboardEvent) => void;
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
-  const { title, type, placeholder, name, step, handleInputValue, defaultValue } = props;
+  const { title, type, placeholder, name, step, handleInputValue, defaultValue, onKeyDown } = props;
   return (
     <div className="Input__container">
       <label htmlFor={name} className="Input__label">
@@ -27,6 +28,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         step={step}
         ref={ref}
         defaultValue={defaultValue?? undefined}
+        onKeyDown={onKeyDown}
+        
       />
     </div>
   );

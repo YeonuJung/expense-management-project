@@ -1,5 +1,3 @@
-import Appbar from "../../Organism/Appbar/Appbar";
-import Sidebar from "../../Organism/Sidebar/Sidebar";
 import "./Faq.scss";
 import { Link } from "react-router-dom";
 import { FaChevronDown } from "react-icons/fa";
@@ -22,22 +20,19 @@ function Faq() {
   const faqArray: string[] = [
     "지출요정은 어떤 서비스인가요?",
     "회원가입을 꼭 해야 하나요?",
-    "파트너와 연결을 끊을 수 있나요?",
+    "비밀번호를 찾고싶어요.",
     "앱이 작동하지 않아요.",
     "1:1 문의를 남기면 어떻게 연락을 받을 수 있나요?",
   ];
   const answerArray: string[] = [
-    "지출 내역을 쉽게 확인하고 효율적으로 관리할 수 있도록 도와주는 서비스입니다. 링크를 통해 파트너와 연결하여 공동으로 사용하는 계좌의 지출 내역을 확인하고 관리할 수 있습니다.",
-    "회원 가입을 해야 합니다. 가입하지 않으면 지출 내역을 저장하거나 다른 파트너와 연결할 수 없습니다.",
-    "물론입니다. 계정의 파트너 섹션에서 연결된 파트너의 연결을 끊을 수 있습니다.",
+    "지출요정은 지출 내역을 쉽게 확인하고 효율적으로 관리할 수 있도록 도와주는 서비스입니다. 다양한 기능을 통해 지출 내역을 한눈에 확인하세요!",
+    "회원 가입을 해야 합니다. 가입하지 않으면 지출 내역을 저장하거나 관리할 수 없습니다.",
+    "로그인 하단에 보시면 비밀번호 찾기 버튼을 통해 비밀번호를 재설정 할 수 있습니다.",
     "앱이 제대로 작동하지 않는 경우, 1:1 문의를 통해 연락해 주시면 신속하게 처리하겠습니다.",
     "제공하신 이메일 또는 전화번호로 연락드리겠습니다.",
   ];
   return (
-    <div className="cs__container">
-      <Sidebar />
-      <div className="cs__content-container">
-        <Appbar />
+    
         <div className="cs__main-container">
           <div className="cs__title-container">
             <div className="cs__title">자주 묻는 질문</div>
@@ -78,8 +73,7 @@ function Faq() {
             </div>
           </div>
         </div>
-      </div>
-    </div>
+    
   );
 }
 

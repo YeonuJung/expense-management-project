@@ -1,7 +1,5 @@
 import Avatar from "../../Atoms/Avatar/Avatar";
 import Button from "../../Atoms/Button/Button";
-import Appbar from "../../Organism/Appbar/Appbar";
-import Sidebar from "../../Organism/Sidebar/Sidebar";
 import Input from "../../Atoms/Input/Input";
 import "./Account.scss";
 import { useInputRef } from "../../../hooks/useInputRef";
@@ -24,20 +22,13 @@ const sessionValue = useAuth()
 
   // useEffect + sub routing 사용해서 더 간결하게 바꿔보기
   return (
-    <div className="account__container">
-      <Sidebar />
-      <div className="account__content-container">
-        <Appbar />
-        <div className="account__main-container">
+            <div className="account__main-container">
           <div className="account__title-container">
-            <div className="account__title">계정</div>
+            <div className="account__title">일반</div>
           </div>
           <div className="account__tab-container">
             <div className={`account__tab clickedTabMenu`}>
               <Link to="/account">일반</Link>
-            </div>
-            <div className="account__tab">
-              <Link to="/account/linkAccount">파트너</Link>
             </div>
             <div className="account__tab"><Link to="/account/security" >보안</Link></div>
           </div>
@@ -56,7 +47,7 @@ const sessionValue = useAuth()
                     title="이름"
                     name="name"
                     type="text"
-                    placeholder="이름을 입력하세요"
+                    placeholder="이름을 입력하세요. 프로필 옆에 표시됩니다."
                     handleInputValue={handleInputValue}
                   />
                 </div>
@@ -115,9 +106,7 @@ const sessionValue = useAuth()
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  );
+     );
 }
 
 export default Account;

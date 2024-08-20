@@ -41,7 +41,7 @@ const navigate = useNavigate();
           </div>
           <div className="login__form-container">
             <Input
-              title="Email address"
+              title="이메일"
               type="email"
               name="email"
               placeholder="example@example.com"

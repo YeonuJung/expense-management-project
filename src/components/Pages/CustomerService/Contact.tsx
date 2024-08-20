@@ -1,7 +1,5 @@
 import "./Contact.scss";
 import { Link , useNavigate} from "react-router-dom";
-import Sidebar from "../../Organism/Sidebar/Sidebar";
-import Appbar from "../../Organism/Appbar/Appbar";
 import Input from "../../Atoms/Input/Input";
 import { useInputRef } from "../../../hooks/useInputRef";
 import { ContactInputValue } from "../../../types/auth";
@@ -28,11 +26,7 @@ function Contact() {
   }
   
   return (
-    <div className="cs__container">
-      <Sidebar />
-      <div className="cs__content-container">
-        <Appbar />
-        <div className="cs__main-container">
+           <div className="cs__main-container">
           <div className="cs__title-container">
             <div className="cs__title">1:1 문의</div>
           </div>
@@ -115,9 +109,7 @@ function Contact() {
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  );
+    );
 }
 
 export default Contact;

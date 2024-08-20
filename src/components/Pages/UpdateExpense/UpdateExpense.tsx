@@ -1,5 +1,3 @@
-import Appbar from "../../Organism/Appbar/Appbar";
-import Sidebar from "../../Organism/Sidebar/Sidebar";
 import Button from "../../Atoms/Button/Button";
 import Input from "../../Atoms/Input/Input";
 import { useInputRef } from "../../../hooks/useInputRef";
@@ -15,6 +13,7 @@ import {
 } from "@react-google-maps/api";
 import supabase from "../../../api/base";
 import { ExpenseRecord } from "../../../types/model";
+import { useAuth } from "../../../hooks/useAuth";
 
 const libraries: Libraries = ["places"];
 
@@ -32,6 +31,8 @@ function UpdateExpense() {
   const [autocomplete, setAutocomplete] =
     useState<google.maps.places.Autocomplete | null>(null);
   const [data, setData] = useState<ExpenseRecord | null>(null);
+
+  const session = useAuth();
 
   const cancleOnClick = () => {
     setOpenModal(!openModal);
@@ -63,26 +64,23 @@ function UpdateExpense() {
   }, []);
 
   const selectExepenseRecord = async (): Promise<void> => {
-    const { data } = await supabase
+    if(session){
+      const { data } = await supabase
       .from("expenserecord")
-      .select("id, name, place, price, category, rating, date, expense_book_id")
-      .eq("id", "2");
+      .select("id, name, place, price, category, rating, date, user_id")
+      .eq("user_id", session.user.id);
     if (data !== null) {
       setData(data[0]);
       
     }
+    }
+   
   };
   console.log(data)
-  // const updateExpenseRecord = async () : Promise<void> => {
-  //   const {data, error} = await supabase.from('expenserecord').update("name, place, price, category, rating, date").eq('id', '4')
-  // }
+
 
   return (
     <>
-      <div className="addExpense__container">
-        <Sidebar />
-        <div className="addExpense__content-container">
-          <Appbar />
           <div className="addExpense__main-container">
             <div className="addExpense__title-container">
               <div className="addExpense__title">지출 세부정보 수정</div>
@@ -181,8 +179,6 @@ function UpdateExpense() {
               </div>
             </div>
           </div>
-        </div>
-      </div>
       {openModal && (
         <Dialog
           title="정말로 취소하시겠습니까?"

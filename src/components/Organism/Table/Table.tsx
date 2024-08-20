@@ -1,7 +1,7 @@
 import "./Table.scss";
 import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
 import Chip from "../../Atoms/Chip/Chip";
-import { Data } from "../../Pages/ExpenseList/ExpenseList";
+import { ExpenseRecord } from "../../../types/model";
 import { RiDeleteBin3Line } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { IoIosRestaurant } from "react-icons/io";
@@ -13,11 +13,14 @@ import { MdOutlineDirectionsBus } from "react-icons/md";
 import { TbCategoryPlus } from "react-icons/tb";
 import { ReactNode } from "react";
 interface TableProps {
-  data: Data[];
+  data: ExpenseRecord[];
+  setStartPage: React.Dispatch<React.SetStateAction<number>>;
+  startPage: number;
+  endPage: number;
 }
 
 function Table(props: TableProps) {
-  const { data } = props;
+  const { data, setStartPage, startPage, endPage } = props;
   const headers: string[] = [
     "",
     "NAME",
@@ -52,6 +55,12 @@ function Table(props: TableProps) {
         return  <TbCategoryPlus />
     }
   };
+  const handleNextPage = (): void => {
+    setStartPage((prev) => Math.min(prev + 1, endPage));
+  }
+  const handlePreviousPage = (): void => {
+    setStartPage((prev) => Math.max(prev - 1, 1));
+  }
   return (
     <div className="table__container">
       <table className="table">
@@ -83,7 +92,7 @@ function Table(props: TableProps) {
                       </div>
                     </div>
                   </td>
-                  <td>{data.place}</td>
+                  <td>{data.place? data.place : "정확한 위치의 설정이 불가능한 지역"}</td>
                   <td>{data.price.toLocaleString() + "원"}</td>
                   <td>
                     {data.rating === "좋아요" ? (
@@ -119,14 +128,14 @@ function Table(props: TableProps) {
       </table>
       <div className="table__page-navigate-container">
         <div className="table__page-navigate-text">
-          <div>1-5 of 13</div>
+          <div>{startPage} of {endPage}</div>
         </div>
         <div className="table__page-navigate-icon-container">
           <div className="table__page-navigate-icon">
-            <IoIosArrowBack />
+            <IoIosArrowBack onClick={handlePreviousPage}/>
           </div>
           <div className="table__page-navigate-icon">
-            <IoIosArrowForward />
+            <IoIosArrowForward onClick={handleNextPage}/>
           </div>
         </div>
       </div>

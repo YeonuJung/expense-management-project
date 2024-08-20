@@ -89,3 +89,15 @@ background-color: #d14343;
 .text-darkGrey{
   color: #6b7280;
 }
+
+.app__container{
+  display: flex;
+  background-color: #F9FAFC;
+  min-width: 1280px;
+}
+.app__content-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

@@ -11,7 +11,6 @@ import {
   BarController,
 } from "chart.js";
 import { Chart } from "react-chartjs-2";
-import { Data } from "../ExpenseList/ExpenseList";
 import moment from "moment";
 
 ChartJS.register(
@@ -26,41 +25,41 @@ ChartJS.register(
   BarController
 );
 
-const groupByMonth = (data: Data[]) => {
-  const acc: {
-    "01": number;
-    "02": number;
-    "03": number;
-    "04": number;
-    "05": number;
-    "06": number;
-    "07": number;
-    "08": number;
-    "09": number;
-    "10": number;
-    "11": number;
-    "12": number;
-  } = {
-    "01": 0,
-    "02": 0,
-    "03": 0,
-    "04": 0,
-    "05": 0,
-    "06": 0,
-    "07": 0,
-    "08": 0,
-    "09": 0,
-    "10": 0,
-    "11": 0,
-    "12": 0,
-  };
+// const groupByMonth = (data: Data[]) => {
+//   const acc: {
+//     "01": number;
+//     "02": number;
+//     "03": number;
+//     "04": number;
+//     "05": number;
+//     "06": number;
+//     "07": number;
+//     "08": number;
+//     "09": number;
+//     "10": number;
+//     "11": number;
+//     "12": number;
+//   } = {
+//     "01": 0,
+//     "02": 0,
+//     "03": 0,
+//     "04": 0,
+//     "05": 0,
+//     "06": 0,
+//     "07": 0,
+//     "08": 0,
+//     "09": 0,
+//     "10": 0,
+//     "11": 0,
+//     "12": 0,
+//   };
 
-  return data.reduce((acc, item) => {
-    const month: string = moment(item.date).format("YYYY-MM");
-    acc[month as (keyof typeof acc)] += item.price ;
-    return acc;
-  }, acc);
-};
+//   return data.reduce((acc, item) => {
+//     const month: string = moment(item.date).format("YYYY-MM");
+//     acc[month as (keyof typeof acc)] += item.price ;
+//     return acc;
+//   }, acc);
+// };
 
 //   const monthlyExpenditures : { [key: string]: number }  = groupByMonth(data);
 //   console.log(monthlyExpenditures);

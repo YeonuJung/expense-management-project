@@ -71,17 +71,17 @@ function Register() {
             </div>
             <div className="register__form-container">
               <Input
-                title="Email address"
+                title="이메일"
                 type="email"
                 name="email"
                 placeholder="example@example.com"
                 handleInputValue={handleInputValue}
               />
               <Input
-                title="Password"
+                title="비밀번호"
                 type="password"
                 name="password"
-                placeholder="Enter your password"
+                placeholder="비밀번호를 입력하세요"
                 handleInputValue={handleInputValue}
               />
               <div className="register__form-checkbox-container">
@@ -101,7 +101,7 @@ function Register() {
                 onClick={handlerRegisterButtonClick}
                 disabled={!checked}
               >
-                Register
+                회원가입
               </Button>
               <Divider />
             </div>

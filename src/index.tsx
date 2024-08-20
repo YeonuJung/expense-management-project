@@ -5,6 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from './hooks/useAuth';
+import { UserNameProvider } from './hooks/useUserName';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -12,7 +13,9 @@ const root = ReactDOM.createRoot(
 root.render(
   <BrowserRouter>
   <AuthProvider>
+    <UserNameProvider>
     <App />
+    </UserNameProvider>
   </AuthProvider>
   </BrowserRouter>
 );

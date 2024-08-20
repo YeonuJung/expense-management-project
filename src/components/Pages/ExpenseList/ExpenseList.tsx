@@ -1,24 +1,16 @@
 import "./ExpenseList.scss";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import Table from "../../Organism/Table/Table";
 import Chip from "../../Atoms/Chip/Chip";
 import Button from "../../Atoms/Button/Button";
-import Appbar from "../../Organism/Appbar/Appbar";
-import Sidebar from "../../Organism/Sidebar/Sidebar";
 import { MdAutorenew } from "react-icons/md";
 import { FaPlus } from "react-icons/fa6";
 import { FaChevronDown } from "react-icons/fa";
 import { HiSearch } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
-
-export interface Data {
-  name: string;
-  category: string;
-  place: string;
-  price: number;
-  rating: string;
-  date: string;
-}
+import { ExpenseRecord } from "../../../types/model";
+import { useAuth } from "../../../hooks/useAuth";
+import supabase from "../../../api/base";
 
 interface OpenFilterMenu {
   Category: boolean;
@@ -44,76 +36,8 @@ interface FilterMenu {
 interface CheckedFilterMenuValue {
   category: string[];
   rating: string[];
-  // date: string[]
+  date: string[];
 }
-//데이터요청으로 가져왔다고 가정
-// place는 null허용으로
-const data: Data[] = [
-  {
-    name: "카페 데이트",
-    category: "카페",
-    place: "송리단길",
-    price: 32000,
-    rating: "좋아요",
-    date: "2024.07.13",
-  },
-  {
-    name: "프렌치 레스토랑",
-    category: "식당",
-    place: "이태원",
-    price: 50000,
-    rating: "좋아요",
-    date: "2024.07.13",
-  },
-  {
-    name: "영화",
-    category: "문화생활",
-    place: "코엑스",
-    price: 24000,
-    rating: "좋아요",
-    date: "2024.07.14",
-  },
-  {
-    name: "롯데마트 쇼핑",
-    category: "쇼핑",
-    place: "역삼점",
-    price: 29000,
-    rating: "보통이에요",
-    date: "2024.07.15",
-  },
-  {
-    name: "따릉이",
-    category: "교통",
-    place: "잠실한강",
-    price: 5000,
-    rating: "별로에요",
-    date: "2024.07.16",
-  },
-  {
-    name: "일본 비행기",
-    category: "교통",
-    place: "오사카",
-    price: 200000,
-    rating: "별로에요",
-    date: "2024.07.18",
-  },
-  {
-    name: "호텔",
-    category: "숙박",
-    place: "오사카",
-    price: 90000,
-    rating: "좋아요",
-    date: "2024.07.19",
-  },
-  {
-    name: "차량수리",
-    category: "기타",
-    place: "양평",
-    price: 50000,
-    rating: "보통이에요",
-    date: "2024.07.15",
-  },
-];
 
 function ExpenseList() {
   const [searchKeyword, setSearchKeyword] = useState<string[]>([]);
@@ -123,8 +47,10 @@ function ExpenseList() {
     Date: false,
   });
   const [checkedFilterMenuValue, setCheckedFilterMenuValue] =
-    useState<CheckedFilterMenuValue>({ category: [], rating: [] });
-  const [filteredData, setFilteredData] = useState<Data[]>([...data]);
+    useState<CheckedFilterMenuValue>({ category: [], rating: [], date: [] });
+  const [filteredData, setFilteredData] = useState<ExpenseRecord[]>([]);
+  const [startPage, setStartPage] = useState<number>(1);
+  const [endPage, setEndPage] = useState<number>(1);
   const inputDataRef = useRef<string>("");
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -143,12 +69,66 @@ function ExpenseList() {
   const checkedFilterMenuRef = useRef<CheckedFilterMenu>(
     initialCheckedFilterMenuRef
   );
+
+  const session = useAuth();
+  const contentPerPage = 5;
+
+  const fetchExpenseRecord = useCallback(async (): Promise<void> => {
+    if (session) {
+      const start: number = (startPage - 1) * contentPerPage;
+      const end: number = start + contentPerPage - 1;
+      let query = supabase
+        .from("expenserecord")
+        .select("id, name, place, price, category, rating, date, user_id", {
+          count: "exact",
+        })
+        .range(start, end)
+        .eq("user_id", session.user.id);
+
+      // dynamic query 여러 조건문 붙이고 싶을 때 사용
+      if (searchKeyword.length > 0) {
+        for (const keyword of searchKeyword) {
+          query = query.ilike("name", `%${keyword}%`);
+        }
+      }
+
+      if (checkedFilterMenuValue.category.length > 0) {
+        query = query.in("category", checkedFilterMenuValue.category);
+      }
+
+      if (checkedFilterMenuValue.rating.length > 0) {
+        query = query.in("rating", checkedFilterMenuValue.rating);
+      }
+
+      if (checkedFilterMenuValue.date.length === 1) {
+        if (checkedFilterMenuValue.date[0] === "최신순") {
+          query = query.order("date", { ascending: false });
+        } else if (checkedFilterMenuValue.date[0] === "늦은순") {
+          query = query.order("date", { ascending: true });
+        }
+      } 
+
+      const { data, count, error } = await query;
+
+      if (!error && count) {
+        setFilteredData(data);
+        setEndPage(Math.ceil(count / contentPerPage));
+      }
+    } else {
+      setFilteredData([]);
+    }
+  }, [session, startPage, searchKeyword, checkedFilterMenuValue]);
+
+  useEffect(() => {
+    fetchExpenseRecord();
+  }, [fetchExpenseRecord]);
+
   // 체크박스가 눌렸을 때 실행되는 함수
   // 눌리면 checkedFilterMenuRef의 값이 변하면서 어떤 값이 눌렸는지 알 수 있다.
   const handleCheckedFilterMenu = (key: string, idx: number) => {
     checkedFilterMenuRef.current[key as keyof CheckedFilterMenu][idx] =
       !checkedFilterMenuRef.current[key as keyof CheckedFilterMenu][idx];
-  }; 
+  };
 
   // 필터메뉴를 객체로 만들어서 조금은 복잡하지만 각각의 경우에 따른 값을 나눴다.
   // 각각의 데이터가 같이 쓰이는지, 의존적인지에 따라서 객체로 감쌀지 배열로 감쌀지 정할 수 있다.
@@ -170,7 +150,7 @@ function ExpenseList() {
   // 오픈필터메뉴의 스테이트를 다시 초기화 시켜서 각 필터메뉴들이 중복되어 열리는 것을 방지한다.
 
   const handleopenFilterMenu = (filter: string): void => {
-    const openFilterMenuKeys : string[] = Object.keys(openFilterMenu);
+    const openFilterMenuKeys: string[] = Object.keys(openFilterMenu);
 
     if (
       openFilterMenuKeys.some((key) => {
@@ -212,36 +192,12 @@ function ExpenseList() {
   // 한 함수에서는 한 역할만 하는 것이 좋다. 그 역할이 작을 수록 좋고, 본래 그 함수를 만든 목적이 무엇인지 생각해보기.
   // 본래 목적에서 벗어난 부가적인 기능은 아래처럼 분리해서 따로 정리하는 것이 좋다.
   // 연산자 여러개 사용할 때는 우선순위 고려해서 사용하기. 소괄호로 묶어줄 경우 우선순위 가장 높아짐
-  useEffect(() => {
-    setFilteredData(
-      data
-        .filter((data) => {
-          return searchKeyword.every((keyword) => {
-            return data.name.includes(keyword);
-          });
-        })
-        .filter((data) => {
-          return (
-            (checkedFilterMenuValue.category.length > 0
-              ? checkedFilterMenuValue.category.some(
-                  (value) => data.category === value
-                )
-              : true) &&
-            (checkedFilterMenuValue.rating.length > 0
-              ? checkedFilterMenuValue.rating.some(
-                  (value) => data.rating === value
-                )
-              : true)
-          );
-        })
-    );
-  }, [searchKeyword, checkedFilterMenuValue]);
 
   // 초기화 눌렀을 때 칩이랑 보여주는 데이터 모두 초기화 하는 로직
   const resetExpenseData = (): void => {
     setSearchKeyword([]);
-    checkedFilterMenuRef.current = initialCheckedFilterMenuRef;
-    setCheckedFilterMenuValue({ category: [], rating: [] });
+    setFilteredData([]);
+    setCheckedFilterMenuValue({ category: [], rating: [], date: [] });
   };
 
   // 인풋데이터가 없을때 누르면 칩이 아무 데이터 없이 생겨날 수 있음
@@ -258,7 +214,6 @@ function ExpenseList() {
       } else {
         setSearchKeyword([...searchKeyword, inputDataRef.current]);
       }
-      inputDataRef.current = "";
       if (inputRef.current) {
         inputRef.current.value = "";
       }
@@ -286,10 +241,10 @@ function ExpenseList() {
   // true인 값을 ret배열에 담아서 리턴
   // 그럼 checkedFilterMenuValue에 이 ret배열을 할당한다.
   const calculateCheckedFilterMenuValue = (): CheckedFilterMenuValue => {
-    const ret: CheckedFilterMenuValue = { category: [], rating: [] };
-    let listIdx : number = 0;
+    const ret: CheckedFilterMenuValue = { category: [], rating: [], date: [] };
+    let listIdx: number = 0;
     for (const key in checkedFilterMenuRef.current) {
-      const items : boolean[] =
+      const items: boolean[] =
         checkedFilterMenuRef.current[key as keyof CheckedFilterMenu];
       for (let i = 0; i < items.length; i++) {
         if (items[i] === true) {
@@ -313,10 +268,7 @@ function ExpenseList() {
   };
   const navigate = useNavigate();
   return (
-    <div className="expenseList__container">
-      <Sidebar />
-      <div className="expenseList__content-container">
-        <Appbar />
+    
         <div className="expenseList__main-container">
           <div className="expenseList__title-container">
             <div className="expenseList__title-wrapper">
@@ -457,11 +409,14 @@ function ExpenseList() {
                 })}
               </div>
             </div>
-            <Table data={filteredData} />
+            <Table
+              data={filteredData}
+              setStartPage={setStartPage}
+              startPage={startPage}
+              endPage={endPage}
+            />
           </div>
         </div>
-      </div>
-    </div>
   );
 }
 

@@ -5,8 +5,6 @@ import {
   InfoWindow,
   Libraries,
 } from "@react-google-maps/api";
-import Appbar from "../../Organism/Appbar/Appbar";
-import Sidebar from "../../Organism/Sidebar/Sidebar";
 import "./VisitedPlace.scss";
 import { useEffect, useState } from "react";
 import { setDefaults, fromAddress, OutputFormat } from "react-geocode";
@@ -143,7 +141,6 @@ const customMapStyles = [
     elementType: "labels.text.stroke",
     stylers: [{ color: "#111827" }],
   },
- 
 ];
 function VisitedPlace() {
   const { isLoaded, loadError } = useJsApiLoader({
@@ -181,21 +178,21 @@ function VisitedPlace() {
   }, []);
 
   const handleMarkerClick = (location: Location) => {
-      setSelectedMarker({...location});
-      map?.setZoom(14);
-      map?.panTo(location);
+    setSelectedMarker({ ...location });
+    map?.setZoom(14);
+    map?.panTo(location);
   };
-  
+
   const handleInfoWindowCloseClick = () => {
     setSelectedMarker(null);
   };
-  
+
   const handleMarkerHover = (location: Location) => {
-    setHoveredMarker({...location});
-  }
+    setHoveredMarker({ ...location });
+  };
   const handleMarkerUnhover = () => {
     setHoveredMarker(null);
-  }
+  };
   if (loadError) {
     return <div>Error loading Google Maps API</div>;
   }
@@ -204,59 +201,58 @@ function VisitedPlace() {
     return <div>Loading...</div>;
   }
   return (
-    <div className="visitedPlace__container">
-      <Sidebar />
-      <div className="visitedPlace__content-container">
-        <Appbar />
-        <div className="visitedPlace__main-container">
-          <div className="visitedPlace__detail-container">
-            <div className="visitedPlace__title">방문한 장소들</div>
-            <div className="visitedPlace__subTitle">
-              &nbsp;지출 내역에 추가한 장소를 지도에서 확인하세요.
-            </div>
-            <div className="visitedPlace__notice">
-              ℹ️지출 내역 정보의 품질에 따라 데이터가 지도에 나타나지 않을 수도 있습니다. ℹ️
-            </div>
-              <GoogleMap
-                mapContainerStyle={containerStyle}
-                center={center}
-                zoom={10}
-                onLoad={(map) => setMap(map)}
-                options={{ styles: customMapStyles}}
-                
-              >
-                {location.map((loc, idx) => (
-                  <Marker
-                    key={idx}
-                    position={loc}
-                    onClick={() => handleMarkerClick(loc)}
-                    onMouseOver={() => handleMarkerHover(loc)}
-                    onMouseOut={handleMarkerUnhover}
-                    icon={{
-                      url: `http://maps.google.com/mapfiles/ms/icons/yellow-dot.png`,
-                      scaledSize: new window.google.maps.Size(45, 45),
-                    }}
-                    animation={window.google.maps.Animation.DROP}
-                    options={{cursor: 'url(data:image/x-icon;base64,AAACAAEAICACAAAAAAAwAQAAFgAAACgAAAAgAAAAQAAAAAEAAQAAAAAAgAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAA////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA9AAAAfwAAAOqAAAHqgAAB6sAAA//AAAd/wAAGf8AAAG9AAABtAAAAYAAAAGAAAABgAAAAYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/////////////////////////////////////////////gn///4B///8Af//+AD///AA///wAH//4AB//8AAf//AAH//5AB///wA///8A////D////w////8P////n////////////////////////////////////////////8=), auto' }}
-                  ></Marker>
-                ))}
-                {(selectedMarker || hoveredMarker) && (
-                  <InfoWindow
-                  position={{
-                    lat: (selectedMarker || hoveredMarker)?.lat as number,
-                    lng: (selectedMarker || hoveredMarker)?.lng as number,
-                  }}
-                    onCloseClick={handleInfoWindowCloseClick}
-                    options={{ pixelOffset: new window.google.maps.Size(0, -55) }}
-                  >
-                    {/* name부분을 같이 보여주는 걸로 하기 */}
-                    {/* 밑에 selectedMarker.info는 데이터의 place로 바꾸기 */}
-                    <div className="infoWindow__content">{(selectedMarker || hoveredMarker)?.info}</div>
-                  </InfoWindow>
-                )}
-              </GoogleMap>
-          </div>
+    <div className="visitedPlace__main-container">
+      <div className="visitedPlace__detail-container">
+        <div className="visitedPlace__title">방문한 장소들</div>
+        <div className="visitedPlace__subTitle">
+          &nbsp;지출 내역에 추가한 장소를 지도에서 확인하세요.
         </div>
+        <div className="visitedPlace__notice">
+          ℹ️지출 내역 정보의 품질에 따라 데이터가 지도에 나타나지 않을 수도
+          있습니다. ℹ️
+        </div>
+        <GoogleMap
+          mapContainerStyle={containerStyle}
+          center={center}
+          zoom={10}
+          onLoad={(map) => setMap(map)}
+          options={{ styles: customMapStyles }}
+        >
+          {location.map((loc, idx) => (
+            <Marker
+              key={idx}
+              position={loc}
+              onClick={() => handleMarkerClick(loc)}
+              onMouseOver={() => handleMarkerHover(loc)}
+              onMouseOut={handleMarkerUnhover}
+              icon={{
+                url: `http://maps.google.com/mapfiles/ms/icons/yellow-dot.png`,
+                scaledSize: new window.google.maps.Size(45, 45),
+              }}
+              animation={window.google.maps.Animation.DROP}
+              options={{
+                cursor:
+                  "url(data:image/x-icon;base64,AAACAAEAICACAAAAAAAwAQAAFgAAACgAAAAgAAAAQAAAAAEAAQAAAAAAgAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAA////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA9AAAAfwAAAOqAAAHqgAAB6sAAA//AAAd/wAAGf8AAAG9AAABtAAAAYAAAAGAAAABgAAAAYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/////////////////////////////////////////////gn///4B///8Af//+AD///AA///wAH//4AB//8AAf//AAH//5AB///wA///8A////D////w////8P////n////////////////////////////////////////////8=), auto",
+              }}
+            ></Marker>
+          ))}
+          {(selectedMarker || hoveredMarker) && (
+            <InfoWindow
+              position={{
+                lat: (selectedMarker || hoveredMarker)?.lat as number,
+                lng: (selectedMarker || hoveredMarker)?.lng as number,
+              }}
+              onCloseClick={handleInfoWindowCloseClick}
+              options={{ pixelOffset: new window.google.maps.Size(0, -55) }}
+            >
+              {/* name부분을 같이 보여주는 걸로 하기 */}
+              {/* 밑에 selectedMarker.info는 데이터의 place로 바꾸기 */}
+              <div className="infoWindow__content">
+                {(selectedMarker || hoveredMarker)?.info}
+              </div>
+            </InfoWindow>
+          )}
+        </GoogleMap>
       </div>
     </div>
   );

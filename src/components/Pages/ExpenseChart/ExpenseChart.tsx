@@ -1,6 +1,4 @@
 import "./ExpenseChart.scss";
-import Sidebar from "../../Organism/Sidebar/Sidebar";
-import Appbar from "../../Organism/Appbar/Appbar";
 import MontlyChart from "./MontlyChart";
 import CategoryChart from "./CategoryChart";
 import { useState } from "react";
@@ -40,10 +38,7 @@ function ExpenseChart() {
   };
   console.log(toggle);
   return (
-    <div className="expenseChart__container">
-      <Sidebar />
-      <div className="expenseChart__content-container">
-        <Appbar />
+    
         <div className="expenseChart__main-container">
           <div className="expenseChart__detail-container">
             <div className="expenseChart__title">지출내역 추이</div>
@@ -77,8 +72,6 @@ function ExpenseChart() {
             {toggle.CategoryButton ? <CategoryChart /> : null}
           </div>
         </div>
-      </div>
-    </div>
   );
 }
 

@@ -44,9 +44,9 @@ function Select(props: SelectProps) {
             <option value="notice" disabled selected={!defaultValue}>
               평가해주세요
             </option>
-            <option value="good">좋아요 😊</option>
-            <option value="okay">보통이에요 🤔</option>
-            <option value="bad">별로에요 😤</option>
+            <option value="좋아요">좋아요 😊</option>
+            <option value="보통이에요">보통이에요 🤔</option>
+            <option value="별로에요">별로에요 😤</option>
           </>
         )}
       </select>

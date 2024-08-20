@@ -13,7 +13,6 @@ import {
 } from "chart.js";
 import { Chart } from "react-chartjs-2";
 import { useState, useEffect, useMemo } from "react";
-import { Data } from "../ExpenseList/ExpenseList";
 import moment from "moment";
 
 ChartJS.register(

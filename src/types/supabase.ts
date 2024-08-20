@@ -33,100 +33,43 @@ export type Database = {
         }
         Relationships: []
       }
-      expensebook: {
-        Row: {
-          expense_limit: number
-          id: number
-        }
-        Insert: {
-          expense_limit: number
-          id?: number
-        }
-        Update: {
-          expense_limit?: number
-          id?: number
-        }
-        Relationships: []
-      }
       expenserecord: {
         Row: {
           category: string
           date: string
-          expense_book_id: number
           id: number
           name: string
           place: string | null
           price: number
           rating: string
+          user_id: string
         }
         Insert: {
           category: string
           date: string
-          expense_book_id: number
           id?: number
           name: string
           place?: string | null
           price: number
           rating: string
+          user_id: string
         }
         Update: {
           category?: string
           date?: string
-          expense_book_id?: number
           id?: number
           name?: string
           place?: string | null
           price?: number
           rating?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "fk_4"
-            columns: ["expense_book_id"]
-            isOneToOne: false
-            referencedRelation: "expensebook"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      expenserecordmember: {
-        Row: {
-          expense_book_id: number
-          id: number
-          is_active: boolean
-          member_id: number
-          role: string
-          user_id: string
-        }
-        Insert: {
-          expense_book_id: number
-          id?: number
-          is_active: boolean
-          member_id: number
-          role: string
-          user_id: string
-        }
-        Update: {
-          expense_book_id?: number
-          id?: number
-          is_active?: boolean
-          member_id?: number
-          role?: string
           user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "expenserecordmember_user_id_fkey"
+            foreignKeyName: "expenserecord_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_3"
-            columns: ["expense_book_id"]
-            isOneToOne: false
-            referencedRelation: "expensebook"
             referencedColumns: ["id"]
           },
         ]
@@ -166,6 +109,7 @@ export type Database = {
       member: {
         Row: {
           email: string
+          expense_limit: number | null
           id: number
           name: string
           profile_img: string | null
@@ -173,6 +117,7 @@ export type Database = {
         }
         Insert: {
           email: string
+          expense_limit?: number | null
           id?: number
           name: string
           profile_img?: string | null
@@ -180,6 +125,7 @@ export type Database = {
         }
         Update: {
           email?: string
+          expense_limit?: number | null
           id?: number
           name?: string
           profile_img?: string | null

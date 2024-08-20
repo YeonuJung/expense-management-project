@@ -16,6 +16,8 @@ import { BsFillCalendar2WeekFill } from "react-icons/bs";
 import { FaShoppingBag, FaMapMarkerAlt } from "react-icons/fa";
 import { MdError } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../hooks/useAuth";
+import { Session } from "@supabase/supabase-js";
 
 function Sidebar() {
   const navigate = useNavigate();
@@ -23,28 +25,51 @@ function Sidebar() {
     navigate("/customerService/contact");
     return window.scrollTo({ top: 0, behavior: "smooth" });
   };
+  const session: Session | null = useAuth();
+
   return (
     <div className="sidebar__container">
       <div className="sidebar__logo-container">
         <img src="/로고.png" className="sidebar__logo" alt="logo"></img>
       </div>
-      <div className="sidebar__expense-container">
-        <div className="sidebar__expense-wrapper">
-          <div className="sidebar__expense-text">
-            <div className="sidebar__expense-title">이번달 총 소비액</div>
-            <div className="sidebar__expense-amount">현재까지: 300000</div>
-          </div>
-          <div className="sidebar__expense-button">
-            <RiExpandUpDownLine />
+      {session ? (
+        <div className="sidebar__expense-container">
+          <div className="sidebar__expense-wrapper">
+            <div className="sidebar__expense-text">
+              <div className="sidebar__expense-amount">
+                설정한도 : 300,000원
+              </div>
+              <div className="sidebar__expense-amount">
+                지출금액 : 200,000원
+              </div>
+              <div className="expenseDivider" />
+              <div className="sidebar__expense-title">잔여한도 : 100,000원</div>
+            </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <div className="sidebar__expense-container">
+          <div className="sidebar__expense-wrapper">
+            <div className="sidebar__expense-text">
+              <div className="sidebar__expense-amount">
+                설정한도 : 로그인 필요
+              </div>
+              <div className="sidebar__expense-amount">
+                지출금액 : 로그인 필요
+              </div>
+              <div className="expenseDivider" />
+              <div className="sidebar__expense-title">
+                잔여한도 : 로그인 필요
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="divider" />
       <div className="sidebar__list-container">
         <List listTitle={<ListTitle listTitle="개인 허브"></ListTitle>}>
           <ListItem path="/">
-            <TiHome />
-            홈
+            <TiHome />홈
           </ListItem>
           <ListItem path="/account">
             <RiAccountCircleFill />
@@ -58,7 +83,7 @@ function Sidebar() {
           </ListItem>
           <ListItem path="/expenseChart">
             <SiSimpleanalytics />
-            지출 그래프 
+            지출 그래프
           </ListItem>
           <ListItem path="/calendar">
             <BsFillCalendar2WeekFill />
@@ -89,7 +114,8 @@ function Sidebar() {
         <div className="sidebar__documentation-text">
           <div>더 많은 서비스를 원하시나요?</div>
           <div>
-            서비스에 대한 제안사항이 있으시면 여기를 눌러 건의해주세요. 큰 도움이 됩니다.
+            서비스에 대한 제안사항이 있으시면 여기를 눌러 건의해주세요. 큰
+            도움이 됩니다.
           </div>
         </div>
         <Button color="success" variant="filled" onClick={onClick}>
