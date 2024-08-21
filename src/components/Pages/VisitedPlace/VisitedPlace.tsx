@@ -4,10 +4,13 @@ import {
   Marker,
   InfoWindow,
   Libraries,
+  
 } from "@react-google-maps/api";
 import "./VisitedPlace.scss";
 import { useEffect, useState } from "react";
 import { setDefaults, fromAddress, OutputFormat } from "react-geocode";
+import supabase from "../../../api/base";
+import { useAuth } from "../../../hooks/useAuth";
 
 const libraries: Libraries = ["places"];
 
@@ -22,6 +25,7 @@ interface Location {
   lat: number;
   lng: number;
   info: string;
+  name: string;
 }
 
 const containerStyle = {
@@ -148,26 +152,51 @@ function VisitedPlace() {
     libraries: libraries,
   });
   const [location, setLocation] = useState<Location[]>([]);
-  const addresses: string[] = ["송리단길", "코엑스", "이태원"];
+  const [data, setData] = useState<{place: string | null, name: string}[]>([])
   const [map, setMap] = useState<google.maps.Map | null>(null);
-  const [center] = useState<Omit<Location, "info">>({
+  const [center] = useState<Omit<Location, "info" | "name">>({
     lat: 37.5665,
     lng: 126.978,
   });
   const [selectedMarker, setSelectedMarker] = useState<Location | null>(null);
   const [hoveredMarker, setHoveredMarker] = useState<Location | null>(null);
 
+  const session = useAuth();
+  const onLoad = (map: google.maps.Map) => {
+    setMap(map);
+    
+  };
+  useEffect(() => {
+    const fetchAddresses = async (): Promise<void> => {
+      if(session){
+        const { data } = await supabase
+        .from("expenserecord")
+        .select("place, name")
+        .eq("user_id", session.user.id);
+        if(data && data.length > 0){
+          setData(data)
+        }
+      }
+    };
+    fetchAddresses();
+  }, [session]);
+
   useEffect(() => {
     const fetchCoordinate = async () => {
       try {
         const results = await Promise.all(
-          //address는 db에서 받아온 데이터로 대체
-          addresses.map((address) => fromAddress(address))
+          data
+          .filter((record: { place: string | null, name: string }) => record.place)
+          .map((record: { place: string | null, name: string }) =>
+            fromAddress(record.place!).then(result => ({ result, name: record.name }))
+          )  
         );
+        console.log(results);
         const locations = results.map((result) => ({
-          lat: result.results[0].geometry.location.lat,
-          lng: result.results[0].geometry.location.lng,
-          info: result.results[0].formatted_address,
+          lat: result.result.results[0].geometry.location.lat,
+          lng: result.result.results[0].geometry.location.lng,
+          info: result.result.results[0].formatted_address,
+          name: result.name, 
         }));
         setLocation(locations);
       } catch (error) {
@@ -175,7 +204,8 @@ function VisitedPlace() {
       }
     };
     fetchCoordinate();
-  }, []);
+  }, [data]);
+
 
   const handleMarkerClick = (location: Location) => {
     setSelectedMarker({ ...location });
@@ -214,8 +244,8 @@ function VisitedPlace() {
         <GoogleMap
           mapContainerStyle={containerStyle}
           center={center}
-          zoom={10}
-          onLoad={(map) => setMap(map)}
+          zoom={11}
+          onLoad={onLoad}
           options={{ styles: customMapStyles }}
         >
           {location.map((loc, idx) => (
@@ -245,10 +275,9 @@ function VisitedPlace() {
               onCloseClick={handleInfoWindowCloseClick}
               options={{ pixelOffset: new window.google.maps.Size(0, -55) }}
             >
-              {/* name부분을 같이 보여주는 걸로 하기 */}
-              {/* 밑에 selectedMarker.info는 데이터의 place로 바꾸기 */}
               <div className="infoWindow__content">
-                {(selectedMarker || hoveredMarker)?.info}
+                <div className="infoWindow__name">{(selectedMarker || hoveredMarker)?.name}</div>
+                <div className="infoWindow__place">{(selectedMarker || hoveredMarker)?.info}</div>
               </div>
             </InfoWindow>
           )}

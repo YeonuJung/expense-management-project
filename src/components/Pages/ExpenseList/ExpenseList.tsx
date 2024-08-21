@@ -7,7 +7,7 @@ import { MdAutorenew } from "react-icons/md";
 import { FaPlus } from "react-icons/fa6";
 import { FaChevronDown } from "react-icons/fa";
 import { HiSearch } from "react-icons/hi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate} from "react-router-dom";
 import { ExpenseRecord } from "../../../types/model";
 import { useAuth } from "../../../hooks/useAuth";
 import supabase from "../../../api/base";
@@ -275,6 +275,8 @@ function ExpenseList() {
     });
     setStartPage(1);
   };
+
+  
   const navigate = useNavigate();
   return (
     <div className="expenseList__main-container">

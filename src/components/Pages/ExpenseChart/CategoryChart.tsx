@@ -51,7 +51,7 @@ const createCenterTextPlugin = (text: string) => {
         ctx.save();
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.font = "36px Spoqa Han Sans";
+        ctx.font = "34px Spoqa Han Sans";
         ctx.fillStyle = "#10B981";
         ctx.fillText(text, centerX, centerY);
         ctx.restore();

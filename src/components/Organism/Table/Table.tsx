@@ -12,6 +12,9 @@ import { FaHotel } from "react-icons/fa";
 import { MdOutlineDirectionsBus } from "react-icons/md";
 import { TbCategoryPlus } from "react-icons/tb";
 import { ReactNode } from "react";
+import { useAuth } from "../../../hooks/useAuth";
+import supabase from "../../../api/base";
+
 interface TableProps {
   data: ExpenseRecord[];
   setStartPage: React.Dispatch<React.SetStateAction<number>>;
@@ -32,11 +35,27 @@ function Table(props: TableProps) {
   ];
 
   const navigate = useNavigate();
-
+  const session = useAuth();
   const handleUpdateButton = (id: number) => {
     navigate("/updateExpense", { state: { id } });
   };
-
+  const handleDeleteButton = async (id: number): Promise<void> => {
+      if(session){
+        const { error } = await supabase
+        .from("expenserecord")
+        .delete()
+        .eq("user_id", session.user.id)
+        .eq("id", id);
+      if (error) {
+        alert("삭제에 실패했습니다.");
+      } else {
+        alert("삭제되었습니다.");
+        window.location.reload();
+    }
+      }else{
+        alert("로그인이 필요합니다.");
+      }
+  }
   const getCategoryIcon = (category: string) : ReactNode => {
     switch (category) {
       case "식당":
@@ -118,7 +137,7 @@ function Table(props: TableProps) {
                   <td>{data.date}</td>
 
                   <td>
-                    <RiDeleteBin3Line className="table__delete-button" />
+                    <RiDeleteBin3Line className="table__delete-button" onClick={() => handleDeleteButton(data.id)} />
                   </td>
                 </tr>
               </>
