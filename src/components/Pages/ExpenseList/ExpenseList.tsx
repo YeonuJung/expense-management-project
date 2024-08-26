@@ -77,6 +77,7 @@ function ExpenseList() {
     if (session) {
       const start: number = (startPage - 1) * contentPerPage;
       const end: number = start + contentPerPage - 1;
+      
       let query = supabase
         .from("expenserecord")
         .select("id, name, place, price, category, rating, date, user_id", {

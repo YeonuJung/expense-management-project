@@ -12,7 +12,6 @@ export const useInputRef = <T>(initialValue: T) => {
     name: string
   ) => {
     inputValueRef.current[name as keyof T] = e.target.value as T[keyof T];
-    console.log(inputValueRef.current);
   };
 
   return [inputValueRef, handleInputValue] as [typeof inputValueRef, typeof handleInputValue];

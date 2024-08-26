@@ -4,7 +4,7 @@
     justify-content: flex-end;
     padding: 12px 30px;
     background-color: white;
-    box-shadow: rgb(100, 116, 139, 6%) 0px 1px 1px;
+    box-shadow: rgba(100, 116, 139, 0.226) 0px 1px 1px;
 }
 .appBar__menu-container{
     display: flex;
@@ -47,6 +47,7 @@
     align-items: center;
     cursor: pointer;
     column-gap: 2px;
+    margin-left: 6px;
 }
 .avatar__dropdown-icon{
     font-size: 24px;

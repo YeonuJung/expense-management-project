@@ -18,6 +18,7 @@ import PasswordReset from "./components/Pages/Login/PasswordReset";
 import Sidebar from "./components/Organism/Sidebar/Sidebar";
 import Appbar from "./components/Organism/Appbar/Appbar";
 
+
 function App() {
   const location = useLocation();
   const pageWithoutSidebarAndAppbar: string[] = [

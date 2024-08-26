@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
 import "./Dialog.scss";
-import { IoClose } from "react-icons/io5";
 
 export interface DialogProps {
   title: string;

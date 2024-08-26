@@ -3,7 +3,7 @@ import Avatar from "../../Atoms/Avatar/Avatar";
 import { useAuth } from "../../../hooks/useAuth";
 import {useState } from "react";
 import { IoMdArrowDropdown } from "react-icons/io";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import supabase from "../../../api/base";
 import { Session } from "@supabase/supabase-js";
 import Divider from "../../Atoms/Divider/Divider";
@@ -15,17 +15,19 @@ function Appbar() {
   const session: Session | null = useAuth();
   const userName: string | null  = useUserName();
 
-
+  const naviagte = useNavigate();
   const handleLogout = async (): Promise<void> => {
     await supabase.auth.signOut();
     alert("로그아웃 되었습니다.");
+    naviagte("/");
+
   };
   return (
     <div className="appBar__container">
       <div className="appBar__menu-container">
         {session && userName ? (
           <div className="appBar__menu-greet">
-            안녕하세요
+            안녕하세요😌
             <span className="appBar__menu-name">{`"${userName}"`}</span>님
           </div>
         ) : (

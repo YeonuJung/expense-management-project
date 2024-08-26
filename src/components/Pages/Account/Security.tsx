@@ -7,13 +7,19 @@ import Button from "../../Atoms/Button/Button";
 import { useAuth } from "../../../hooks/useAuth";
 import { Session } from "@supabase/supabase-js";
 import supabase from "../../../api/base";
+import { LoginHistory } from "../../../types/model";
+import { useEffect, useState } from "react";
+
 
 function Security() {
   const [inputValueRef, handleInputValue] = useInputRef<SecurityPassword>({
     password: "",
   });
+  const [loginHistory, setLoginHistory] = useState<LoginHistory[] | null>(null);
+
   const session: Session | null = useAuth();
   const navigate = useNavigate();
+ 
   const handlePasswordChange = async (): Promise<void> => {
     if (session) {
       const { error } = await supabase.auth.updateUser({
@@ -29,6 +35,18 @@ function Security() {
       alert("로그인이 필요합니다.");
     }
   };
+
+  useEffect(() => {
+    const fetchLoginHistory = async () => {
+      if(session){
+        const {data} = await supabase.from("loginhistory").select("*").eq("user_id", session?.user.id);
+        console.log(data)
+        setLoginHistory(data)
+      }
+    }
+    fetchLoginHistory()
+  }, [session])
+  console.log(loginHistory)
   return (
     <div className="account__main-container">
       <div className="account__title-container">
@@ -79,18 +97,18 @@ function Security() {
               <div className="account__detail-table-loginType">
                 <div className="account__detail-table-loginType-info-container">
                   <div className="account__detail-table-loginType-type">
-                    Credential login
+                  {loginHistory&& "Email-login"}
                   </div>
                   <div className="account__detail-table-loginType-time">
-                    on 10:40 AM 2021/09/01
+                    {loginHistory? loginHistory[0].created_at : "로그인이 필요합니다."}
                   </div>
                 </div>
               </div>
               <div className="account__detail-table-ipAddress">
-                <div>95.130.17.84</div>
+                <div>{loginHistory? loginHistory[0].ip : "로그인이 필요합니다."}</div>
               </div>
               <div className="account__detail-table-client">
-                <div>Chrome, Mac OS 10.15.7</div>
+                <div>{loginHistory? loginHistory[0].browser : "로그인이 필요합니다."}</div>
               </div>
             </div>
           </div>

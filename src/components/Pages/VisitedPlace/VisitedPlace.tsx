@@ -191,7 +191,6 @@ function VisitedPlace() {
             fromAddress(record.place!).then(result => ({ result, name: record.name }))
           )  
         );
-        console.log(results);
         const locations = results.map((result) => ({
           lat: result.result.results[0].geometry.location.lat,
           lng: result.result.results[0].geometry.location.lng,
@@ -257,7 +256,7 @@ function VisitedPlace() {
               onMouseOut={handleMarkerUnhover}
               icon={{
                 url: `http://maps.google.com/mapfiles/ms/icons/yellow-dot.png`,
-                scaledSize: new window.google.maps.Size(45, 45),
+                scaledSize: new window.google.maps.Size(40, 40),
               }}
               animation={window.google.maps.Animation.DROP}
               options={{
