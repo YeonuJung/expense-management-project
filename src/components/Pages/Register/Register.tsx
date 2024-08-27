@@ -5,11 +5,10 @@ import Divider from "../../Atoms/Divider/Divider";
 import { useInputRef } from "../../../hooks/useInputRef";
 import { RegisterInputValue } from "../../../types/auth";
 import supabase from "../../../api/base";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Terms from "./Terms";
-import { useNavigate
-  
- } from "react-router-dom";
+import Alert from "../../Atoms/Alert/Alert";
+import { useNavigate } from "react-router-dom";
 function Register() {
   const [inputValueRef, handleInputValue] = useInputRef<RegisterInputValue>({
     email: "",
@@ -17,6 +16,9 @@ function Register() {
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [checked, setChecked] = useState(false);
+  const [errors, setErrors] = useState<RegisterInputValue | null>(null);
+  const [isEmailValid, setIsEmailValid] = useState<boolean>(true);
+
   const navigate = useNavigate();
 
   const handleTermsClick = () => {
@@ -24,30 +26,68 @@ function Register() {
   };
 
   const handlerRegisterButtonClick = async (): Promise<void> => {
-    const { data: existingUser } = await supabase
-      .from("member")
-      .select("email")
-      .eq("email", inputValueRef.current.email);
-
-    if (existingUser && existingUser?.length > 0) {
-      alert("이미 존재하는 이메일입니다. 다른 이메일을 사용해주세요.");
-      return;
-    }
-
-    const { error } = await supabase.auth.signUp({
-      email: inputValueRef.current.email,
-      password: inputValueRef.current.password,
-      options: {
-        emailRedirectTo: "http://localhost:3000/login",
-      },
-    });
-    if (error) {
-      alert("회원가입에 실패했습니다. 다시 시도해주세요.");
-      return;
-    }
-    alert("이메일을 확인해주세요!");
+    setErrors(
+      validateRegisterForm(
+        inputValueRef.current.email,
+        inputValueRef.current.password
+      )
+    );
   };
+  useEffect(() => {
+    const register = async () => {
+      if (errors?.email === "" && errors?.password === "") {
+        const { data: existingUser} = await supabase
+          .from("member")
+          .select("email")
+          .eq("email", inputValueRef.current.email);
+      
 
+        if (existingUser && existingUser?.length > 0) {
+          setIsEmailValid(false);
+          return;
+        }
+
+        const { error } = await supabase.auth.signUp({
+          email: inputValueRef.current.email,
+          password: inputValueRef.current.password,
+          options: {
+            emailRedirectTo: "http://localhost:3000/login",
+          },
+        });
+        if (error) {
+          alert("회원가입에 실패했습니다. 다시 시도해주세요.");
+          return;
+        }
+        alert("이메일을 확인해주세요!");
+      }else{
+        setIsEmailValid(true);
+      }
+    };
+    register();
+  }, [errors, inputValueRef.current.email]);
+
+  const validateRegisterForm = (email: string, password: string) => {
+    const error: RegisterInputValue = { email: "", password: "" };
+
+    if (email === "") {
+      error.email = "이메일을 입력해주세요.";
+    } else if (!/^[a-z0-9.\-_]+@([a-z0-9-]+\.)+[a-z]{2,6}$/.test(email)) {
+      error.email = "이메일 형식에 맞게 입력해주세요.";
+    }
+
+    if (password === "") {
+      error.password = "패스워드를 입력해주세요.";
+    } else if (
+      !/^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/.test(
+        password
+      )
+    ) {
+      error.password =
+        "패스워드는 최소 8자 이상, 영문자, 숫자, 특수문자를 포함해야 합니다.";
+    }
+
+    return error;
+  };
   return (
     <>
       <div className="register__container">
@@ -77,6 +117,7 @@ function Register() {
                 placeholder="example@example.com"
                 handleInputValue={handleInputValue}
               />
+              {errors?.email && <Alert type="error" content={errors.email} />}
               <Input
                 title="비밀번호"
                 type="password"
@@ -84,16 +125,18 @@ function Register() {
                 placeholder="비밀번호를 입력하세요"
                 handleInputValue={handleInputValue}
               />
+              {errors?.password && <Alert type="error" content={errors.password} />}
               <div className="register__form-checkbox-container">
                 <input
                   type="checkbox"
                   className="register__form-checkbox"
                   checked={checked}
+                  onChange={() => setChecked(!checked)}
                 ></input>
                 <div className="register__terms" onClick={handleTermsClick}>
                   회원가입 이용약관
                 </div>
-                <span>을 모두 읽고 확인했습니다</span>
+                <span>을 모두 읽고 확인했습니다.</span>
               </div>
               <Button
                 variant="filled"
@@ -103,6 +146,7 @@ function Register() {
               >
                 회원가입
               </Button>
+              {!isEmailValid && <Alert type="error" content={"이미 가입된 이메일입니다."} />}
               <Divider />
             </div>
           </div>

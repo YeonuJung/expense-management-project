@@ -7,17 +7,19 @@ import { Link, useNavigate } from "react-router-dom";
 import { useInputRef } from "../../../hooks/useInputRef";
 import { LoginInputValue } from "../../../types/auth";
 import supabase from "../../../api/base";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../../../hooks/useAuth";
 
 function Login() {
+  const [errors, setErrors] = useState<LoginInputValue | null>(null);
+  const [isEmailAndPasswordValid, setIsEmailAndPasswordValid] = useState(true);
   const [inputValueRef, handleInputValue] = useInputRef<LoginInputValue>({
     email: "",
     password: "",
   });
   const navigate = useNavigate();
   const session = useAuth();
-console.log(session?.user.user_metadata)
+
   const getIpAndAgent = async () => {
     const response = await fetch("https://api64.ipify.org/?format=json");
     const { ip } = await response.json();
@@ -44,55 +46,68 @@ console.log(session?.user.user_metadata)
   };
 
   const handleLoginButtonClick = async () => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: inputValueRef.current.email,
-      password: inputValueRef.current.password,
-    });
-    const checkStatus = (await supabase.auth.getUser(data.session?.access_token))
-    console.log(checkStatus)
-    const { ip, agent } = await getIpAndAgent();
-    console.log(ip, agent);
-    if (data.user && ip && agent && checkStatus?.data.user?.user_metadata.status === undefined) {
-      await supabase
-        .from("loginhistory")
-        .insert([
-          {
-            user_id: data.user.id,
-            ip: ip,
-            browser: agent,
-            created_at: new Date().toLocaleString(),
-          },
-        ])
-    }
-    if(checkStatus?.data.user?.user_metadata.status === "deleted"){
-      alert("탈퇴한 회원입니다.")
-      await supabase.auth.signOut();
-    }
-
-    if (error?.message === "Invalid login credentials") {
-      console.log(error);
-      alert("아이디나 비밀번호가 틀렸습니다. 다시 시도해주세요!");
-      return;
-    } else if (error) {
-      alert("로그인에 실패했습니다. 다시 시도해주세요!");
-      return;
-    }
-
-    const checkMember = await supabase
-      .from("member")
-      .select("email")
-      .eq("email", inputValueRef.current.email);
-
-    if (checkMember.data?.length === 0) {
-      await supabase.from("member").insert({
-        email: inputValueRef.current.email,
-        user_id: data?.user.id,
-        name: "회원",
-      });
-    }
-
-    navigate("/");
+    setErrors(
+      validateLoginForm(inputValueRef.current.email, inputValueRef.current.password)
+    );
+    
   };
+  useEffect(() => {
+    const login = async () => {
+      if(errors?.email === "" && errors?.password === ""){
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: inputValueRef.current.email,
+          password: inputValueRef.current.password,
+        });
+        const checkStatus = await supabase.auth.getUser(data.session?.access_token)
+        
+        const { ip, agent } = await getIpAndAgent();
+       
+        if (data.user && ip && agent && checkStatus?.data.user?.user_metadata.status === undefined) {
+          await supabase
+            .from("loginhistory")
+            .insert([
+              {
+                user_id: data.user.id,
+                ip: ip,
+                browser: agent,
+                created_at: new Date().toLocaleString(),
+              },
+            ])
+        }
+
+        if(checkStatus?.data.user?.user_metadata.status === "deleted"){
+          alert("탈퇴한 회원입니다.")
+          await supabase.auth.signOut();
+        }
+    
+        if (error?.message === "Invalid login credentials") {
+          setIsEmailAndPasswordValid(false)
+          return;
+        } else if (error) {
+          alert("로그인에 실패했습니다. 다시 시도해주세요!");
+          return;
+        }
+   
+        const checkMember = await supabase
+          .from("member")
+          .select("email")
+          .eq("email", inputValueRef.current.email);
+    
+        if (checkMember.data?.length === 0) {
+          await supabase.from("member").insert({
+            email: inputValueRef.current.email,
+            user_id: data?.user.id,
+            name: "회원",
+          });
+        }
+    
+        navigate("/");
+      }else{
+        setIsEmailAndPasswordValid(true)
+      }
+    }
+    login()
+  }, [errors, inputValueRef.current.email, inputValueRef.current.password]);
 
   const activeEnter = (e: React.KeyboardEvent): void => {
     console.log("Key pressed:", e.key);
@@ -100,6 +115,7 @@ console.log(session?.user.user_metadata)
       handleLoginButtonClick();
     }
   };
+
   useEffect(() => {
     if (session) {
       alert("이미 로그인 되어있습니다.");
@@ -107,6 +123,30 @@ console.log(session?.user.user_metadata)
     }
      // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const validateLoginForm = (email: string, password: string) => {
+    const error: LoginInputValue = { email: "", password: "" };
+
+    if (email === "") {
+      error.email = "이메일을 입력해주세요.";
+    } else if (!/^[a-z0-9.\-_]+@([a-z0-9-]+\.)+[a-z]{2,6}$/.test(email)) {
+      error.email = "이메일 형식에 맞게 입력해주세요.";
+    }
+
+    if (password === "") {
+      error.password = "패스워드를 입력해주세요.";
+    } else if (
+      !/^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/.test(
+        password
+      )
+    ) {
+      error.password =
+        "패스워드는 최소 8자 이상, 영문자, 숫자, 특수문자를 포함해야 합니다.";
+    }
+
+    return error;
+  };
+  
   return (
     <div className="login__container">
       <div className="login__main-container">
@@ -136,14 +176,16 @@ console.log(session?.user.user_metadata)
               handleInputValue={handleInputValue}
               onKeyDown={activeEnter}
             />
+            {errors?.email && <Alert type="error" content={errors.email} />}
             <Input
               title="비밀번호"
               type="password"
               name="password"
-              placeholder="비밀번호를 입력하세요"
+              placeholder="비밀번호를 입력하세요."
               handleInputValue={handleInputValue}
               onKeyDown={activeEnter}
             />
+             {errors?.password && <Alert type="error" content={errors.password} />}
             <Button
               variant="filled"
               size="large"
@@ -151,10 +193,11 @@ console.log(session?.user.user_metadata)
             >
               로그인
             </Button>
-            <Alert
-              type="warning"
-              content="아이디와 비밀번호를 제대로 입력해주세요!"
-            />
+            {!isEmailAndPasswordValid && <Alert
+              type="error"
+              content="이메일 또는 비밀번호가 일치하지 않습니다."
+            />}
+            
             <Divider />
             <div className="login__form-link-container">
               <Link to={"/register"}>회원가입</Link>

@@ -29,7 +29,7 @@ function Select(props: SelectProps) {
         {name === "category" ? (
           <>
             <option value="notice" disabled selected={!defaultValue}>
-              카테고리를 골라주세요
+              카테고리를 골라주세요.
             </option>
             <option value="식당">식당</option>
             <option value="카페">카페</option>
@@ -42,7 +42,7 @@ function Select(props: SelectProps) {
         ) : (
           <>
             <option value="notice" disabled selected={!defaultValue}>
-              평가해주세요
+              평가해주세요.
             </option>
             <option value="좋아요">좋아요 😊</option>
             <option value="보통이에요">보통이에요 🤔</option>

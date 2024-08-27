@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import "./Button.scss";
 
 interface ButtonProps {
-  children: ReactNode;
+  children?: ReactNode;
   variant?: "outlined" | "filled" | "text-only";
   color?: "primary" | "success" | "error" | "black" | "grey" | "darkGrey" | "white";
   size?: "large" | "medium" | "small";

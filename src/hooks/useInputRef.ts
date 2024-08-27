@@ -6,13 +6,12 @@ import React, { useRef } from "react";
 // 타입은 제네릭으로 별도 정의
 export const useInputRef = <T>(initialValue: T) => {
   const inputValueRef = useRef<T>(initialValue);
-
   const handleInputValue = (
     e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement> | React.ChangeEvent<HTMLTextAreaElement>,
     name: string
   ) => {
     inputValueRef.current[name as keyof T] = e.target.value as T[keyof T];
   };
-
+ 
   return [inputValueRef, handleInputValue] as [typeof inputValueRef, typeof handleInputValue];
 };

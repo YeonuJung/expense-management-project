@@ -7,23 +7,54 @@ import { useInputRef } from "../../../hooks/useInputRef";
 import { LoginInputValue } from "../../../types/auth";
 import supabase from "../../../api/base";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 function PasswordFind() {
-  const [inputValueRef, handleInputValue] = useInputRef<LoginInputValue>({
+  const [errors, setErrors] = useState<Pick<LoginInputValue, "email"> | null>(null);
+  const [isEmailValid, setIsEmailValid] = useState<boolean>(true);
+  const [inputValueRef, handleInputValue] = useInputRef<Pick<LoginInputValue, "email">>({
     email: "",
-    password: "",
   });
 const navigate = useNavigate();
-  const handlePasswordFindButtonClick = async () => {
-    const { error } = await supabase.auth.resetPasswordForEmail(
-      inputValueRef.current.email, {redirectTo: "http://localhost:3000/passwordReset"}
-    );
-    if (error) {
-      alert("비밀번호 찾기에 실패했습니다. 다시 시도해주세요!");
-    } else {
-      alert("이메일로 비밀번호 재설정 링크를 보냈습니다.");
-    }
+
+const handlePasswordFindButtonClick = async () => {
+  setErrors(validateEmail(inputValueRef.current.email));
   };
+useEffect(() => {
+  const passwordFind = async () => {
+    if(errors?.email === ""){
+      const {data} = await supabase.from("member").select("email").eq("email", inputValueRef.current.email);
+      if(data?.length === 0){
+        setIsEmailValid(false);
+        return
+      }
+     
+      const { error } = await supabase.auth.resetPasswordForEmail(
+        inputValueRef.current.email, {redirectTo: "http://localhost:3000/passwordReset"}
+      );
+      if (error) {
+        alert("비밀번호 찾기에 실패했습니다. 다시 시도해주세요!");
+        return;
+      } else {
+        alert("이메일로 비밀번호 재설정 링크를 보냈습니다.");
+      }
+    }else{
+      setIsEmailValid(true);
+    }
+  }
+  passwordFind()
+}, [errors])
+
+  const validateEmail = (email: string) => {
+    const error: Pick<LoginInputValue, "email"> = { email: ""};
+
+    if (email === "") {
+      error.email = "이메일을 입력해주세요.";
+    } else if (!/^[a-z0-9.\-_]+@([a-z0-9-]+\.)+[a-z]{2,6}$/.test(email)) {
+      error.email = "이메일 형식에 맞게 입력해주세요.";
+    }
+    return error
+  }
   return (
     <div className="login__container">
       <div className="login__main-container">
@@ -47,10 +78,11 @@ const navigate = useNavigate();
               placeholder="example@example.com"
               handleInputValue={handleInputValue}
             />
+            {errors?.email && <Alert type="error" content={errors.email} />}
             <Button variant="filled" size="large" onClick={handlePasswordFindButtonClick}>
               비밀번호 찾기
             </Button>
-            <Alert type="warning" content="이메일을 제대로 입력해주세요!" />
+            {!isEmailValid && <Alert type="error" content="가입되지 않은 이메일입니다." />}
             <Divider />
           </div>
         </div>

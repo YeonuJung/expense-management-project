@@ -109,7 +109,7 @@ function AddExpense() {
               title="이름"
               type="text"
               name="name"
-              placeholder="구체적인 행위를 적어주시면 더 좋습니다."
+              placeholder="구체적인 행위를 적어주시면 좋습니다."
               handleInputValue={handleInputValue}
             />
           </div>
@@ -196,8 +196,8 @@ function AddExpense() {
           title="정말로 취소하시겠습니까?"
           buttons={
             <>
-              <Button onClick={cancleOnClick}>Cancle</Button>
-              <Button onClick={modalCancleOnClick}>Confirm</Button>
+              <Button onClick={cancleOnClick}>취소</Button>
+              <Button onClick={modalCancleOnClick}>확인</Button>
             </>
           }
         ></Dialog>

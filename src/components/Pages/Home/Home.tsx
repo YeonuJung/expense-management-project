@@ -57,7 +57,7 @@ function Home() {
         showThumbs={false}
         showStatus={false}
         autoPlay={true}
-        interval={4000}
+        interval={3000}
         infiniteLoop={true}
         renderArrowPrev={(clickHandler, hasPrev) => hasPrev && <IoIosArrowBack onClick={clickHandler} className="arrow__left"/>}
         renderArrowNext={(clickHandler, hasNext) => hasNext && <IoIosArrowForward onClick={clickHandler} className="arrow__right"/>}

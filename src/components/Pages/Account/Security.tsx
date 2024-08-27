@@ -9,6 +9,7 @@ import { Session } from "@supabase/supabase-js";
 import supabase from "../../../api/base";
 import { LoginHistory } from "../../../types/model";
 import { useEffect, useState } from "react";
+import Alert from "../../Atoms/Alert/Alert";
 
 
 function Security() {
@@ -16,25 +17,37 @@ function Security() {
     password: "",
   });
   const [loginHistory, setLoginHistory] = useState<LoginHistory[] | null>(null);
+  const [errors, setErrors] = useState<SecurityPassword | null>(null)
 
   const session: Session | null = useAuth();
   const navigate = useNavigate();
- 
-  const handlePasswordChange = async (): Promise<void> => {
+
+
+  const changeMemberPassword = async (): Promise<void> => {
     if (session) {
-      const { error } = await supabase.auth.updateUser({
-        password: inputValueRef.current.password,
-      });
-      if (error) {
-        alert("비밀번호 변경에 실패했습니다. 다시 시도해주세요!");
-      } else {
-        alert("비밀번호 변경이 완료되었습니다.");
-        navigate("/")
-      }
+      setErrors(validatePassword(inputValueRef.current.password))
     } else {
       alert("로그인이 필요합니다.");
     }
   };
+useEffect(() => {
+  const changePassword = async () => {
+    if(errors?.password === ""){
+      const { error } = await supabase.auth.updateUser({
+        password: inputValueRef.current.password,
+      });
+      console.log(error?.name)
+      if (error?.message === 'New password should be different from the old password.') {
+       alert("다른 비밀번호로 재시도해주세요.")
+      } else {
+        alert("비밀번호 변경이 완료되었습니다.");
+        navigate("/")
+      }
+    }
+   
+  }
+  changePassword()
+}, [errors, inputValueRef.current.password])
 
   useEffect(() => {
     const fetchLoginHistory = async () => {
@@ -46,7 +59,17 @@ function Security() {
     }
     fetchLoginHistory()
   }, [session])
-  console.log(loginHistory)
+
+  const validatePassword = (password: string)  => {
+    const error: SecurityPassword = {password: ""}
+    if(password === ""){
+      error.password = "패스워드를 입력해주세요."
+    }else if( !/^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/.test(password)){
+      error.password = "패스워드는 최소 8자 이상, 영문자, 숫자, 특수문자를 포함해야 합니다."
+    }
+    return error
+  }
+ 
   return (
     <div className="account__main-container">
       <div className="account__title-container">
@@ -73,8 +96,9 @@ function Security() {
                 handleInputValue={handleInputValue}
               ></Input>
             </div>
-            <Button onClick={handlePasswordChange}>변경</Button>
+            <Button onClick={changeMemberPassword}>변경</Button>
           </div>
+          {errors?.password && <Alert type="error" content={errors.password}/>}
         </div>
       </div>
       <div className="account__detail-container">

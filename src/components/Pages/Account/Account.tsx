@@ -9,6 +9,7 @@ import { useAuth } from "../../../hooks/useAuth";
 import supabase from "../../../api/base";
 import { useEffect, useState, useCallback } from "react";
 import Dialog from "../../Organism/Dialog/Dialog";
+import Alert from "../../Atoms/Alert/Alert";
 
 
 function Account() {
@@ -16,6 +17,7 @@ function Account() {
     null
   );
   const [openModal, setOpenModal] = useState<boolean>(false);
+  const [errors, setErrors] = useState<Pick<AccountInputValue, "name"> | null>(null)
   const [inputValueRef, handleInputValue] = useInputRef<
     Omit<AccountInputValue, "email">
   >({
@@ -24,6 +26,7 @@ function Account() {
   });
   const session = useAuth();
   const navigate = useNavigate();
+
 
   const fetchMemberRecord = useCallback(async (): Promise<void> => {
     if (session) {
@@ -43,24 +46,29 @@ function Account() {
 
   const updateMemberName = async (): Promise<void> => {
     if (session) {
-      if (inputValueRef.current.name === "") {
-        alert("이름을 입력해주세요.");
-        return;
-      }
-      const { error } = await supabase
-        .from("member")
-        .update({ name: inputValueRef.current.name })
-        .eq("user_id", session.user.id);
-      if (error) {
-        alert("이름 변경에 실패했습니다. 다시 시도해주세요!");
-      } else {
-        alert("이름 변경이 완료되었습니다.");
-        window.location.reload();
-      }
+      setErrors(validateName(inputValueRef.current.name))
     } else {
       alert("로그인이 필요합니다.");
     }
   };
+
+  useEffect(() => {
+    const updateName = async () => {
+    if(errors?.name === "" && session){
+      const { error } = await supabase
+      .from("member")
+      .update({ name: inputValueRef.current.name })
+      .eq("user_id", session.user.id);
+    if (error) {
+      alert("이름 변경에 실패했습니다. 다시 시도해주세요!");
+    } else {
+      alert("이름 변경이 완료되었습니다.");
+      window.location.reload();
+    }
+    }
+  }
+  updateName()
+  }, [errors, session])
 
   const updateMemberLimit = async (): Promise<void> => {
     if (session) {
@@ -103,6 +111,18 @@ function Account() {
       alert("로그인이 필요합니다.");
     }
   };
+
+  const validateName = (name: string)  => {
+    const error: Pick<AccountInputValue, "name"> = {name: ""}
+    if(name === ""){
+      error.name = "이름을 입력해주세요."
+    }else if( !/^[가-힣]{2,4}$/.test(name)){
+      error.name = "한글 2~4자로 입력해주세요."
+    }
+    return error
+  }
+
+  
   return (
     <div className="account__main-container">
       <div className="account__title-container">
@@ -140,6 +160,9 @@ function Account() {
               저장
             </Button>
           </div>
+          {errors?.name && <Alert type="error" content={errors.name}></Alert>}
+         
+            
           <div className="account__detail">
             <div className="account__detail-input-container">
               <Input

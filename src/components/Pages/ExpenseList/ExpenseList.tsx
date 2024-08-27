@@ -114,7 +114,7 @@ function ExpenseList() {
       // searchKeyword가 존재하고 결과가 없는 경우 빈 배열 반환
       if (searchKeyword.length > 0 && (!data || data.length === 0)) {
         setFilteredData([]);
-        setEndPage(0);
+        setEndPage(1);
         return;
       }
 
@@ -318,7 +318,7 @@ function ExpenseList() {
             <input
               className="expenseList__card-input"
               type="text"
-              placeholder="검색어를 입력하세요"
+              placeholder="검색어를 입력하세요."
               name="searchKeyword"
               onChange={(e) => {
                 const { value } = e.target;
