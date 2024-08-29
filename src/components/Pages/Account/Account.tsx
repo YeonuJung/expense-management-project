@@ -11,28 +11,34 @@ import { useEffect, useState, useCallback } from "react";
 import Dialog from "../../Organism/Dialog/Dialog";
 import Alert from "../../Atoms/Alert/Alert";
 
+export const getFullStorageUrl = (filePath: string) => {
+  return `${process.env.REACT_APP_SUPABASE_URL}/storage/v1/object/public/image_bucket/${filePath}`;
+};
 
 function Account() {
-  const [MemberRecord, setMemberRecord] = useState<AccountInputValue[] | null>(
+  const [memberRecord, setMemberRecord] = useState<AccountInputValue[] | null>(
     null
   );
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const [errors, setErrors] = useState<Pick<AccountInputValue, "name"> | null>(null)
-  const [inputValueRef, handleInputValue] = useInputRef<
-    Omit<AccountInputValue, "email">
-  >({
+  const [errors, setErrors] = useState<Pick<AccountInputValue, "name"> | null>(
+    null
+  );
+  const [preview, setPreview] = useState<string | ArrayBuffer | null>(null);
+  const [inputValueRef, handleInputValue] = useInputRef<{
+    name: string;
+    expense_limit: number;
+  }>({
     name: "",
     expense_limit: 0,
   });
   const session = useAuth();
   const navigate = useNavigate();
 
-
   const fetchMemberRecord = useCallback(async (): Promise<void> => {
     if (session) {
       const { data } = await supabase
         .from("member")
-        .select("name, email, expense_limit")
+        .select("name, email, expense_limit, profile_img")
         .eq("user_id", session.user.id);
       if (data && data.length > 0) {
         setMemberRecord(data);
@@ -44,31 +50,31 @@ function Account() {
     fetchMemberRecord();
   }, [fetchMemberRecord]);
 
-  const updateMemberName = async (): Promise<void> => {
+  const handleUpdateMemberName = () => {
     if (session) {
-      setErrors(validateName(inputValueRef.current.name))
+      const validateResult = validateName(inputValueRef.current.name);
+      if (validateResult?.name === "") {
+        updateName();
+      } else {
+        setErrors(validateResult);
+      }
     } else {
       alert("로그인이 필요합니다.");
     }
   };
 
-  useEffect(() => {
-    const updateName = async () => {
-    if(errors?.name === "" && session){
-      const { error } = await supabase
+  const updateName = async () => {
+    const { error } = await supabase
       .from("member")
       .update({ name: inputValueRef.current.name })
-      .eq("user_id", session.user.id);
+      .eq("user_id", session?.user.id as string);
     if (error) {
       alert("이름 변경에 실패했습니다. 다시 시도해주세요!");
     } else {
       alert("이름 변경이 완료되었습니다.");
       window.location.reload();
     }
-    }
-  }
-  updateName()
-  }, [errors, session])
+  };
 
   const updateMemberLimit = async (): Promise<void> => {
     if (session) {
@@ -104,25 +110,62 @@ function Account() {
         alert("계정 삭제가 완료되었습니다.");
         await supabase.auth.signOut();
         navigate("/");
-        window.scrollTo({ top: 0});
-        
+        window.scrollTo({ top: 0 });
       }
     } else {
       alert("로그인이 필요합니다.");
     }
   };
 
-  const validateName = (name: string)  => {
-    const error: Pick<AccountInputValue, "name"> = {name: ""}
-    if(name === ""){
-      error.name = "이름을 입력해주세요."
-    }else if( !/^[가-힣]{2,4}$/.test(name)){
-      error.name = "한글 2~4자로 입력해주세요."
+  const validateName = (name: string) => {
+    const error: Pick<AccountInputValue, "name"> = { name: "" };
+    if (name === "") {
+      error.name = "이름을 입력해주세요.";
+    } else if (!/^[가-힣]{2,4}$/.test(name)) {
+      error.name = "한글 2~4자로 입력해주세요.";
     }
-    return error
-  }
+    return error;
+  };
 
-  
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (session) {
+      const reader = new FileReader();
+      const file = e.target.files?.[0];
+      if (file) {
+        reader.readAsDataURL(file);
+        reader.onloadend = () => {
+          setPreview(reader.result);
+          handleImageUpload(file);
+        };
+      }
+    } else {
+      alert("로그인이 필요합니다.");
+    }
+  };
+  const handleImageUpload = async (image: File) => {
+    if (image) {
+      // 이미지 업로드 로직
+      const { data, error } = await supabase.storage
+        .from("image_bucket")
+        .upload(
+          `${session?.user.id!}/${new Date().toISOString()}.${image.type.slice(
+            6,
+            10
+          )}`,
+          image
+        );
+      if (error) {
+        console.log(error);
+      } else {
+        const { error } = await supabase
+          .from("member")
+          .update({ profile_img: data.path })
+          .eq("user_id", session?.user.id!);
+        console.log(error);
+      }
+    }
+  };
+
   return (
     <div className="account__main-container">
       <div className="account__title-container">
@@ -140,9 +183,26 @@ function Account() {
         <div className="account__detail-title">기본 정보</div>
         <div className="account__detail-wrapper">
           <div className="account__detail">
-            <Avatar shape="circular" />
+            {preview ? (
+              <Avatar shape="circular" type="img" src={preview as string} />
+            ) : memberRecord?.[0].profile_img ? (
+              <Avatar
+                shape="circular"
+                type="img"
+                src={getFullStorageUrl(memberRecord?.[0].profile_img)}
+              ></Avatar>
+            ) : (
+              <Avatar shape="circular" />
+            )}
+            <input
+              className="account__detail-image-input"
+              id="image-upload"
+              accept="image/*"
+              onChange={handleImageChange}
+              type="file"
+            />
             <Button color="success" size="small">
-              변경
+              <label htmlFor="image-upload"> 변경</label>
             </Button>
           </div>
           <div className="account__detail">
@@ -153,16 +213,15 @@ function Account() {
                 type="text"
                 placeholder="이름을 입력하세요. 프로필 옆에 표시됩니다."
                 handleInputValue={handleInputValue}
-                defaultValue={MemberRecord ? MemberRecord[0].name : null}
+                defaultValue={memberRecord ? memberRecord[0].name : null}
               />
             </div>
-            <Button size="small" onClick={updateMemberName}>
+            <Button size="small" onClick={handleUpdateMemberName}>
               저장
             </Button>
           </div>
           {errors?.name && <Alert type="error" content={errors.name}></Alert>}
-         
-            
+
           <div className="account__detail">
             <div className="account__detail-input-container">
               <Input
@@ -171,7 +230,7 @@ function Account() {
                 type="email"
                 placeholder="example@example.com"
                 handleInputValue={handleInputValue}
-                defaultValue={MemberRecord ? MemberRecord[0].email : null}
+                defaultValue={memberRecord ? memberRecord[0].email : null}
                 readOnly={true}
               />
             </div>
@@ -199,7 +258,7 @@ function Account() {
                 placeholder="0"
                 handleInputValue={handleInputValue}
                 defaultValue={
-                  MemberRecord ? MemberRecord[0].expense_limit : null
+                  memberRecord ? memberRecord[0].expense_limit : null
                 }
               ></Input>
             </div>

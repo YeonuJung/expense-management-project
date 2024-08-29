@@ -1,22 +1,22 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-import { BrowserRouter } from 'react-router-dom';
-import { AuthProvider } from './hooks/useAuth';
-import { UserNameProvider } from './hooks/useUserName';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import { BrowserRouter } from "react-router-dom";
+import { AuthProvider } from "./hooks/useAuth";
+import { UserInfoProvider } from "./hooks/useUserInfo";
 
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
+  document.getElementById("root") as HTMLElement
 );
 root.render(
   <BrowserRouter>
-  <AuthProvider>
-    <UserNameProvider>
-    <App />
-    </UserNameProvider>
-  </AuthProvider>
+    <AuthProvider>
+      <UserInfoProvider>
+        <App />
+      </UserInfoProvider>
+    </AuthProvider>
   </BrowserRouter>
 );
 

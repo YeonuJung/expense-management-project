@@ -18,6 +18,11 @@ interface AccountInputValue {
   name: string;
   email: string;
   expense_limit: number | null;
+  profile_img: string | null;
+}
+interface AppbarValue {
+  name: string;
+  profile_img: string | null;
 }
 interface ContactInputValue {
   name: string;
@@ -44,7 +49,8 @@ export type{
     AddExpenseInputValue,
     LinkedEmail,
     SecurityPassword,
-    totalPrice
+    totalPrice,
+    AppbarValue
     
 }
 

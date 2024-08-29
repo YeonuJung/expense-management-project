@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useInputRef } from "../../../hooks/useInputRef";
 import { SecurityPassword } from "../../../types/auth";
 import supabase from "../../../api/base";
-import { useState, useEffect } from "react";
+import { useState} from "react";
 
 function PasswordReset() {
   const [errors, setErrors] = useState<SecurityPassword | null>(null);
@@ -18,35 +18,33 @@ function PasswordReset() {
   const navigate = useNavigate();
 
   const handlePasswordResetButtonClick = async () => {
-    setErrors(validatePassword(inputValueRef.current.password));
+    const validateResult = validatePassword(inputValueRef.current.password);
+    if (validateResult.password === "") {
+      resetPassword();
+    } else {
+      setIsPasswordVaild(true);
+      setErrors(validatePassword(inputValueRef.current.password));
+    }
   };
 
-  useEffect(() => {
-    const resetPassword = async () => {
-      if (errors?.password === "") {
-        const { error } = await supabase.auth.updateUser({
-          password: inputValueRef.current.password,
-        });
-
-        if (
-          error?.message ===
-          "New password should be different from the old password."
-        ) {
-          setIsPasswordVaild(false);
-          return;
-        } else if (error) {
-          alert("비밀번호 재설정에 실패했습니다. 다시 시도해주세요!");
-          return;
-        } else {
-          alert("비밀번호 재설정이 완료되었습니다");
-        }
-        navigate("/login");
-      } else {
-        setIsPasswordVaild(true);
-      }
-    };
-    resetPassword();
-  }, [errors, inputValueRef.current.password]);
+  const resetPassword = async () => {
+    const { error } = await supabase.auth.updateUser({
+      password: inputValueRef.current.password,
+    })
+    if (
+      error?.message ===
+      "New password should be different from the old password."
+    ) {
+      setIsPasswordVaild(false);
+      return;
+    } else if (error) {
+      alert("비밀번호 재설정에 실패했습니다. 다시 시도해주세요!");
+      return;
+    } else {
+      alert("비밀번호 재설정이 완료되었습니다");
+    }
+    navigate("/login");
+  };
 
   const validatePassword = (password: string) => {
     const error: SecurityPassword = { password: "" };
@@ -91,7 +89,9 @@ function PasswordReset() {
               placeholder="새로운 비밀번호를 입력하세요"
               handleInputValue={handleInputValue}
             />
-            {errors?.password && <Alert type="error" content={errors.password} />}
+            {errors?.password && (
+              <Alert type="error" content={errors.password} />
+            )}
             <Button
               variant="filled"
               size="large"
@@ -99,9 +99,13 @@ function PasswordReset() {
             >
               비밀번호 재설정
             </Button>
-            {
-            !isPasswordVaild && <Alert type="error" content={"기존 비밀번호와 다른 비밀번호를 사용해주세요."} />}
-            
+            {!isPasswordVaild && (
+              <Alert
+                type="error"
+                content={"기존 비밀번호와 다른 비밀번호를 사용해주세요."}
+              />
+            )}
+
             <Divider />
           </div>
         </div>

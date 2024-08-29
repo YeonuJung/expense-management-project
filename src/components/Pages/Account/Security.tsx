@@ -25,29 +25,30 @@ function Security() {
 
   const changeMemberPassword = async (): Promise<void> => {
     if (session) {
-      setErrors(validatePassword(inputValueRef.current.password))
+      const validateResult = validatePassword(inputValueRef.current.password)
+      if(validateResult.password === ""){
+        changePassword()
+      }else{
+        setErrors(validateResult)
+      }
     } else {
       alert("로그인이 필요합니다.");
     }
   };
-useEffect(() => {
+
   const changePassword = async () => {
-    if(errors?.password === ""){
       const { error } = await supabase.auth.updateUser({
         password: inputValueRef.current.password,
       });
-      console.log(error?.name)
+
       if (error?.message === 'New password should be different from the old password.') {
        alert("다른 비밀번호로 재시도해주세요.")
       } else {
         alert("비밀번호 변경이 완료되었습니다.");
         navigate("/")
       }
-    }
-   
   }
-  changePassword()
-}, [errors, inputValueRef.current.password])
+
 
   useEffect(() => {
     const fetchLoginHistory = async () => {

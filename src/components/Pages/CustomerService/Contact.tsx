@@ -5,7 +5,7 @@ import { useInputRef } from "../../../hooks/useInputRef";
 import { ContactInputValue } from "../../../types/auth";
 import Button from "../../Atoms/Button/Button";
 import supabase from "../../../api/base";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Alert from "../../Atoms/Alert/Alert";
 
 function Contact() {
@@ -19,41 +19,41 @@ function Contact() {
   const navigate = useNavigate();
 
   const insertContactData = async () => {
-    setErrors(
-      validateContactForm(
-        inputValueRef.current.name,
-        inputValueRef.current.email,
-        inputValueRef.current.phonenumber,
-        inputValueRef.current.detail
-      )
+    const validateResult = validateContactForm(
+      inputValueRef.current.name,
+      inputValueRef.current.email,
+      inputValueRef.current.phonenumber,
+      inputValueRef.current.detail
     );
+    if (
+      validateResult.name === "" &&
+      validateResult.email === "" &&
+      validateResult.phonenumber === "" &&
+      validateResult.detail === ""
+    ) {
+      insertData();
+    } else {
+      setErrors(validateResult);
+    }
   };
-  useEffect(() => {
-    const insertData = async () => {
-      if (
-        errors?.name === "" &&
-        errors?.email === "" &&
-        errors?.phonenumber === "" &&
-        errors?.detail === ""
-      ) {
-        const { error } = await supabase.from("contact").insert([
-          {
-            name: inputValueRef.current.name,
-            email: inputValueRef.current.email,
-            phonenumber: inputValueRef.current.phonenumber,
-            detail: inputValueRef.current.detail,
-          },
-        ]);
-        if (error) {
-          alert("문의하기에 실패했습니다. 다시 시도해주세요!");
-          return;
-        }
-        alert("문의하기가 완료되었습니다.");
-        navigate("/");
-      }
-    };
-    insertData();
-  }, [errors]);
+
+  const insertData = async () => {
+    const { error } = await supabase.from("contact").insert([
+      {
+        name: inputValueRef.current.name,
+        email: inputValueRef.current.email,
+        phonenumber: inputValueRef.current.phonenumber,
+        detail: inputValueRef.current.detail,
+      },
+    ]);
+
+    if (error) {
+      alert("문의하기에 실패했습니다. 다시 시도해주세요!");
+      return;
+    }
+    alert("문의하기가 완료되었습니다.");
+    navigate("/");
+  };
 
   const validateContactForm = (
     name: string,

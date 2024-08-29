@@ -45,69 +45,72 @@ function Login() {
     return { ip: ip, agent: match?.[0] };
   };
 
-  const handleLoginButtonClick = async () => {
-    setErrors(
-      validateLoginForm(inputValueRef.current.email, inputValueRef.current.password)
-    );
-    
-  };
-  useEffect(() => {
-    const login = async () => {
-      if(errors?.email === "" && errors?.password === ""){
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email: inputValueRef.current.email,
-          password: inputValueRef.current.password,
-        });
-        const checkStatus = await supabase.auth.getUser(data.session?.access_token)
-        
-        const { ip, agent } = await getIpAndAgent();
-       
-        if (data.user && ip && agent && checkStatus?.data.user?.user_metadata.status === undefined) {
-          await supabase
-            .from("loginhistory")
-            .insert([
-              {
-                user_id: data.user.id,
-                ip: ip,
-                browser: agent,
-                created_at: new Date().toLocaleString(),
-              },
-            ])
-        }
+  const login = async () => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: inputValueRef.current.email,
+      password: inputValueRef.current.password,
+    });
+    const checkStatus = await supabase.auth.getUser(data.session?.access_token);
 
-        if(checkStatus?.data.user?.user_metadata.status === "deleted"){
-          alert("탈퇴한 회원입니다.")
-          await supabase.auth.signOut();
-        }
-    
-        if (error?.message === "Invalid login credentials") {
-          setIsEmailAndPasswordValid(false)
-          return;
-        } else if (error) {
-          alert("로그인에 실패했습니다. 다시 시도해주세요!");
-          return;
-        }
-   
-        const checkMember = await supabase
-          .from("member")
-          .select("email")
-          .eq("email", inputValueRef.current.email);
-    
-        if (checkMember.data?.length === 0) {
-          await supabase.from("member").insert({
-            email: inputValueRef.current.email,
-            user_id: data?.user.id,
-            name: "회원",
-          });
-        }
-    
-        navigate("/");
-      }else{
-        setIsEmailAndPasswordValid(true)
-      }
+    const { ip, agent } = await getIpAndAgent();
+
+    if (
+      data.user &&
+      ip &&
+      agent &&
+      checkStatus?.data.user?.user_metadata.status === undefined
+    ) {
+      await supabase.from("loginhistory").insert([
+        {
+          user_id: data.user.id,
+          ip: ip,
+          browser: agent,
+          created_at: new Date().toLocaleString(),
+        },
+      ]);
     }
-    login()
-  }, [errors, inputValueRef.current.email, inputValueRef.current.password]);
+
+    if (checkStatus?.data.user?.user_metadata.status === "deleted") {
+      alert("탈퇴한 회원입니다.");
+      await supabase.auth.signOut();
+    }
+
+    if (error?.message === "Invalid login credentials") {
+      setIsEmailAndPasswordValid(false);
+      return;
+    } else if (error) {
+      alert("로그인에 실패했습니다. 다시 시도해주세요!");
+      return;
+    }
+
+    const checkMember = await supabase
+      .from("member")
+      .select("email")
+      .eq("email", inputValueRef.current.email);
+
+    if (checkMember.data?.length === 0) {
+      await supabase.from("member").insert({
+        email: inputValueRef.current.email,
+        user_id: data?.user.id,
+        name: "회원",
+      });
+    }
+
+    navigate("/");
+  };
+
+  const handleLoginButtonClick = () => {
+    const validateResult = validateLoginForm(
+      inputValueRef.current.email,
+      inputValueRef.current.password
+    );
+    if (validateResult?.email === "" && validateResult?.password === "") {
+      login();
+    } else {
+      setErrors(validateResult);
+      setIsEmailAndPasswordValid(true);
+    }
+  };
 
   const activeEnter = (e: React.KeyboardEvent): void => {
     console.log("Key pressed:", e.key);
@@ -121,7 +124,7 @@ function Login() {
       alert("이미 로그인 되어있습니다.");
       navigate("/");
     }
-     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const validateLoginForm = (email: string, password: string) => {
@@ -146,7 +149,7 @@ function Login() {
 
     return error;
   };
-  
+
   return (
     <div className="login__container">
       <div className="login__main-container">
@@ -185,7 +188,9 @@ function Login() {
               handleInputValue={handleInputValue}
               onKeyDown={activeEnter}
             />
-             {errors?.password && <Alert type="error" content={errors.password} />}
+            {errors?.password && (
+              <Alert type="error" content={errors.password} />
+            )}
             <Button
               variant="filled"
               size="large"
@@ -193,11 +198,13 @@ function Login() {
             >
               로그인
             </Button>
-            {!isEmailAndPasswordValid && <Alert
-              type="error"
-              content="이메일 또는 비밀번호가 일치하지 않습니다."
-            />}
-            
+            {!isEmailAndPasswordValid && (
+              <Alert
+                type="error"
+                content="이메일 또는 비밀번호가 일치하지 않습니다."
+              />
+            )}
+
             <Divider />
             <div className="login__form-link-container">
               <Link to={"/register"}>회원가입</Link>
