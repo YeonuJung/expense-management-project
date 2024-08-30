@@ -91,7 +91,7 @@ function Table(props: TableProps) {
           </tr>
         </thead>
         <tbody>
-          {data.map((data, idx) => {
+          {data.map((data) => {
             return (
               <>
                 <tr key={data.id} className="tbody-row">

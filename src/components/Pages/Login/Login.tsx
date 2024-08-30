@@ -19,7 +19,7 @@ function Login() {
   });
   const navigate = useNavigate();
   const session = useAuth();
-
+  
   const getIpAndAgent = async () => {
     const response = await fetch("https://api64.ipify.org/?format=json");
     const { ip } = await response.json();
@@ -50,19 +50,19 @@ function Login() {
       email: inputValueRef.current.email,
       password: inputValueRef.current.password,
     });
-    const checkStatus = await supabase.auth.getUser(data.session?.access_token);
+    const checkStatus = await supabase.auth.getUser(session?.access_token);
 
     const { ip, agent } = await getIpAndAgent();
 
     if (
-      data.user &&
+      session?.user &&
       ip &&
       agent &&
       checkStatus?.data.user?.user_metadata.status === undefined
     ) {
       await supabase.from("loginhistory").insert([
         {
-          user_id: data.user.id,
+          user_id: session.user.id,
           ip: ip,
           browser: agent,
           created_at: new Date().toLocaleString(),
@@ -124,8 +124,8 @@ function Login() {
       alert("이미 로그인 되어있습니다.");
       navigate("/");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    
+  }, [session]);
 
   const validateLoginForm = (email: string, password: string) => {
     const error: LoginInputValue = { email: "", password: "" };

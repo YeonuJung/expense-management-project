@@ -6,6 +6,7 @@ import { useAuth } from "../../../hooks/useAuth";
 import supabase from "../../../api/base";
 import { Session } from "@supabase/supabase-js";
 import { ExpenseRecordForChart } from "../../../types/auth";
+
 function ExpenseChart() {
   const [toggle, setToggle] = useState<{
     MonthlyButton: boolean;

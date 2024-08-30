@@ -82,7 +82,6 @@ function AddExpense() {
             user_id: session.user.id,
           },
         ])
-        .select();
       if (error) {
         alert("지출내역 추가에 실패했습니다. 다시 시도해주세요!");
         return;
