@@ -7,11 +7,11 @@ import { MdAutorenew } from "react-icons/md";
 import { FaPlus } from "react-icons/fa6";
 import { FaChevronDown } from "react-icons/fa";
 import { HiSearch } from "react-icons/hi";
-import { useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ExpenseRecord } from "../../../types/model";
 import { useAuth } from "../../../hooks/useAuth";
-import supabase from "../../../api/base";
-
+import { readExpenseRecord } from "../../../api/expenseRecord";
+import { useQuery } from "@tanstack/react-query";
 interface OpenFilterMenu {
   Category: boolean;
   Rating: boolean;
@@ -73,63 +73,51 @@ function ExpenseList() {
   const session = useAuth();
   const contentPerPage = 5;
 
-  const fetchExpenseRecord = useCallback(async (): Promise<void> => {
+  const fetchExpenseRecord  = useCallback(async () => {
     if (session) {
       const start: number = (startPage - 1) * contentPerPage;
       const end: number = start + contentPerPage - 1;
-      
-      let query = supabase
-        .from("expenserecord")
-        .select("id, name, place, price, category, rating, date, user_id", {
-          count: "exact",
-        })
-        .range(start, end)
-        .eq("user_id", session.user.id);
 
-      // dynamic query 여러 조건문 붙이고 싶을 때 사용
-      if (searchKeyword.length > 0) {
-        for (const keyword of searchKeyword) {
-          query = query.ilike("name", `%${keyword}%`);
-        }
-      }
+      const result = await readExpenseRecord(session.user.id, {
+        searchKeyword,
+        checkedFilterMenuValue,
+        start,
+        end,
+      });
+      return result;
+    }
+    return {data: [], count: 0}
+  }, [session, startPage, searchKeyword, checkedFilterMenuValue]);
 
-      if (checkedFilterMenuValue.category.length > 0) {
-        query = query.in("category", checkedFilterMenuValue.category);
-      }
+  const {
+    isError,
+    isPending,
+    data: dataWithCount,
+    refetch: refetchExpenseRecord,
+  } = useQuery({ queryKey: ["expense"], queryFn: fetchExpenseRecord });
 
-      if (checkedFilterMenuValue.rating.length > 0) {
-        query = query.in("rating", checkedFilterMenuValue.rating);
-      }
+  useEffect(() => {
+    refetchExpenseRecord();
+  }, [fetchExpenseRecord]);
 
-      if (checkedFilterMenuValue.date.length === 1) {
-        if (checkedFilterMenuValue.date[0] === "최신순") {
-          query = query.order("date", { ascending: false });
-        } else if (checkedFilterMenuValue.date[0] === "늦은순") {
-          query = query.order("date", { ascending: true });
-        }
-      }
-
-      const { data, count, error } = await query;
-
-      // searchKeyword가 존재하고 결과가 없는 경우 빈 배열 반환
+  useEffect(() => {
+    // searchKeyword가 존재하고 결과가 없는 경우 빈 배열 반환
+    if (dataWithCount && dataWithCount.data.length !== 0) {
+      const { data, count } = dataWithCount;
       if (searchKeyword.length > 0 && (!data || data.length === 0)) {
         setFilteredData([]);
         setEndPage(1);
         return;
       }
 
-      if (!error && count) {
+      if (!isError && count) {
         setFilteredData(data);
         setEndPage(Math.ceil(count / contentPerPage));
+      } else {
+        setFilteredData([]);
       }
-    } else {
-      setFilteredData([]);
     }
-  }, [session, startPage, searchKeyword, checkedFilterMenuValue]);
-
-  useEffect(() => {
-    fetchExpenseRecord();
-  }, [fetchExpenseRecord]);
+  }, [dataWithCount, isError, searchKeyword]);
 
   // 체크박스가 눌렸을 때 실행되는 함수
   // 눌리면 checkedFilterMenuRef의 값이 변하면서 어떤 값이 눌렸는지 알 수 있다.
@@ -277,7 +265,6 @@ function ExpenseList() {
     setStartPage(1);
   };
 
-  
   const navigate = useNavigate();
   return (
     <div className="expenseList__main-container">
@@ -419,12 +406,16 @@ function ExpenseList() {
             })}
           </div>
         </div>
-        <Table
-          data={filteredData}
-          setStartPage={setStartPage}
-          startPage={startPage}
-          endPage={endPage}
-        />
+        {isPending ? (
+          <div>로딩중...</div>
+        ) : (
+          <Table
+            data={filteredData}
+            setStartPage={setStartPage}
+            startPage={startPage}
+            endPage={endPage}
+          />
+        )}
       </div>
     </div>
   );

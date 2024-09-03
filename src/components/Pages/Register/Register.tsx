@@ -9,6 +9,7 @@ import {useState } from "react";
 import Terms from "./Terms";
 import Alert from "../../Atoms/Alert/Alert";
 import { useNavigate } from "react-router-dom";
+
 function Register() {
   const [inputValueRef, handleInputValue] = useInputRef<RegisterInputValue>({
     email: "",
@@ -56,6 +57,7 @@ function Register() {
         emailRedirectTo: "http://localhost:3000/login",
       },
     });
+    console.log(error?.message)
     if (error) {
       alert("회원가입에 실패했습니다. 다시 시도해주세요.");
       return;
@@ -82,7 +84,6 @@ function Register() {
       error.password =
         "패스워드는 최소 8자 이상, 영문자, 숫자, 특수문자를 포함해야 합니다.";
     }
-
     return error;
   };
   return (

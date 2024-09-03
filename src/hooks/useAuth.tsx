@@ -5,11 +5,14 @@ import supabase from "../api/base";
 const AuthContext = createContext<Session | null>(null);
 
 export const useAuth = () => {
-    return useContext(AuthContext)
-}
+  return useContext(AuthContext);
+};
 
-
-export const AuthProvider = ({children} : {children: React.ReactElement}) => {
+export const AuthProvider = ({
+  children,
+}: {
+  children: React.ReactElement;
+}) => {
   const [session, setSession] = useState<Session | null>(null);
 
   useEffect(() => {
@@ -27,8 +30,6 @@ export const AuthProvider = ({children} : {children: React.ReactElement}) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={session}>
-        {children}
-    </AuthContext.Provider>
-  )
+    <AuthContext.Provider value={session}>{children}</AuthContext.Provider>
+  );
 };

@@ -69,7 +69,7 @@ function AddExpense() {
         return;
       }
 
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from("expenserecord")
         .insert([
           {
