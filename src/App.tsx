@@ -1,4 +1,5 @@
 import { Routes, Route, useLocation } from "react-router-dom";
+import { Helmet } from "react-helmet";
 import AddExpense from "./components/Pages/AddExpense/AddExpense";
 import ExpenseList from "./components/Pages/ExpenseList/ExpenseList";
 import Login from "./components/Pages/Login/Login";
@@ -19,6 +20,7 @@ import Sidebar from "./components/Organism/Sidebar/Sidebar";
 import Appbar from "./components/Organism/Appbar/Appbar";
 
 
+
 function App() {
   const location = useLocation();
   const pageWithoutSidebarAndAppbar: string[] = [
@@ -31,6 +33,10 @@ function App() {
     pageWithoutSidebarAndAppbar.includes(location.pathname);
   return (
     <>
+    <Helmet>
+    <title>지출요정</title>
+    <meta name="description" content="지출요정" />
+    </Helmet>
       {!isPageWithoutSidebarAndAppbar ? (
         <div className="app__container">
           <Sidebar />
