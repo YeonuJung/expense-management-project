@@ -10,6 +10,7 @@ import {
   LineController,
   BarController,
   ArcElement,
+  DoughnutController,
 } from "chart.js";
 import { Chart } from "react-chartjs-2";
 import { useState, useEffect, useMemo, useCallback } from "react";
@@ -28,6 +29,7 @@ ChartJS.register(
   Tooltip,
   LineController,
   BarController,
+  DoughnutController,
   ArcElement
 );
 
