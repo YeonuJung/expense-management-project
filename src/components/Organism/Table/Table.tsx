@@ -111,7 +111,7 @@ function Table(props: TableProps) {
                       </div>
                     </div>
                   </td>
-                  <td>{data.place? data.place : "정확한 위치의 설정이 불가능한 지역"}</td>
+                  <td>{data.place? data.place : <span style={{color: "#d14343"}}>"정확한 위치의 설정이 불가능한 지역"</span>}</td>
                   <td>{data.price.toLocaleString() + "원"}</td>
                   <td>
                     {data.rating === "좋아요" ? (

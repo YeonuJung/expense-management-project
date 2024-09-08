@@ -12,9 +12,8 @@ import {
   Autocomplete,
   Libraries,
 } from "@react-google-maps/api";
-import supabase from "../../../api/base";
-import { useAuth } from "../../../hooks/useAuth";
-import moment from "moment";
+import { useInsertExpense } from "../../../hooks/mutation/useInsertExpense";
+import { useAutoComplete } from "../../../hooks/useAutoComplete";
 
 const libraries: Libraries = ["places"];
 
@@ -29,10 +28,8 @@ function AddExpense() {
   });
   const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
-  const [autocomplete, setAutocomplete] =
+  const [autocomplete, setAutoComplete] =
     useState<google.maps.places.Autocomplete | null>(null);
-
-  const session = useAuth();
 
   const cancleOnClick = () => {
     setOpenModal(!openModal);
@@ -42,57 +39,8 @@ function AddExpense() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const onLoad = (autocompleteInstance: google.maps.places.Autocomplete) => {
-    setAutocomplete(autocompleteInstance);
-  };
-
-  const onPlaceChanged = () => {
-    if (autocomplete !== null) {
-      const place = autocomplete.getPlace();
-      if (place.geometry) {
-        const event = {
-          target: { value: place.formatted_address || place.name },
-        } as React.ChangeEvent<HTMLInputElement>;
-        handleInputValue(event, "place");
-      }
-    }
-  };
-  const handleInsertData = () => {
-    insertExpenseRecord();
-  };
-  const insertExpenseRecord = async (): Promise<void> => {
-    if (session) {
-      const today = moment(new Date()).format("YYYY-MM-DD");
-
-      if (inputValueRef.current.date > today) {
-        alert("오늘 이후의 날짜는 추가할 수 없습니다.");
-        return;
-      }
-
-      const { data, error } = await supabase
-        .from("expenserecord")
-        .insert([
-          {
-            name: inputValueRef.current.name,
-            place: inputValueRef.current.place,
-            price: inputValueRef.current.price,
-            rating: inputValueRef.current.rating,
-            date: inputValueRef.current.date,
-            category: inputValueRef.current.category,
-            user_id: session.user.id,
-          },
-        ])
-      if (error) {
-        alert("지출내역 추가에 실패했습니다. 다시 시도해주세요!");
-        return;
-      } else {
-        alert("지출내역 추가가 완료되었습니다.");
-        navigate("/expenseList");
-      }
-    } else {
-      alert("로그인이 필요합니다.");
-    }
-  };
+  const { onLoad, onPlaceChanged } = useAutoComplete();
+  const { handleInsertExpense } = useInsertExpense();
 
   return (
     <>
@@ -123,7 +71,14 @@ function AddExpense() {
               libraries={libraries}
               loadingElement={<div>Loading...</div>}
             >
-              <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
+              <Autocomplete
+                onLoad={(autocompleteInstance) =>
+                  onLoad(autocompleteInstance, setAutoComplete)
+                }
+                onPlaceChanged={() =>
+                  onPlaceChanged(handleInputValue, autocomplete)
+                }
+              >
                 <Input
                   title="장소"
                   type="text"
@@ -184,7 +139,19 @@ function AddExpense() {
             <Button variant="outlined" onClick={cancleOnClick}>
               취소
             </Button>
-            <Button variant="filled" onClick={handleInsertData}>
+            <Button
+              variant="filled"
+              onClick={() =>
+                handleInsertExpense({
+                  name: inputValueRef.current.name,
+                  place: inputValueRef.current.place,
+                  price: inputValueRef.current.price,
+                  rating: inputValueRef.current.rating,
+                  date: inputValueRef.current.date,
+                  category: inputValueRef.current.category,
+                })
+              }
+            >
               추가
             </Button>
           </div>

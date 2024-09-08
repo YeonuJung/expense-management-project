@@ -40,7 +40,9 @@ export const changePassword = async (password: string) => {
     const { error } = await supabase.auth.updateUser({
         password: password,
       });
-      return {error}
+      if(error){
+        throw error
+      }
       // 비밀번호 변경 함수
 }
 

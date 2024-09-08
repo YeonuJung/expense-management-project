@@ -4,16 +4,19 @@ import Input from "../../Atoms/Input/Input";
 import "./Account.scss";
 import { useInputRef } from "../../../hooks/useInputRef";
 import { AccountInputValue } from "../../../types/auth";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "../../../hooks/useAuth";
-import supabase from "../../../api/base";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import Dialog from "../../Organism/Dialog/Dialog";
 import Alert from "../../Atoms/Alert/Alert";
-
-export const getFullStorageUrl = (filePath: string) => {
-  return `${process.env.REACT_APP_SUPABASE_URL}/storage/v1/object/public/image_bucket/${filePath}`;
-};
+import { readMemberRecord } from "../../../api/member";
+import { useQuery } from "@tanstack/react-query";
+import Loading from "../../Atoms/Loading/Loading";
+import { getFullStorageUrl } from "../../../utils/getFullStorageUrl";
+import { useUpdateMemberLimit } from "../../../hooks/mutation/useUpdateMemberLimit";
+import { useUpdateMemberName } from "../../../hooks/mutation/useUpdateMemberName";
+import { useDeleteMember } from "../../../hooks/mutation/useDeleteMember";
+import { useUploadMemberProfile } from "../../../hooks/mutation/useUploadMemberProfile";
 
 function Account() {
   const [memberRecord, setMemberRecord] = useState<AccountInputValue[] | null>(
@@ -32,141 +35,30 @@ function Account() {
     expense_limit: 0,
   });
   const session = useAuth();
-  const navigate = useNavigate();
+  const { handleUpdateMemberName } = useUpdateMemberName();
+  const { handleUpdateMemberLimit } = useUpdateMemberLimit();
+  const { handleDeleteMember } = useDeleteMember(setOpenModal, openModal);
+  const { handleUploadProfile } = useUploadMemberProfile();
 
-  const fetchMemberRecord = useCallback(async (): Promise<void> => {
-    if (session) {
-      const { data } = await supabase
-        .from("member")
-        .select("name, email, expense_limit, profile_img")
-        .eq("user_id", session.user.id);
-      if (data && data.length > 0) {
-        setMemberRecord(data);
-      }
-    }
-  }, [session]);
+  const { data, isPending, isError } = useQuery({
+    queryKey: ["member"],
+    queryFn: () => readMemberRecord(session?.user.id as string),
+    enabled: !!session,
+    staleTime: 1000 * 60 * 3,
+  });
 
   useEffect(() => {
-    fetchMemberRecord();
-  }, [fetchMemberRecord]);
-
-  const handleUpdateMemberName = () => {
-    if (session) {
-      const validateResult = validateName(inputValueRef.current.name);
-      if (validateResult?.name === "") {
-        updateName();
-      } else {
-        setErrors(validateResult);
-      }
-    } else {
-      alert("로그인이 필요합니다.");
+    if (data && data.length > 0) {
+      setMemberRecord(data);
     }
-  };
-
-  const updateName = async () => {
-    const { error } = await supabase
-      .from("member")
-      .update({ name: inputValueRef.current.name })
-      .eq("user_id", session?.user.id as string);
-    if (error) {
-      alert("이름 변경에 실패했습니다. 다시 시도해주세요!");
-    } else {
-      alert("이름 변경이 완료되었습니다.");
-      window.location.reload();
+    if (isError) {
+      alert("멤버 정보를 불러오는데 실패했습니다. 다시 시도해주세요.");
     }
-  };
+  }, [data, isError]);
 
-  const updateMemberLimit = async (): Promise<void> => {
-    if (session) {
-      if (inputValueRef.current.expense_limit === 0) {
-        alert("한도를 입력해주세요.");
-        return;
-      }
-      const { error } = await supabase
-        .from("member")
-        .update({ expense_limit: inputValueRef.current.expense_limit })
-        .eq("user_id", session.user.id);
-      if (error) {
-        alert("한도 변경에 실패했습니다. 다시 시도해주세요!");
-      } else {
-        alert("한도 변경이 완료되었습니다.");
-        window.location.reload();
-      }
-    } else {
-      alert("로그인이 필요합니다.");
-    }
-  };
-
-  const deleteMember = async (): Promise<void> => {
-    if (session) {
-      const { error } = await supabase.auth.updateUser({
-        data: { status: "deleted" },
-      });
-      if (error) {
-        alert("계정 삭제에 실패했습니다. 다시 시도해주세요!");
-        setOpenModal(!openModal);
-        console.log(error);
-      } else {
-        alert("계정 삭제가 완료되었습니다.");
-        await supabase.auth.signOut();
-        navigate("/");
-        window.scrollTo({ top: 0 });
-      }
-    } else {
-      alert("로그인이 필요합니다.");
-    }
-  };
-
-  const validateName = (name: string) => {
-    const error: Pick<AccountInputValue, "name"> = { name: "" };
-    if (name === "") {
-      error.name = "이름을 입력해주세요.";
-    } else if (!/^[가-힣]{2,4}$/.test(name)) {
-      error.name = "한글 2~4자로 입력해주세요.";
-    }
-    return error;
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (session) {
-      const reader = new FileReader();
-      const file = e.target.files?.[0];
-      if (file) {
-        reader.readAsDataURL(file);
-        reader.onloadend = () => {
-          setPreview(reader.result);
-          handleImageUpload(file);
-        };
-      }
-    } else {
-      alert("로그인이 필요합니다.");
-    }
-  };
-  const handleImageUpload = async (image: File) => {
-    if (image) {
-      // 이미지 업로드 로직
-      const { data, error } = await supabase.storage
-        .from("image_bucket")
-        .upload(
-          `${session?.user.id!}/${new Date().toISOString()}.${image.type.slice(
-            6,
-            10
-          )}`,
-          image
-        );
-      if (error) {
-        console.log(error);
-      } else {
-        const { error } = await supabase
-          .from("member")
-          .update({ profile_img: data.path })
-          .eq("user_id", session?.user.id!);
-        console.log(error);
-      }
-    }
-  };
-
-  return (
+  return session && isPending ? (
+    <Loading />
+  ) : (
     <div className="account__main-container">
       <div className="account__title-container">
         <div className="account__title">일반</div>
@@ -198,7 +90,7 @@ function Account() {
               className="account__detail-image-input"
               id="image-upload"
               accept="image/*"
-              onChange={handleImageChange}
+              onChange={(e) => handleUploadProfile(e, setPreview)}
               type="file"
             />
             <Button color="success" size="small">
@@ -216,7 +108,12 @@ function Account() {
                 defaultValue={memberRecord ? memberRecord[0].name : null}
               />
             </div>
-            <Button size="small" onClick={handleUpdateMemberName}>
+            <Button
+              size="small"
+              onClick={() =>
+                handleUpdateMemberName(setErrors, inputValueRef.current.name)
+              }
+            >
               저장
             </Button>
           </div>
@@ -262,7 +159,12 @@ function Account() {
                 }
               ></Input>
             </div>
-            <Button size="small" onClick={updateMemberLimit}>
+            <Button
+              size="small"
+              onClick={() =>
+                handleUpdateMemberLimit(inputValueRef.current.expense_limit)
+              }
+            >
               저장
             </Button>
           </div>
@@ -280,7 +182,13 @@ function Account() {
             <Button
               variant="outlined"
               color="error"
-              onClick={() => setOpenModal(!openModal)}
+              onClick={() => {
+                if (!session) {
+                  alert("로그인이 필요합니다.");
+                  return;
+                }
+                setOpenModal(!openModal);
+              }}
             >
               계정 삭제
             </Button>
@@ -293,7 +201,7 @@ function Account() {
           content="계정과 모든 소스 데이터가 삭제되어 다시 복구할 수 없습니다."
           buttons={
             <>
-              <Button onClick={deleteMember}>삭제</Button>
+              <Button onClick={handleDeleteMember}>삭제</Button>
               <Button onClick={() => setOpenModal(!openModal)}>취소</Button>
             </>
           }

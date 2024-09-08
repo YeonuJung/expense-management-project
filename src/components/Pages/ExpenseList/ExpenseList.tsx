@@ -12,6 +12,7 @@ import { ExpenseRecord } from "../../../types/model";
 import { useAuth } from "../../../hooks/useAuth";
 import { readExpenseRecord } from "../../../api/expenseRecord";
 import { useQuery } from "@tanstack/react-query";
+import Loading from "../../Atoms/Loading/Loading";
 interface OpenFilterMenu {
   Category: boolean;
   Rating: boolean;
@@ -73,7 +74,7 @@ function ExpenseList() {
   const session = useAuth();
   const contentPerPage = 5;
 
-  const fetchExpenseRecord  = useCallback(async () => {
+  const fetchExpenseRecord = useCallback(async () => {
     if (session) {
       const start: number = (startPage - 1) * contentPerPage;
       const end: number = start + contentPerPage - 1;
@@ -86,7 +87,7 @@ function ExpenseList() {
       });
       return result;
     }
-    return {data: [], count: 0}
+    return { data: [], count: 0 };
   }, [session, startPage, searchKeyword, checkedFilterMenuValue]);
 
   const {
@@ -94,7 +95,12 @@ function ExpenseList() {
     isPending,
     data: dataWithCount,
     refetch: refetchExpenseRecord,
-  } = useQuery({ queryKey: ["expense"], queryFn: fetchExpenseRecord });
+  } = useQuery({
+    queryKey: ["expenseRecord", "range", "category"],
+    queryFn: fetchExpenseRecord,
+    enabled: !!session,
+    staleTime: 1000 * 60 * 3,
+  });
 
   useEffect(() => {
     refetchExpenseRecord();
@@ -406,16 +412,14 @@ function ExpenseList() {
             })}
           </div>
         </div>
-        {isPending ? (
-          <div>로딩중...</div>
-        ) : (
-          <Table
-            data={filteredData}
-            setStartPage={setStartPage}
-            startPage={startPage}
-            endPage={endPage}
-          />
-        )}
+        (
+        <Table
+          data={filteredData}
+          setStartPage={setStartPage}
+          startPage={startPage}
+          endPage={endPage}
+        />
+        )
       </div>
     </div>
   );

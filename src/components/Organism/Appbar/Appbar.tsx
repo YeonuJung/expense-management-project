@@ -4,31 +4,42 @@ import { useAuth } from "../../../hooks/useAuth";
 import { useState } from "react";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { Link, useNavigate } from "react-router-dom";
-import supabase from "../../../api/base";
 import { Session } from "@supabase/supabase-js";
 import Divider from "../../Atoms/Divider/Divider";
-import { useUserInfo } from "../../../hooks/useUserInfo";
-import { getFullStorageUrl } from "../../Pages/Account/Account";
-import { AppbarValue } from "../../../types/auth";
+import { getFullStorageUrl } from "../../../utils/getFullStorageUrl";
+import { logout } from "../../../api/auth";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { readMemberRecord } from "../../../api/member";
+import Loading from "../../Atoms/Loading/Loading";
 
 function Appbar() {
   const [isDropdownClicked, setIsDropdownClicked] = useState(false);
   const session: Session | null = useAuth();
-  const userInfo: AppbarValue | null = useUserInfo();
-
+  const queryClient = useQueryClient();
   const naviagte = useNavigate();
-  const handleLogout = async (): Promise<void> => {
-    await supabase.auth.signOut();
+
+const {data, isError, isPending} = useQuery({queryKey: ["member"], queryFn: () => readMemberRecord(session?.user.id as string), enabled: !!session ,staleTime: 1000 * 60 * 3});
+
+if(isError){
+ alert("이름과 프로필 이미지를 불러오는데 실패했습니다.");
+ }
+
+const handleLogout = async (): Promise<void> => {
+    await logout();
     alert("로그아웃 되었습니다.");
+    queryClient.clear();
+    localStorage.clear();
     naviagte("/");
   };
   return (
     <div className="appBar__container">
       <div className="appBar__menu-container">
-        {session && userInfo?.name ? (
+        {isPending? (<Loading size="small" />) : (
+          <>
+        {(session && data && data[0] && data[0].name) ? (
           <div className="appBar__menu-greet">
             안녕하세요😌
-            <span className="appBar__menu-name">{`"${userInfo.name}"`}</span>님
+            <span className="appBar__menu-name">{`"${data[0].name}"`}</span>님
           </div>
         ) : (
           <>
@@ -46,11 +57,11 @@ function Appbar() {
         >
           {session ? (
             <>
-              {userInfo?.profile_img ? (
+              {(data && data[0] && data[0].profile_img)? (
                 <Avatar
                   shape="circular"
                   type="img"
-                  src={getFullStorageUrl(userInfo.profile_img)}
+                  src={getFullStorageUrl(data[0].profile_img)}
                 />
               ) : (
                 <Avatar shape="circular" type="icon" />
@@ -103,6 +114,8 @@ function Appbar() {
             </>
           )}
         </div>
+        </>
+        )}
       </div>
     </div>
   );

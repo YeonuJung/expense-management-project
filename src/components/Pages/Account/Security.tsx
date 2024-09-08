@@ -1,76 +1,44 @@
 import Input from "../../Atoms/Input/Input";
 import "./Security.scss";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useInputRef } from "../../../hooks/useInputRef";
 import { SecurityPassword } from "../../../types/auth";
 import Button from "../../Atoms/Button/Button";
 import { useAuth } from "../../../hooks/useAuth";
 import { Session } from "@supabase/supabase-js";
-import supabase from "../../../api/base";
 import { LoginHistory } from "../../../types/model";
 import { useEffect, useState } from "react";
 import Alert from "../../Atoms/Alert/Alert";
-
+import { useChangePassword } from "../../../hooks/mutation/useChangePassword";
+import { useQuery } from "@tanstack/react-query";
+import { selectLoginHistoryRecord } from "../../../api/loginHistory";
+import Loading from "../../Atoms/Loading/Loading";
 
 function Security() {
   const [inputValueRef, handleInputValue] = useInputRef<SecurityPassword>({
     password: "",
   });
   const [loginHistory, setLoginHistory] = useState<LoginHistory[] | null>(null);
-  const [errors, setErrors] = useState<SecurityPassword | null>(null)
-
+  const [errors, setErrors] = useState<SecurityPassword | null>(null);
   const session: Session | null = useAuth();
-  const navigate = useNavigate();
 
-
-  const changeMemberPassword = async (): Promise<void> => {
-    if (session) {
-      const validateResult = validatePassword(inputValueRef.current.password)
-      if(validateResult.password === ""){
-        changePassword()
-      }else{
-        setErrors(validateResult)
-      }
-    } else {
-      alert("로그인이 필요합니다.");
-    }
-  };
-
-  const changePassword = async () => {
-      const { error } = await supabase.auth.updateUser({
-        password: inputValueRef.current.password,
-      });
-
-      if (error?.message === 'New password should be different from the old password.') {
-       alert("다른 비밀번호로 재시도해주세요.")
-      } else {
-        alert("비밀번호 변경이 완료되었습니다.");
-        navigate("/")
-      }
-  }
-
+  const { handleChangePassword } = useChangePassword();
+  const { data, isError, isPending } = useQuery({
+    queryKey: ["loginHistory"],
+    queryFn: () => selectLoginHistoryRecord(session?.user.id as string),
+    enabled: !!session,
+    staleTime: (1000 * 60 * 3)
+  });
 
   useEffect(() => {
-    const fetchLoginHistory = async () => {
-      if(session){
-        const {data} = await supabase.from("loginhistory").select("*").eq("user_id", session?.user.id);
-        console.log(data)
-        setLoginHistory(data)
-      }
+    if (data && data.length > 0) {
+      setLoginHistory(data);
     }
-    fetchLoginHistory()
-  }, [session])
-
-  const validatePassword = (password: string)  => {
-    const error: SecurityPassword = {password: ""}
-    if(password === ""){
-      error.password = "패스워드를 입력해주세요."
-    }else if( !/^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/.test(password)){
-      error.password = "패스워드는 최소 8자 이상, 영문자, 숫자, 특수문자를 포함해야 합니다."
-    }
-    return error
-  }
- 
+    if (isError) {
+      alert("로그인 기록을 불러오는데 실패했습니다. 다시 시도해주세요.");
+    } 
+  }, [data, isError]);
+  
   return (
     <div className="account__main-container">
       <div className="account__title-container">
@@ -97,48 +65,66 @@ function Security() {
                 handleInputValue={handleInputValue}
               ></Input>
             </div>
-            <Button onClick={changeMemberPassword}>변경</Button>
+            <Button
+              onClick={() =>
+                handleChangePassword(inputValueRef.current.password, setErrors)
+              }
+            >
+              변경
+            </Button>
           </div>
-          {errors?.password && <Alert type="error" content={errors.password}/>}
+          {errors?.password && <Alert type="error" content={errors.password} />}
         </div>
       </div>
-      <div className="account__detail-container">
-        <div className="account__detail-wrapper">
-          <div className="account__detail-title">로그인 기록</div>
-          <div className="account__detail-subTitle">최근 로그인 활동:</div>
-          <div className="account__detail-table">
-            <div className="account__detail-table-header">
-              <div className="account__detail-table-header-loginType">
-                로그인 시간
+      {session && isPending ? (
+        <Loading />
+      ) : (
+        <div className="account__detail-container">
+          <div className="account__detail-wrapper">
+            <div className="account__detail-title">로그인 기록</div>
+            <div className="account__detail-subTitle">최근 로그인 활동:</div>
+            <div className="account__detail-table">
+              <div className="account__detail-table-header">
+                <div className="account__detail-table-header-loginType">
+                  로그인 시간
+                </div>
+                <div className="account__detail-table-header-ipAddress">
+                  IP 주소
+                </div>
+                <div className="account__detail-table-header-client">
+                  클라이언트
+                </div>
               </div>
-              <div className="account__detail-table-header-ipAddress">
-                IP 주소
-              </div>
-              <div className="account__detail-table-header-client">
-                클라이언트
-              </div>
-            </div>
-            <div className="account__detail-table-data">
-              <div className="account__detail-table-loginType">
-                <div className="account__detail-table-loginType-info-container">
-                  <div className="account__detail-table-loginType-type">
-                  {loginHistory&& "Email-login"}
+              <div className="account__detail-table-data">
+                <div className="account__detail-table-loginType">
+                  <div className="account__detail-table-loginType-info-container">
+                    <div className="account__detail-table-loginType-type">
+                      {loginHistory && "Email-login"}
+                    </div>
+                    <div className="account__detail-table-loginType-time">
+                      {loginHistory
+                        ? loginHistory[0].created_at
+                        : "로그인이 필요합니다."}
+                    </div>
                   </div>
-                  <div className="account__detail-table-loginType-time">
-                    {loginHistory? loginHistory[0].created_at : "로그인이 필요합니다."}
+                </div>
+                <div className="account__detail-table-ipAddress">
+                  <div>
+                    {loginHistory ? loginHistory[0].ip : "로그인이 필요합니다."}
+                  </div>
+                </div>
+                <div className="account__detail-table-client">
+                  <div>
+                    {loginHistory
+                      ? loginHistory[0].browser
+                      : "로그인이 필요합니다."}
                   </div>
                 </div>
               </div>
-              <div className="account__detail-table-ipAddress">
-                <div>{loginHistory? loginHistory[0].ip : "로그인이 필요합니다."}</div>
-              </div>
-              <div className="account__detail-table-client">
-                <div>{loginHistory? loginHistory[0].browser : "로그인이 필요합니다."}</div>
-              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
