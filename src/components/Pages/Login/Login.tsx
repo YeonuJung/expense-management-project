@@ -120,11 +120,11 @@ function Login() {
   };
 
   useEffect(() => {
+  
     if (session) {
-      alert("이미 로그인 되어있습니다.");
       navigate("/");
     }
-    
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
 
   const validateLoginForm = (email: string, password: string) => {
