@@ -3,37 +3,41 @@ import { Session } from "@supabase/supabase-js"
 import moment from "moment";
 
 interface ReadExpenseRecordParams {
-    searchKeyword: string[];
-    checkedFilterMenuValue: {
+    searchKeyword?: string[];
+    checkedFilterMenuValue?: {
       category: string[];
       rating: string[];
       date: string[];
     };
-    start: number;
-    end: number;
+    start?: number;
+    end?: number;
 }
 
 ///fetch, CRUD로 이름 짓기
 export const readExpenseRecord = async (userId: string, {searchKeyword, checkedFilterMenuValue, start, end}: ReadExpenseRecordParams) => {
-    let query = supabase.from("expenserecord").select("*", {count: "exact"}).range(start, end).eq("user_id", userId)
+    let query = supabase.from("expenserecord").select("*", {count: "exact"}).eq("user_id", userId)
     
     
      // dynamic query 여러 조건문 붙이고 싶을 때 사용
-     if (searchKeyword.length > 0) {
+     if(start && end){
+      query = query.range(start, end)
+     }
+
+     if (searchKeyword && searchKeyword.length > 0) {
         for (const keyword of searchKeyword) {
           query = query.ilike("name", `%${keyword}%`);
         }
       }
 
-      if (checkedFilterMenuValue.category.length > 0) {
+      if (checkedFilterMenuValue && checkedFilterMenuValue.category.length > 0) {
         query = query.in("category", checkedFilterMenuValue.category);
       }
 
-      if (checkedFilterMenuValue.rating.length > 0) {
+      if (checkedFilterMenuValue && checkedFilterMenuValue.rating.length > 0) {
         query = query.in("rating", checkedFilterMenuValue.rating);
       }
 
-      if (checkedFilterMenuValue.date.length === 1) {
+      if (checkedFilterMenuValue && checkedFilterMenuValue.date.length === 1) {
         if (checkedFilterMenuValue.date[0] === "최신순") {
           query = query.order("date", { ascending: false });
         } else if (checkedFilterMenuValue.date[0] === "늦은순") {
@@ -57,27 +61,31 @@ export const selectClickedExpenseRecord = async (session: Session, id: number) =
         .select("*")
         .eq("user_id", session.user.id)
         .eq("id", id);
-    
-    return {data, error};
+        if(error){
+          throw error
+         }
+    return {data};
     // 업데이트를 위해 클릭한 expenseReocord를 id를 이용해 불러오는 함수
     // (세션과 id를 인자로 받아서 해당 id의 지출 정보를 불러옴)
 }
 
-export const selectMontlyExpenseRecord = async (session: Session, month: string) => {
+export const readMontlyExpenseRecord = async (userId: string, month: string) => {
     const { data, error } = await supabase
         .from("expenserecord")
         .select("price, date, category")
-        .eq("user_id", session.user.id)
+        .eq("user_id", userId)
         .gte("date", moment(month).startOf("month").format("YYYY-MM-DD"))
         .lte("date", moment(month).endOf("month").format("YYYY-MM-DD"));
-   
-    return {data, error};
+   if(error){
+    throw error
+   }
+    return data;
     // 월간 지출 정보를 불러오는 함수(세션과 월을 인자로 받아서 해당 월의 지출 정보를 불러옴)
     }
 
 
-export const updateExpenseRecord = async (session: Session, id: number, name: string, place: string, price: number, rating: string, date: string, category: string) => {
-    const { error } = await supabase
+export const updateExpenseRecord = async ({session, id, name, place, price, rating, date, category} : {session: Session, id: number, name: string, place: string | null, price: number, rating: string, date: string, category: string}) => {
+    const { data, error } = await supabase
         .from("expenserecord")
         .update({
             name: name,
@@ -88,14 +96,18 @@ export const updateExpenseRecord = async (session: Session, id: number, name: st
             category: category
         })
         .eq("user_id", session.user.id)
-        .eq("id", id);
-   
-    return {error};
+        .eq("id", id)
+        .select("*");
+
+        if(error){
+          throw error
+         }
+    return data;
     // 지출 정보를 수정하는 함수(세션과 지출 정보를 인자로 받아서 해당 id의 지출 정보를 수정함)
 }
 
-export const insertExpenseRecord = async (session: Session, name: string, place: string, price: number, rating: string, date: string, category: string) => {
-    const { error } = await supabase.from("expenserecord").insert([
+export const insertExpenseRecord = async ({userId, name, place, price, rating, date, category} : {userId: string, name: string, place: string | null, price: number, rating: string, date: string, category: string}) => {
+    const { data, error } = await supabase.from("expenserecord").insert([
         {
             name: name,
             place: place,
@@ -103,21 +115,27 @@ export const insertExpenseRecord = async (session: Session, name: string, place:
             rating: rating,
             date: date,
             category: category,
-            user_id: session.user.id
+            user_id: userId
         }
-    ]);
-   
-    return {error};
+    ])
+    .select("*");
+   if(error){
+    throw error
+   }
+  return data
     // 지출 정보를 추가하는 함수(세션과 지출 정보를 인자로 받아서 지출 정보를 추가함)
 }
 
 export const deleteExpenseRecord = async (session: Session, id: number) => {
-    const { error } = await supabase
+    const { data, error } = await supabase
         .from("expenserecord")
         .delete()
         .eq("user_id", session.user.id)
-        .eq("id", id);
-       
-        return {error}
+        .eq("id", id)
+        .select("*");
+       if(error){
+        throw error
+       }
+       return data
         // 지출 정보를 삭제하는 함수(세션과 id를 인자로 받아서 해당 id의 지출 정보를 삭제함)
     }

@@ -4,22 +4,26 @@ import { useAuth } from "../../../hooks/useAuth";
 import { useState } from "react";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { Link, useNavigate } from "react-router-dom";
-import supabase from "../../../api/base";
 import { Session } from "@supabase/supabase-js";
 import Divider from "../../Atoms/Divider/Divider";
 import { useUserInfo } from "../../../hooks/useUserInfo";
-import { getFullStorageUrl } from "../../Pages/Account/Account";
+import { getFullStorageUrl } from "../../../utils/getFullStorageUrl";
 import { AppbarValue } from "../../../types/auth";
+import { logout } from "../../../api/auth";
+import { useQueryClient } from "@tanstack/react-query";
 
 function Appbar() {
   const [isDropdownClicked, setIsDropdownClicked] = useState(false);
   const session: Session | null = useAuth();
   const userInfo: AppbarValue | null = useUserInfo();
-
+  const queryClient = useQueryClient();
   const naviagte = useNavigate();
+
   const handleLogout = async (): Promise<void> => {
-    await supabase.auth.signOut();
+    await logout();
     alert("로그아웃 되었습니다.");
+    queryClient.clear();
+    localStorage.clear();
     naviagte("/");
   };
   return (

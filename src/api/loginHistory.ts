@@ -1,10 +1,11 @@
 import supabase from "./base";
-import { Session } from "@supabase/supabase-js";
 
-export const selectLoginHistoryRecord = async (session: Session) => {
-    const { data, error } = await supabase.from("loginhistory").select("*").eq("user_id", session.user.id);
-   
-    return {data, error};
+export const selectLoginHistoryRecord = async (userId : string) => {
+    const { data, error } = await supabase.from("loginhistory").select("*").eq("user_id", userId);
+   if(error){
+    throw error
+   }
+    return data;
     // 로그인 히스토리를 불러오는 함수(세션을 인자로 받아서 세션의 유저id로 로그인 히스토리를 불러옴)
 }
 

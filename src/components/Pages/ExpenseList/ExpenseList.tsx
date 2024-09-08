@@ -94,7 +94,7 @@ function ExpenseList() {
     isPending,
     data: dataWithCount,
     refetch: refetchExpenseRecord,
-  } = useQuery({ queryKey: ["expense"], queryFn: fetchExpenseRecord });
+  } = useQuery({ queryKey: ["expenseRecord", "range", "category"], queryFn: fetchExpenseRecord, enabled: !!session });
 
   useEffect(() => {
     refetchExpenseRecord();

@@ -13,13 +13,16 @@ import { MdError } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../hooks/useAuth";
 import { Session } from "@supabase/supabase-js";
-import supabase from "../../../api/base";
-import { useEffect, useState } from "react";
-import { totalPrice } from "../../../types/auth";
+import { useState, useEffect } from "react";
 import moment from "moment";
+import { useQuery } from "@tanstack/react-query";
+import { ExpenseRecord, Member} from "../../../types/model";
+import Loading from "../../Atoms/Loading/Loading";
+import { readMemberRecord } from "../../../api/member";
+import { readMontlyExpenseRecord } from "../../../api/expenseRecord";
 
 function Sidebar() {
-  const [expenseLimit, setExpenseLimit] = useState<number | null>(0);
+  const [expenseLimit, setExpenseLimit] = useState<number | null>(null);
   const [totalExpense, setTotalExpense] = useState<number | null>(null);
   const navigate = useNavigate();
   const onClick = (): void => {
@@ -27,46 +30,46 @@ function Sidebar() {
     return window.scrollTo({ top: 0, behavior: "smooth" });
   };
   const session: Session | null = useAuth();
+  const month: string = moment().format("YYYY-MM");
+
+  const handleReadAll =async (userId: string, month: string) => {
+    const [memberData, expenseData] = await Promise.all([
+      readMemberRecord(userId),
+      readMontlyExpenseRecord(userId, month),
+    ]);
+    return [memberData, expenseData] as [Member[], ExpenseRecord[]];
+  
+}
+  const { data, isError, isPending } = useQuery({
+    queryKey: ["member", "montlyExpense"],
+    queryFn: () => handleReadAll(session?.user.id as string, month),
+    enabled: !!session,
+    staleTime: (1000 * 60 * 3)
+  });
 
   useEffect(() => {
-    if (session) {
-      const fetchMemberLimit = async (): Promise<void> => {
-        const { data } = await supabase
-          .from("member")
-          .select("expense_limit")
-          .eq("user_id", session.user.id);
-        if (data && data.length > 0) {
-          setExpenseLimit(data[0].expense_limit);
-        }
-      };
-      const fetchTotalExpense = async (): Promise<void> => {
-        const month: string = moment().format("YYYY-MM");
-        const { data } = await supabase
-          .from("expenserecord")
-          .select("price")
-          .eq("user_id", session.user.id)
-          .gte("date", moment(month).startOf("month").format("YYYY-MM-DD"))
-          .lte("date", moment(month).endOf("month").format("YYYY-MM-DD"));
-        if (data && data.length > 0) {
-          const totalExpense: number = data.reduce(
-            (acc: number, cur: totalPrice) => acc + cur.price,
-            0
-          );
-          setTotalExpense(totalExpense);
-        }
-      };
-
-      fetchMemberLimit();
-      fetchTotalExpense();
+    if (data && data[0].length > 0) {
+      setExpenseLimit(data[0][0].expense_limit);
     }
-  }, [session]);
+    if (data && data[1].length > 0) {
+      const totalExpense: number = data[1].reduce(
+        (acc: number, cur: ExpenseRecord): number => acc + cur.price,
+        0
+      );
+      setTotalExpense(totalExpense);
+    }
+    if (isError) {
+      alert("설정한도를 불러오는데 실패했습니다. 다시 시도해주세요.");
+    }
+  }, [data, isError]);
 
+  
   return (
     <div className="sidebar__container">
       <div className="sidebar__logo-container">
         <img src="/로고.png" className="sidebar__logo" alt="logo"></img>
       </div>
-      {session ? (
+      {session ? isPending? (<Loading size="small"/>) : (
         <div className="sidebar__expense-container">
           <div className="sidebar__expense-wrapper">
             <div className="sidebar__expense-text">

@@ -1,12 +1,12 @@
 import "./Contact.scss";
-import { Link, useNavigate } from "react-router-dom";
+import { Link} from "react-router-dom";
 import Input from "../../Atoms/Input/Input";
 import { useInputRef } from "../../../hooks/useInputRef";
 import { ContactInputValue } from "../../../types/auth";
 import Button from "../../Atoms/Button/Button";
-import supabase from "../../../api/base";
 import { useState } from "react";
 import Alert from "../../Atoms/Alert/Alert";
+import { useInsertContact } from "../../../hooks/mutation/useInsertContact";
 
 function Contact() {
   const [errors, setErrors] = useState<ContactInputValue | null>(null);
@@ -16,83 +16,7 @@ function Contact() {
     phonenumber: "",
     detail: "",
   });
-  const navigate = useNavigate();
-
-  const insertContactData = async () => {
-    const validateResult = validateContactForm(
-      inputValueRef.current.name,
-      inputValueRef.current.email,
-      inputValueRef.current.phonenumber,
-      inputValueRef.current.detail
-    );
-    if (
-      validateResult.name === "" &&
-      validateResult.email === "" &&
-      validateResult.phonenumber === "" &&
-      validateResult.detail === ""
-    ) {
-      insertData();
-    } else {
-      setErrors(validateResult);
-    }
-  };
-
-  const insertData = async () => {
-    const { error } = await supabase.from("contact").insert([
-      {
-        name: inputValueRef.current.name,
-        email: inputValueRef.current.email,
-        phonenumber: inputValueRef.current.phonenumber,
-        detail: inputValueRef.current.detail,
-      },
-    ]);
-
-    if (error) {
-      alert("문의하기에 실패했습니다. 다시 시도해주세요!");
-      return;
-    }
-    alert("문의하기가 완료되었습니다.");
-    navigate("/");
-  };
-
-  const validateContactForm = (
-    name: string,
-    email: string,
-    phonenumber: string,
-    datail: string
-  ) => {
-    const error: ContactInputValue = {
-      name: "",
-      email: "",
-      phonenumber: "",
-      detail: "",
-    };
-    if (name === "") {
-      error.name = "이름을 입력해주세요!";
-    } else if (!/^[가-힣]{2,4}$/.test(name)) {
-      error.name = "한글 2~4자로 입력해주세요.";
-    }
-
-    if (email === "") {
-      error.email = "이메일을 입력해주세요!";
-    } else if (!/^[a-z0-9.\-_]+@([a-z0-9-]+\.)+[a-z]{2,6}$/.test(email)) {
-      error.email = "이메일 형식에 맞게 입력해주세요.";
-    }
-
-    if (phonenumber === "") {
-      error.phonenumber = "휴대폰 번호를 입력해주세요!";
-    } else if (
-      !/^(010|011|016|017|018|019)-[0-9]{3,4}-[0-9]{4}$/.test(phonenumber)
-    ) {
-      error.phonenumber = "000-0000-0000 형식으로 입력해주세요.";
-    }
-
-    if (datail === "") {
-      error.detail = "문의 내용을 입력해주세요!";
-    }
-
-    return error;
-  };
+  const { handleInsertContact } = useInsertContact();
 
   return (
     <div className="cs__main-container">
@@ -178,7 +102,19 @@ function Contact() {
           </div>
           {errors?.detail && <Alert type="error" content={errors.detail} />}
           <div className="cs__detail-submit">
-            <Button variant="filled" size="large" onClick={insertContactData}>
+            <Button
+              variant="filled"
+              size="large"
+              onClick={() =>
+                handleInsertContact({
+                  name: inputValueRef.current.name,
+                  email: inputValueRef.current.email,
+                  phonenumber: inputValueRef.current.phonenumber,
+                  detail: inputValueRef.current.detail,
+                  setErrors: setErrors,
+                })
+              }
+            >
               문의하기
             </Button>
           </div>
