@@ -18,7 +18,7 @@ export const useUploadMemberProfile = () => {
         alert("프로필 이미지 변경이 완료되었습니다.");
       },
       onError: () => {
-        alert("프로필 이미지 변경에 실패했습니다. 다시 시도해주세요!");
+        alert("프로필 이미지 변경에 실패했습니다. 다시 시도해주세요.");
       },
     });
 

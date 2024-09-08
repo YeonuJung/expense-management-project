@@ -19,7 +19,7 @@ export const readExpenseRecord = async (userId: string, {searchKeyword, checkedF
     
     
      // dynamic query 여러 조건문 붙이고 싶을 때 사용
-     if(start && end){
+     if(start !== undefined && end !== undefined){
       query = query.range(start, end)
      }
 

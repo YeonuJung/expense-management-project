@@ -5,7 +5,9 @@ export const uploadImage = async ({image, userId}: {image: File, userId: string}
             6,
             10
           )}`, image);
-  if(error){
+          console.log(data?.path)
+    const {error: error2} = await supabase.from("member").update({profile_img: data?.path}).eq("user_id", userId)
+  if(error || error2){
     throw error
   }
     return data
