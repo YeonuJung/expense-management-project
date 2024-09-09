@@ -12,7 +12,7 @@ import { ExpenseRecord } from "../../../types/model";
 import { useAuth } from "../../../hooks/useAuth";
 import { readExpenseRecord } from "../../../api/expenseRecord";
 import { useQuery } from "@tanstack/react-query";
-import Loading from "../../Atoms/Loading/Loading";
+// import Loading from "../../Atoms/Loading/Loading";
 interface OpenFilterMenu {
   Category: boolean;
   Rating: boolean;
@@ -92,7 +92,7 @@ function ExpenseList() {
 
   const {
     isError,
-    isPending,
+    // isPending,
     data: dataWithCount,
     refetch: refetchExpenseRecord,
   } = useQuery({
@@ -412,14 +412,12 @@ function ExpenseList() {
             })}
           </div>
         </div>
-        (
         <Table
           data={filteredData}
           setStartPage={setStartPage}
           startPage={startPage}
           endPage={endPage}
         />
-        )
       </div>
     </div>
   );

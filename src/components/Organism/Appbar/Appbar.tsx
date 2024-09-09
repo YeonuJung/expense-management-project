@@ -34,9 +34,9 @@ const handleLogout = async (): Promise<void> => {
   return (
     <div className="appBar__container">
       <div className="appBar__menu-container">
-        {isPending? (<Loading size="small" />) : (
+        {(session && isPending)? (<div style={{width: "280px", height: "40px"}}><Loading size="small" /></div>) : (
           <>
-        {(session && data && data[0] && data[0].name) ? (
+        {(data && data[0] && data[0].name) ? (
           <div className="appBar__menu-greet">
             안녕하세요😌
             <span className="appBar__menu-name">{`"${data[0].name}"`}</span>님
