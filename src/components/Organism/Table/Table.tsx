@@ -4,16 +4,8 @@ import Chip from "../../Atoms/Chip/Chip";
 import { ExpenseRecord } from "../../../types/model";
 import { RiDeleteBin3Line } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
-import { IoIosRestaurant } from "react-icons/io";
-import { SiBuymeacoffee } from "react-icons/si";
-import { FaShoppingCart } from "react-icons/fa";
-import { GiTheater } from "react-icons/gi";
-import { FaHotel } from "react-icons/fa";
-import { MdOutlineDirectionsBus } from "react-icons/md";
-import { TbCategoryPlus } from "react-icons/tb";
-import { ReactNode } from "react";
-import { useAuth } from "../../../hooks/useAuth";
-import supabase from "../../../api/base";
+import { getCategoryIcon } from "../../../utils/getCategoryIcon";
+import { useDeleteExpense } from "../../../hooks/mutation/useDeleteExpense";
 
 interface TableProps {
   data: ExpenseRecord[];
@@ -21,59 +13,25 @@ interface TableProps {
   startPage: number;
   endPage: number;
 }
+const headers: string[] = [
+  "",
+  "NAME",
+  "PLACE",
+  "PRICE",
+  "RATING",
+  "DATE",
+  "",
+];
 
 function Table(props: TableProps) {
   const { data, setStartPage, startPage, endPage } = props;
-  const headers: string[] = [
-    "",
-    "NAME",
-    "PLACE",
-    "PRICE",
-    "RATING",
-    "DATE",
-    "",
-  ];
 
   const navigate = useNavigate();
-  const session = useAuth();
-  const handleUpdateButton = (id: number) => {
-    navigate("/updateExpense", { state: { id } });
+  const handleUpdateButton = (id: number, startPage: number) => {
+    navigate("/updateExpense", { state: { id, startPage } });
   };
-  const handleDeleteButton = async (id: number): Promise<void> => {
-      if(session){
-        const { error } = await supabase
-        .from("expenserecord")
-        .delete()
-        .eq("user_id", session.user.id)
-        .eq("id", id);
-      if (error) {
-        alert("삭제에 실패했습니다.");
-      } else {
-        alert("삭제되었습니다.");
-        window.location.reload();
-    }
-      }else{
-        alert("로그인이 필요합니다.");
-      }
-  }
-  const getCategoryIcon = (category: string) : ReactNode => {
-    switch (category) {
-      case "식당":
-        return <IoIosRestaurant />
-      case "카페":
-        return <SiBuymeacoffee />
-      case "쇼핑":
-        return  <FaShoppingCart />
-      case "문화생활":
-        return  <GiTheater />
-      case "숙박":
-        return  <FaHotel />
-      case "교통":
-        return  <MdOutlineDirectionsBus />
-      case "기타":
-        return  <TbCategoryPlus />
-    }
-  };
+ const {handleDeleteExpense} = useDeleteExpense()
+
   const handleNextPage = (): void => {
     setStartPage((prev) => Math.min(prev + 1, endPage));
   }
@@ -98,7 +56,7 @@ function Table(props: TableProps) {
                   <td>
                     <div className="arrow__container">
                       <IoIosArrowForward
-                        onClick={() => handleUpdateButton(data.id)}
+                        onClick={() => handleUpdateButton(data.id, startPage)}
                         className="table__update-button"
                       />
                     </div>
@@ -137,7 +95,7 @@ function Table(props: TableProps) {
                   <td>{data.date}</td>
 
                   <td>
-                    <RiDeleteBin3Line className="table__delete-button" onClick={() => handleDeleteButton(data.id)} />
+                    <RiDeleteBin3Line className="table__delete-button" onClick={() => handleDeleteExpense(data.id)} />
                   </td>
                 </tr>
               </>

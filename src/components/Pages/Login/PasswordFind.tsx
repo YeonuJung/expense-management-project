@@ -5,9 +5,9 @@ import Alert from "../../Atoms/Alert/Alert";
 import Divider from "../../Atoms/Divider/Divider";
 import { useInputRef } from "../../../hooks/useInputRef";
 import { LoginInputValue } from "../../../types/auth";
-import supabase from "../../../api/base";
 import { useNavigate } from "react-router-dom";
 import {useState } from "react";
+import { usePasswordFind } from "../../../hooks/usePasswordFind";
 
 function PasswordFind() {
   const [errors, setErrors] = useState<Pick<LoginInputValue, "email"> | null>(
@@ -20,50 +20,10 @@ function PasswordFind() {
     email: "",
   });
   const navigate = useNavigate();
+  const {handlePasswordFind} = usePasswordFind();
+ 
 
-  const handlePasswordFindButtonClick = async () => {
-    const validateResult = validateEmail(inputValueRef.current.email);
-    if (validateResult.email === "") {
-      passwordFind();
-    } else {
-      setErrors(validateResult);
-      setIsEmailValid(true);
-    }
-  };
-
-  const passwordFind = async () => {
-    const { data } = await supabase
-      .from("member")
-      .select("email")
-      .eq("email", inputValueRef.current.email);
-    
-      if (data?.length === 0) {
-      setIsEmailValid(false);
-      return;
-    }
-
-    const { error } = await supabase.auth.resetPasswordForEmail(
-      inputValueRef.current.email,
-      { redirectTo: "http://localhost:3000/passwordReset" }
-    );
-    if (error) {
-      alert("비밀번호 찾기에 실패했습니다. 다시 시도해주세요!");
-      return;
-    } else {
-      alert("이메일로 비밀번호 재설정 링크를 보냈습니다.");
-    }
-  };
-
-  const validateEmail = (email: string) => {
-    const error: Pick<LoginInputValue, "email"> = { email: "" };
-
-    if (email === "") {
-      error.email = "이메일을 입력해주세요.";
-    } else if (!/^[a-z0-9.\-_]+@([a-z0-9-]+\.)+[a-z]{2,6}$/.test(email)) {
-      error.email = "이메일 형식에 맞게 입력해주세요.";
-    }
-    return error;
-  };
+  
   return (
     <div className="login__container">
       <div className="login__main-container">
@@ -96,7 +56,7 @@ function PasswordFind() {
             <Button
               variant="filled"
               size="large"
-              onClick={handlePasswordFindButtonClick}
+              onClick={() => handlePasswordFind(inputValueRef.current.email, setIsEmailValid, setErrors)}
             >
               비밀번호 찾기
             </Button>

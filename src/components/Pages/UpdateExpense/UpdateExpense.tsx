@@ -4,16 +4,19 @@ import { useInputRef } from "../../../hooks/useInputRef";
 import { AddExpenseInputValue } from "../../../types/auth";
 import Select from "../../Atoms/Select/Select";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import Dialog from "../../Organism/Dialog/Dialog";
 import {
   LoadScriptNext,
   Autocomplete,
   Libraries,
 } from "@react-google-maps/api";
-import supabase from "../../../api/base";
 import { ExpenseRecord } from "../../../types/model";
 import { useAuth } from "../../../hooks/useAuth";
+import { useQuery } from "@tanstack/react-query";
+import { readClickedExpenseRecord } from "../../../api/expenseRecord";
+import { useUpdateExpense } from "../../../hooks/mutation/useUpdateExpense";
+import Loading from "../../Atoms/Loading/Loading";
 
 const libraries: Libraries = ["places"];
 
@@ -39,7 +42,7 @@ function UpdateExpense() {
   const cancleOnClick = () => {
     setOpenModal(!openModal);
   };
-  const modalCancleOnClick = () => {
+  const modalConfirmOnclick = () => {
     navigate("/expenseList");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -59,62 +62,40 @@ function UpdateExpense() {
       }
     }
   };
-  const updateExpenseRecord = async () => {
-    if (session) {
-      const { error } = await supabase
-        .from("expenserecord")
-        .update({
-          name: inputValueRef.current.name,
-          place: inputValueRef.current.place,
-          price: inputValueRef.current.price,
-          category: inputValueRef.current.category,
-          rating: inputValueRef.current.rating,
-          date: inputValueRef.current.date,
-        })
-        .eq("user_id", session.user.id)
-        .eq("id", id);
-      if (error) {
-        alert("수정에 실패했습니다. 다시 시도해주세요!");
-        return;
-      } else {
-        alert("수정이 완료되었습니다.");
-        navigate("/expenseList");
-      }
-    } else {
-      alert("로그인이 필요합니다.");
-    }
-  };
 
   const location = useLocation();
-  const id: number = location.state.id;
+  const {id} = location.state;
+  const { data, isError, isPending } = useQuery({
+    queryKey: ["expenseRecord", id],
+    queryFn: () => readClickedExpenseRecord(session?.user.id as string, id),
+    enabled: !!session,
+    staleTime: 1000 * 60 * 2,
+  });
+  const { updateExpense } = useUpdateExpense();
 
   useEffect(() => {
-    const selectExepenseRecord = async (): Promise<void> => {
-      if (session) {
-        const { data } = await supabase
-          .from("expenserecord")
-          .select("id, name, place, price, category, rating, date, user_id")
-          .eq("user_id", session.user.id)
-          .eq("id", id);
-
-        if (data && data.length > 0) {
-          setExpenseRecord(data[0]);
-        }
+    if (session) {
+      if (data) {
+        setExpenseRecord(data[0]);
       }
-    };
-    selectExepenseRecord();
-  }, [session, id]);
+      if (isError) {
+        alert("데이터를 불러오는데 실패했습니다. 다시 시도해주세요!");
+      }
+    } 
+  }, [session, data, isError, navigate]);
 
-  if(expenseRecord){
-  inputValueRef.current.name = expenseRecord.name  
-  inputValueRef.current.place = expenseRecord.place 
-  inputValueRef.current.price = expenseRecord.price 
-  inputValueRef.current.category = expenseRecord.category 
-  inputValueRef.current.rating = expenseRecord.rating 
-  inputValueRef.current.date = expenseRecord.date 
+  if (expenseRecord) {
+    inputValueRef.current.name = expenseRecord.name;
+    inputValueRef.current.place = expenseRecord.place;
+    inputValueRef.current.price = expenseRecord.price;
+    inputValueRef.current.category = expenseRecord.category;
+    inputValueRef.current.rating = expenseRecord.rating;
+    inputValueRef.current.date = expenseRecord.date;
   }
- 
-  return (
+
+  return isPending ? (
+    <Loading />
+  ) : (
     <>
       <div className="addExpense__main-container">
         <div className="addExpense__title-container">
@@ -210,7 +191,21 @@ function UpdateExpense() {
             <Button variant="outlined" onClick={cancleOnClick}>
               취소
             </Button>
-            <Button variant="filled" onClick={updateExpenseRecord}>
+            <Button
+              variant="filled"
+              onClick={() =>
+                updateExpense.mutate({
+                  userId: session?.user.id as string,
+                  id: id,
+                  name: inputValueRef.current.name,
+                  place: inputValueRef.current.place,
+                  price: inputValueRef.current.price,
+                  rating: inputValueRef.current.rating,
+                  date: inputValueRef.current.date,
+                  category: inputValueRef.current.category,
+                })
+              }
+            >
               수정
             </Button>
           </div>
@@ -222,7 +217,7 @@ function UpdateExpense() {
           buttons={
             <>
               <Button onClick={cancleOnClick}>Cancle</Button>
-              <Button onClick={modalCancleOnClick}>Confirm</Button>
+              <Button onClick={modalConfirmOnclick}>Confirm</Button>
             </>
           }
         ></Dialog>

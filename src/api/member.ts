@@ -10,10 +10,8 @@ export const readMemberRecord = async (userId: string) => {
 }
 export const checkIsMember = async (email: string) => {
     const {data, error} = await supabase.from("member").select("email").eq("email", email)
-    if(error){
-        throw error
-    }
-    return {data};
+    
+    return {data, error};
 // 1. 로그인할 때 멤버인지 체크하는 함수(이메일을 인자로 받아서 멤버인지 체크)
 // 2. 비밀번호 찾을 때 멤버인지 체크하는 함수(이메일을 인자로 받아서 멤버인지 체크)
 // 3. 회원가입할 때 기존에 있는 멤버인지 체크하는 함수(이메일을 인자로 받아서 멤버인지 체크)
@@ -38,21 +36,13 @@ export const updateMemberLimit = async ({limit, userId}: {limit: number, userId:
     // 멤버 한도를 변경하는 함수(한도를 인자로 받아서 세션의 유저id로 한도 변경)
 }
 
-export const updateMemberProfileImg = async (profileImg: string, userId: string) => {
-    const {data, error } = await supabase.from("member").update({ profile_img: profileImg}).eq("user_id", userId).select("*");
-   if(error){
-         throw error
-   }
-    return data;
-    // 멤버 프로필 이미지를 변경하는 함수(프로필 이미지를 인자로 받아서 세션의 유저id로 프로필 이미지 변경)
-}
-
 export const insertMemberRecord = async (email: string, userId: string) => {
     const { error } = await supabase.from("member").insert({
         email: email,
         user_id: userId,
         name: "회원",
       });
+      
       return {error}
     // 멤버 정보를 추가하는 함수(이메일, 유저id를 인자로 받아서 멤버 정보 추가)
 }

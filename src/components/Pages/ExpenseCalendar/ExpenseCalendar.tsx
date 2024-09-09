@@ -33,7 +33,8 @@ function ExpenseCalendar({ data }: ExpenseCalendarProps) {
   } = useQuery({
     queryKey: ["expenseRecord"],
     queryFn: () => readExpenseRecord(session?.user.id as string, {}),
-    staleTime: 1000 * 60 * 3,
+    staleTime: 1000 * 60 * 2,
+    enabled: !!session,
   });
 
   useEffect(() => {

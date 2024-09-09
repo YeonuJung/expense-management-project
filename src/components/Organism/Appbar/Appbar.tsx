@@ -18,13 +18,18 @@ function Appbar() {
   const queryClient = useQueryClient();
   const naviagte = useNavigate();
 
-const {data, isError, isPending} = useQuery({queryKey: ["member"], queryFn: () => readMemberRecord(session?.user.id as string), enabled: !!session ,staleTime: 1000 * 60 * 3});
+  const { data, isError, isPending } = useQuery({
+    queryKey: ["member"],
+    queryFn: () => readMemberRecord(session?.user.id as string),
+    enabled: !!session,
+    staleTime: 1000 * 60 * 2,
+  });
 
-if(isError){
- alert("이름과 프로필 이미지를 불러오는데 실패했습니다.");
- }
+  if (isError) {
+    alert("이름과 프로필 이미지를 불러오는데 실패했습니다.");
+  }
 
-const handleLogout = async (): Promise<void> => {
+  const handleLogout = async (): Promise<void> => {
     await logout();
     alert("로그아웃 되었습니다.");
     queryClient.clear();
@@ -34,87 +39,92 @@ const handleLogout = async (): Promise<void> => {
   return (
     <div className="appBar__container">
       <div className="appBar__menu-container">
-        {(session && isPending)? (<div style={{width: "280px", height: "40px"}}><Loading size="small" /></div>) : (
-          <>
-        {(data && data[0] && data[0].name) ? (
-          <div className="appBar__menu-greet">
-            안녕하세요😌
-            <span className="appBar__menu-name">{`"${data[0].name}"`}</span>님
+        {session && isPending ? (
+          <div style={{ width: "260px", height: "40px" }}>
+            <Loading size="small" />
           </div>
         ) : (
           <>
-            <Link className="appBar__menu" to={"/register"}>
-              회원가입
-            </Link>
-            <Link className="appBar__menu" to={"/login"}>
-              로그인
-            </Link>
-          </>
-        )}
-        <div
-          className="appBar__avatar"
-          onClick={() => setIsDropdownClicked(!isDropdownClicked)}
-        >
-          {session ? (
-            <>
-              {(data && data[0] && data[0].profile_img)? (
-                <Avatar
-                  shape="circular"
-                  type="img"
-                  src={getFullStorageUrl(data[0].profile_img)}
-                />
+            {data && data[0] && data[0].name ? (
+              <div className="appBar__menu-greet">
+                안녕하세요😌
+                <span className="appBar__menu-name">{`"${data[0].name}"`}</span>
+                님
+              </div>
+            ) : (
+              <>
+                <Link className="appBar__menu" to={"/register"}>
+                  회원가입
+                </Link>
+                <Link className="appBar__menu" to={"/login"}>
+                  로그인
+                </Link>
+              </>
+            )}
+            <div
+              className="appBar__avatar"
+              onClick={() => setIsDropdownClicked(!isDropdownClicked)}
+            >
+              {session ? (
+                <>
+                  {data && data[0] && data[0].profile_img ? (
+                    <Avatar
+                      shape="circular"
+                      type="img"
+                      src={getFullStorageUrl(data[0].profile_img)}
+                    />
+                  ) : (
+                    <Avatar shape="circular" type="icon" />
+                  )}
+                  <IoMdArrowDropdown className="avatar__dropdown-icon" />
+                  {isDropdownClicked && (
+                    <div className="avatar__dropdown-container">
+                      <Link className="avatar__dropdown" to={"/account"}>
+                        계정 관리
+                      </Link>
+                      <Link
+                        className="avatar__dropdown"
+                        to={"/customerService/contact"}
+                      >
+                        1:1 문의
+                      </Link>
+                      <Link
+                        className="avatar__dropdown"
+                        to={"/customerService/faq"}
+                      >
+                        자주 묻는 질문
+                      </Link>
+                      <Divider />
+                      <div className="avatar__dropdown" onClick={handleLogout}>
+                        로그아웃
+                      </div>
+                    </div>
+                  )}
+                </>
               ) : (
-                <Avatar shape="circular" type="icon" />
+                <>
+                  <Avatar shape="circular" type="icon" />
+                  <IoMdArrowDropdown className="avatar__dropdown-icon" />
+                  {isDropdownClicked && (
+                    <div className="avatar__dropdown-container">
+                      <Link
+                        className="avatar__dropdown"
+                        to={"/customerService/contact"}
+                      >
+                        1:1 문의
+                      </Link>
+                      <Link
+                        className="avatar__dropdown"
+                        to={"/customerService/faq"}
+                      >
+                        자주 묻는 질문
+                      </Link>
+                    </div>
+                  )}
+                </>
               )}
-              <IoMdArrowDropdown className="avatar__dropdown-icon" />
-              {isDropdownClicked && (
-                <div className="avatar__dropdown-container">
-                  <Link className="avatar__dropdown" to={"/account"}>
-                    계정 관리
-                  </Link>
-                  <Link
-                    className="avatar__dropdown"
-                    to={"/customerService/contact"}
-                  >
-                    1:1 문의
-                  </Link>
-                  <Link
-                    className="avatar__dropdown"
-                    to={"/customerService/faq"}
-                  >
-                    자주 묻는 질문
-                  </Link>
-                  <Divider />
-                  <div className="avatar__dropdown" onClick={handleLogout}>
-                    로그아웃
-                  </div>
-                </div>
-              )}
-            </>
-          ) : (
-            <>
-              <Avatar shape="circular" type="icon" />
-              <IoMdArrowDropdown className="avatar__dropdown-icon" />
-              {isDropdownClicked && (
-                <div className="avatar__dropdown-container">
-                  <Link
-                    className="avatar__dropdown"
-                    to={"/customerService/contact"}
-                  >
-                    1:1 문의
-                  </Link>
-                  <Link
-                    className="avatar__dropdown"
-                    to={"/customerService/faq"}
-                  >
-                    자주 묻는 질문
-                  </Link>
-                </div>
-              )}
-            </>
-          )}
-        </div>
-        </>
+            </div>
+          </>
         )}
       </div>
     </div>

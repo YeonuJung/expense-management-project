@@ -13,12 +13,17 @@ function Terms({ setIsModalOpen, isModalOpen, setChecked }: TermsProps) {
     setIsModalOpen(!isModalOpen);
     setChecked(true);
   };
-const navigate = useNavigate();
+  const navigate = useNavigate();
   return (
     <div className="terms__container">
       <div className="terms__main-container">
         <div className="terms__title">
-          <img src="로고.png" className="register__logo" alt="logo" onClick={() => navigate("/")}></img>
+          <img
+            src="로고.png"
+            className="register__logo"
+            alt="logo"
+            onClick={() => navigate("/")}
+          ></img>
           회원가입 이용약관
         </div>
         <Divider />
