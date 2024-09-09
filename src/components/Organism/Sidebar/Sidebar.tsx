@@ -16,7 +16,7 @@ import { Session } from "@supabase/supabase-js";
 import { useState, useEffect } from "react";
 import moment from "moment";
 import { useQuery } from "@tanstack/react-query";
-import { ExpenseRecord, Member} from "../../../types/model";
+import { ExpenseRecord, Member } from "../../../types/model";
 import Loading from "../../Atoms/Loading/Loading";
 import { readMemberRecord } from "../../../api/member";
 import { readMontlyExpenseRecord } from "../../../api/expenseRecord";
@@ -32,19 +32,18 @@ function Sidebar() {
   const session: Session | null = useAuth();
   const month: string = moment().format("YYYY-MM");
 
-  const handleReadAll =async (userId: string, month: string) => {
+  const handleReadAll = async (userId: string, month: string) => {
     const [memberData, expenseData] = await Promise.all([
       readMemberRecord(userId),
       readMontlyExpenseRecord(userId, month),
     ]);
     return [memberData, expenseData] as [Member[], ExpenseRecord[]];
-  
-}
+  };
   const { data, isError, isPending } = useQuery({
     queryKey: ["member", "montlyExpense"],
     queryFn: () => handleReadAll(session?.user.id as string, month),
     enabled: !!session,
-    staleTime: (1000 * 60 * 3)
+    staleTime: 1000 * 60 * 3,
   });
 
   useEffect(() => {
@@ -63,31 +62,34 @@ function Sidebar() {
     }
   }, [data, isError]);
 
-  
   return (
     <div className="sidebar__container">
       <div className="sidebar__logo-container">
         <img src="/로고.png" className="sidebar__logo" alt="logo"></img>
       </div>
-      {session ? isPending? (<Loading size="small"/>) : (
+      {session ? (
         <div className="sidebar__expense-container">
           <div className="sidebar__expense-wrapper">
-            <div className="sidebar__expense-text">
-              <div className="sidebar__expense-amount">
-                설정한도 : {expenseLimit?.toLocaleString()}원
+            {isPending ? (
+              <div style={{height: "80px", width: "200px"}}><Loading size="small" /></div>
+            ) : (
+              <div className="sidebar__expense-text">
+                <div className="sidebar__expense-amount">
+                  설정한도 : {expenseLimit?.toLocaleString()}원
+                </div>
+                <div className="sidebar__expense-amount">
+                  지출금액 : {totalExpense?.toLocaleString()}원
+                </div>
+                <div className="expenseDivider" />
+                <div className="sidebar__expense-title">
+                  잔여한도 :{" "}
+                  {expenseLimit !== null && totalExpense !== null
+                    ? (expenseLimit - totalExpense).toLocaleString()
+                    : null}
+                  원
+                </div>
               </div>
-              <div className="sidebar__expense-amount">
-                지출금액 : {totalExpense?.toLocaleString()}원
-              </div>
-              <div className="expenseDivider" />
-              <div className="sidebar__expense-title">
-                잔여한도 :{" "}
-                {expenseLimit !== null && totalExpense !== null
-                  ? (expenseLimit - totalExpense).toLocaleString()
-                  : null}
-                원
-              </div>
-            </div>
+            )}
           </div>
         </div>
       ) : (
