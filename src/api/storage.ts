@@ -11,5 +11,5 @@ export const uploadImage = async ({image, userId}: {image: File, userId: string}
     throw error
   }
     return data
-    //스토리지에 이미지 파일 업로드하는 함수
+    //스토리지에 이미지 파일 업로드 및 멤버 테이블에 업데이트하는 함수
 }

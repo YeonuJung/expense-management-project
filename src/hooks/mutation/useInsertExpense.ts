@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation} from "@tanstack/react-query";
 import { insertExpenseRecord } from "../../api/expenseRecord";
 import { useAuth } from "../useAuth";
 import { useNavigate } from "react-router-dom";
@@ -7,12 +7,26 @@ import moment from "moment";
 export const useInsertExpense = () => {
   const session = useAuth();
   const navigate = useNavigate();
-
+  // const queryClient = useQueryClient();
   const updateExpense = useMutation({
     mutationFn: insertExpenseRecord,
-    onSuccess: () => {
+    onSuccess: (data) => {
+      // queryClient.setQueryData(["expenseRecord"], data);
+      // queryClient.invalidateQueries({
+      //   queryKey: [
+      //     "expenseRecord",
+      //     [],
+      //     {
+      //       category: [],
+      //       rating: [],
+      //       date: [],
+      //     },
+      //     1,
+      //   ],
+      // });
       alert("지출내역 추가가 완료되었습니다.");
       navigate("/expenseList");
+      window.location.reload();
     },
     onError: () => {
       alert("지출내역 추가에 실패했습니다. 다시 시도해주세요!");

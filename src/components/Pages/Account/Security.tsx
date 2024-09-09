@@ -27,7 +27,7 @@ function Security() {
     queryKey: ["loginHistory"],
     queryFn: () => selectLoginHistoryRecord(session?.user.id as string),
     enabled: !!session,
-    staleTime: (1000 * 60 * 3)
+    staleTime: (1000 * 60 * 2)
   });
 
   useEffect(() => {

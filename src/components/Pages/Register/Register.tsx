@@ -4,11 +4,11 @@ import Button from "../../Atoms/Button/Button";
 import Divider from "../../Atoms/Divider/Divider";
 import { useInputRef } from "../../../hooks/useInputRef";
 import { RegisterInputValue } from "../../../types/auth";
-import supabase from "../../../api/base";
 import {useState } from "react";
 import Terms from "./Terms";
 import Alert from "../../Atoms/Alert/Alert";
 import { useNavigate } from "react-router-dom";
+import { useRegister } from "../../../hooks/useRegister";
 
 function Register() {
   const [inputValueRef, handleInputValue] = useInputRef<RegisterInputValue>({
@@ -21,71 +21,12 @@ function Register() {
   const [isEmailValid, setIsEmailValid] = useState<boolean>(true);
 
   const navigate = useNavigate();
-
   const handleTermsClick = () => {
     setIsModalOpen(!isModalOpen);
   };
+  const {handleRegister} = useRegister(); 
 
-  const handlerRegisterButtonClick = async (): Promise<void> => {
-    const validateResult = validateRegisterForm(
-      inputValueRef.current.email,
-      inputValueRef.current.password
-    );
-    if (validateResult.email === "" && validateResult.password === "") {
-      register();
-    } else {
-      setIsEmailValid(true);
-      setErrors(validateResult);
-    }
-  };
-
-  const register = async () => {
-    const { data: existingUser } = await supabase
-      .from("member")
-      .select("email")
-      .eq("email", inputValueRef.current.email);
-
-    if (existingUser && existingUser?.length > 0) {
-      setIsEmailValid(false);
-      return;
-    }
-
-    const { error } = await supabase.auth.signUp({
-      email: inputValueRef.current.email,
-      password: inputValueRef.current.password,
-      options: {
-        emailRedirectTo: "http://localhost:3000/login",
-      },
-    });
-    console.log(error?.message)
-    if (error) {
-      alert("회원가입에 실패했습니다. 다시 시도해주세요.");
-      return;
-    }
-    alert("이메일을 확인해주세요!");
-  };
-
-  const validateRegisterForm = (email: string, password: string) => {
-    const error: RegisterInputValue = { email: "", password: "" };
-
-    if (email === "") {
-      error.email = "이메일을 입력해주세요.";
-    } else if (!/^[a-z0-9.\-_]+@([a-z0-9-]+\.)+[a-z]{2,6}$/.test(email)) {
-      error.email = "이메일 형식에 맞게 입력해주세요.";
-    }
-
-    if (password === "") {
-      error.password = "패스워드를 입력해주세요.";
-    } else if (
-      !/^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/.test(
-        password
-      )
-    ) {
-      error.password =
-        "패스워드는 최소 8자 이상, 영문자, 숫자, 특수문자를 포함해야 합니다.";
-    }
-    return error;
-  };
+  
   return (
     <>
       <div className="register__container">
@@ -141,7 +82,7 @@ function Register() {
               <Button
                 variant="filled"
                 size="large"
-                onClick={handlerRegisterButtonClick}
+                onClick={() => handleRegister(inputValueRef.current.email, inputValueRef.current.password, setIsEmailValid, setErrors)} 
                 disabled={!checked}
               >
                 회원가입

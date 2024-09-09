@@ -6,8 +6,10 @@ import Divider from "../../Atoms/Divider/Divider";
 import { Link, useNavigate } from "react-router-dom";
 import { useInputRef } from "../../../hooks/useInputRef";
 import { LoginInputValue } from "../../../types/auth";
-import supabase from "../../../api/base";
 import { useEffect, useState } from "react";
+import { selectIpAndAgent } from "../../../api/loginHistory";
+import { useQuery } from "@tanstack/react-query";
+import { useLogin } from "../../../hooks/useLogin";
 import { useAuth } from "../../../hooks/useAuth";
 
 function Login() {
@@ -19,103 +21,13 @@ function Login() {
   });
   const navigate = useNavigate();
   const session = useAuth();
+  const {data} = useQuery({queryKey: ["LoginHistory"], queryFn: selectIpAndAgent,})
+  const {handleLogin} = useLogin()
   
-  const getIpAndAgent = async () => {
-    const response = await fetch("https://api64.ipify.org/?format=json");
-    const { ip } = await response.json();
-
-    const browsers: string[] = [
-      "Chrome",
-      "Safari",
-      "Firefox",
-      "Edge",
-      "Edg",
-      "OPR",
-      "Opera",
-      "MSIE",
-      "Trident",
-      "YaBrowser",
-      "UCBrowser",
-      "CriOS",
-      "FxiOS",
-      "SamsungBrowser",
-    ];
-    const browserRegex = new RegExp(`(${browsers.join("|")})/([\\d\\.]+)`, "i");
-    const match = navigator.userAgent.match(browserRegex);
-    return { ip: ip, agent: match?.[0] };
-  };
-
-  const login = async () => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: inputValueRef.current.email,
-      password: inputValueRef.current.password,
-    });
-    const checkStatus = await supabase.auth.getUser(session?.access_token);
-
-    const { ip, agent } = await getIpAndAgent();
-
-    if (
-      session?.user &&
-      ip &&
-      agent &&
-      checkStatus?.data.user?.user_metadata.status === undefined
-    ) {
-      await supabase.from("loginhistory").insert([
-        {
-          user_id: session.user.id,
-          ip: ip,
-          browser: agent,
-          created_at: new Date().toLocaleString(),
-        },
-      ]);
-    }
-
-    if (checkStatus?.data.user?.user_metadata.status === "deleted") {
-      alert("탈퇴한 회원입니다.");
-      await supabase.auth.signOut();
-    }
-
-    if (error?.message === "Invalid login credentials") {
-      setIsEmailAndPasswordValid(false);
-      return;
-    } else if (error) {
-      alert("로그인에 실패했습니다. 다시 시도해주세요!");
-      return;
-    }
-
-    const checkMember = await supabase
-      .from("member")
-      .select("email")
-      .eq("email", inputValueRef.current.email);
-
-    if (checkMember.data?.length === 0) {
-      await supabase.from("member").insert({
-        email: inputValueRef.current.email,
-        user_id: data?.user.id,
-        name: "회원",
-      });
-    }
-
-    navigate("/");
-  };
-
-  const handleLoginButtonClick = () => {
-    const validateResult = validateLoginForm(
-      inputValueRef.current.email,
-      inputValueRef.current.password
-    );
-    if (validateResult?.email === "" && validateResult?.password === "") {
-      login();
-    } else {
-      setErrors(validateResult);
-      setIsEmailAndPasswordValid(true);
-    }
-  };
 
   const activeEnter = (e: React.KeyboardEvent): void => {
-    console.log("Key pressed:", e.key);
     if (e.key === "Enter") {
-      handleLoginButtonClick();
+      handleLogin(inputValueRef.current.email, inputValueRef.current.password, inputValueRef, data, setIsEmailAndPasswordValid, setErrors)
     }
   };
 
@@ -127,28 +39,7 @@ function Login() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
 
-  const validateLoginForm = (email: string, password: string) => {
-    const error: LoginInputValue = { email: "", password: "" };
-
-    if (email === "") {
-      error.email = "이메일을 입력해주세요.";
-    } else if (!/^[a-z0-9.\-_]+@([a-z0-9-]+\.)+[a-z]{2,6}$/.test(email)) {
-      error.email = "이메일 형식에 맞게 입력해주세요.";
-    }
-
-    if (password === "") {
-      error.password = "패스워드를 입력해주세요.";
-    } else if (
-      !/^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/.test(
-        password
-      )
-    ) {
-      error.password =
-        "패스워드는 최소 8자 이상, 영문자, 숫자, 특수문자를 포함해야 합니다.";
-    }
-
-    return error;
-  };
+  
 
   return (
     <div className="login__container">
@@ -194,7 +85,7 @@ function Login() {
             <Button
               variant="filled"
               size="large"
-              onClick={handleLoginButtonClick}
+              onClick={() => handleLogin(inputValueRef.current.email, inputValueRef.current.password, inputValueRef, data, setIsEmailAndPasswordValid, setErrors)}
             >
               로그인
             </Button>

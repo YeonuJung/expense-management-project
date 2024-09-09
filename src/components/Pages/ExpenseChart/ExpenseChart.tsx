@@ -3,65 +3,43 @@ import MontlyChart from "./MontlyChart";
 import CategoryChart from "./CategoryChart";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../../hooks/useAuth";
-import supabase from "../../../api/base";
 import { Session } from "@supabase/supabase-js";
 import { ExpenseRecordForChart } from "../../../types/auth";
+import { useToggleButton } from "../../../hooks/useToggleButton";
+import { useQuery } from "@tanstack/react-query";
+import { readExpenseRecord } from "../../../api/expenseRecord";
+import Loading from "../../Atoms/Loading/Loading";
 
 function ExpenseChart() {
   const [toggle, setToggle] = useState<{
     MonthlyButton: boolean;
     CategoryButton: boolean;
   }>({ MonthlyButton: false, CategoryButton: false });
-  const [expenseRecord, setExpenseRecord] = useState<
-    ExpenseRecordForChart[]
-  >([]);
+  const [expenseRecord, setExpenseRecord] = useState<ExpenseRecordForChart[]>(
+    []
+  );
 
   const session: Session | null = useAuth();
-
+    
+  const { data, isError, isPending } = useQuery({
+    queryKey: ["expenseRecord"],
+    queryFn: () => readExpenseRecord(session?.user.id as string, {}),
+    staleTime: 1000 * 60 * 2,
+    enabled: !!session,
+  });
+ 
   useEffect(() => {
-    const fetchExpenseRecord = async (): Promise<void> => {
-      if (session) {
-        const { data } = await supabase
-          .from("expenserecord")
-          .select("price, date")
-          .eq("user_id", session.user.id);
-        if (data && data.length > 0) {
-          setExpenseRecord(data);
-        }
-      }
-    };
-    fetchExpenseRecord();
-  }, [session]);
-
-  const handleMontlyButtonClick = () => {
-    if (toggle.CategoryButton) {
-      setToggle((prev) => ({
-        ...prev,
-        MonthlyButton: !prev.MonthlyButton,
-        CategoryButton: !prev.CategoryButton,
-      }));
-    } else if (toggle.MonthlyButton) {
-      return;
-    } else {
-      setToggle((prev) => ({ ...prev, MonthlyButton: !prev.MonthlyButton }));
+    if(data && data.data && data.data.length > 0){
+      setExpenseRecord(data.data)
     }
-  };
-
-  const handleCategoryButtonClick = () => {
-    if (toggle.MonthlyButton) {
-      setToggle((prev) => ({
-        ...prev,
-        CategoryButton: !prev.CategoryButton,
-        MonthlyButton: !prev.MonthlyButton,
-      }));
-    } else if (toggle.CategoryButton) {
-      return;
-    } else {
-      setToggle((prev) => ({ ...prev, CategoryButton: !prev.CategoryButton }));
+    if(isError){
+      alert("지출내역을 불러오는데 실패했습니다.")
     }
-  };
+  }, [data, isError])
+  
+  const { handleButtonClick } = useToggleButton(toggle, setToggle);
 
-  return (
+  return (session && isPending) ? <Loading/> : (
     <div className="expenseChart__main-container">
       <div className="expenseChart__detail-container">
         <div className="expenseChart__title">지출내역 추이</div>
@@ -77,7 +55,7 @@ function ExpenseChart() {
               className={`expenseChart__toggle-button toggle-left ${
                 toggle.MonthlyButton ? "toggle-active" : ""
               }`}
-              onClick={handleMontlyButtonClick}
+              onClick={() => handleButtonClick("MonthlyButton")}
             >
               월별
             </div>
@@ -85,7 +63,7 @@ function ExpenseChart() {
               className={`expenseChart__toggle-button toggle-right ${
                 toggle.CategoryButton ? "toggle-active" : ""
               }`}
-              onClick={handleCategoryButtonClick}
+              onClick={() => handleButtonClick("CategoryButton")}
             >
               카테고리별
             </div>
@@ -94,9 +72,7 @@ function ExpenseChart() {
         {toggle.MonthlyButton ? (
           <MontlyChart expenseRecord={expenseRecord} />
         ) : null}
-        {toggle.CategoryButton ? (
-          <CategoryChart/>
-        ) : null}
+        {toggle.CategoryButton ? <CategoryChart /> : null}
       </div>
     </div>
   );

@@ -14,6 +14,7 @@ import { Chart } from "react-chartjs-2";
 import moment from "moment";
 import { ExpenseRecordForChart } from "../../../types/auth";
 import { useMemo } from "react";
+import { useAuth } from "../../../hooks/useAuth";
 
 ChartJS.register(
   LinearScale,
@@ -55,7 +56,6 @@ const groupByMonth = (expenseRecord: ExpenseRecordForChart[]) => {
     "11": 0,
     "12": 0,
   };
-  console.log(expenseRecord);
   return expenseRecord.reduce((acc, data) => {
     const month: string = moment(data.date).format("MM");
     acc[month as keyof typeof acc] += data.price;
@@ -157,7 +157,8 @@ interface MontlyChartProps {
 }
 function MontlyChart(props: MontlyChartProps) {
   const { expenseRecord } = props;
-  
+  const session = useAuth();
+
   const monthlyExpenditures: { [key: string]: number } =
     groupByMonth(expenseRecord);
   
@@ -187,7 +188,7 @@ function MontlyChart(props: MontlyChartProps) {
       ],
   }), [monthlyExpenditures]);
 
-  return <Chart type="bar" data={chartData} options={options} />;
+  return !session? <div className = "montlyChart__box">로그인이 필요합니다.</div> : <Chart type="bar" data={chartData} options={options} />;
 }
 
 export default MontlyChart;

@@ -12,7 +12,7 @@ import { ExpenseRecord } from "../../../types/model";
 import { useAuth } from "../../../hooks/useAuth";
 import { readExpenseRecord } from "../../../api/expenseRecord";
 import { useQuery } from "@tanstack/react-query";
-// import Loading from "../../Atoms/Loading/Loading";
+import Loading from "../../Atoms/Loading/Loading";
 interface OpenFilterMenu {
   Category: boolean;
   Rating: boolean;
@@ -87,24 +87,26 @@ function ExpenseList() {
       });
       return result;
     }
-    return { data: [], count: 0 };
   }, [session, startPage, searchKeyword, checkedFilterMenuValue]);
 
   const {
     isError,
-    // isPending,
+    isStale,
+    isPending,
     data: dataWithCount,
     refetch: refetchExpenseRecord,
   } = useQuery({
-    queryKey: ["expenseRecord", "range", "category"],
+    queryKey: ["expenseRecord", searchKeyword, checkedFilterMenuValue, startPage],
     queryFn: fetchExpenseRecord,
     enabled: !!session,
-    staleTime: 1000 * 60 * 3,
+    staleTime: 1000 * 60 * 2,
   });
 
   useEffect(() => {
-    refetchExpenseRecord();
-  }, [fetchExpenseRecord]);
+    if(isStale){
+      refetchExpenseRecord();
+    }
+  }, [fetchExpenseRecord, isStale, refetchExpenseRecord]);
 
   useEffect(() => {
     // searchKeyword가 존재하고 결과가 없는 경우 빈 배열 반환
@@ -272,7 +274,7 @@ function ExpenseList() {
   };
 
   const navigate = useNavigate();
-  return (
+  return (session && isPending)? <Loading/> : (
     <div className="expenseList__main-container">
       <div className="expenseList__title-container">
         <div className="expenseList__title-wrapper">

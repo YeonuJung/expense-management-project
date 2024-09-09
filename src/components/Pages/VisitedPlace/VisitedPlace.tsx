@@ -9,24 +9,24 @@ import {
 import "./VisitedPlace.scss";
 import { useEffect, useState } from "react";
 import { setDefaults, fromAddress, OutputFormat } from "react-geocode";
-import supabase from "../../../api/base";
 import { useAuth } from "../../../hooks/useAuth";
+import Loading from "../../Atoms/Loading/Loading";
+import { useQuery } from "@tanstack/react-query";
+import { readExpenseRecord } from "../../../api/expenseRecord";
 
 const libraries: Libraries = ["places"];
-
-setDefaults({
-  key: process.env.REACT_APP_GOOGLE_MAP_API_KEY as string,
-  language: "ko" as string,
-  region: "kr" as string,
-  outputFormat: "json" as OutputFormat.JSON,
-});
-
 interface Location {
   lat: number;
   lng: number;
   info: string;
   name: string;
 }
+setDefaults({
+  key: process.env.REACT_APP_GOOGLE_MAP_API_KEY as string,
+  language: "ko" as string,
+  region: "kr" as string,
+  outputFormat: "json" as OutputFormat.JSON,
+});
 
 const containerStyle = {
   width: "100%",
@@ -164,24 +164,20 @@ function VisitedPlace() {
   const session = useAuth();
   const onLoad = (map: google.maps.Map) => {
     setMap(map);
-    
   };
-  useEffect(() => {
-    const fetchAddresses = async (): Promise<void> => {
-      if(session){
-        const { data } = await supabase
-        .from("expenserecord")
-        .select("place, name")
-        .eq("user_id", session.user.id);
-        if(data && data.length > 0){
-          setData(data)
-        }
-      }
-    };
-    fetchAddresses();
-  }, [session]);
+ 
+const {data: expenseData, isError} = useQuery({queryKey: ["expenseRecord"], queryFn:() => readExpenseRecord(session?.user.id as string, {}),enabled: !!session, staleTime: 1000 * 60 * 2})
+ 
+useEffect(() => {
+    if(expenseData && expenseData.data && expenseData.data.length > 0){
+      setData(expenseData.data)
+    }
+    if(isError){
+      alert("지출 내역을 불러오는데 실패했습니다.")
+    }
+}, [expenseData, isError]);
 
-  useEffect(() => {
+useEffect(() => {
     const fetchCoordinate = async () => {
       try {
         const results = await Promise.all(
@@ -205,7 +201,6 @@ function VisitedPlace() {
     fetchCoordinate();
   }, [data]);
 
-
   const handleMarkerClick = (location: Location) => {
     setSelectedMarker({ ...location });
     map?.setZoom(14);
@@ -227,7 +222,7 @@ function VisitedPlace() {
   }
 
   if (!isLoaded) {
-    return <div>Loading...</div>;
+    return <Loading/>
   }
   return (
     <div className="visitedPlace__main-container">

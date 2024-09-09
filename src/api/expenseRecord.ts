@@ -13,7 +13,6 @@ interface ReadExpenseRecordParams {
     end?: number;
 }
 
-///fetch, CRUD로 이름 짓기
 export const readExpenseRecord = async (userId: string, {searchKeyword, checkedFilterMenuValue, start, end}: ReadExpenseRecordParams) => {
     let query = supabase.from("expenserecord").select("*", {count: "exact"}).eq("user_id", userId)
     
@@ -50,21 +49,21 @@ export const readExpenseRecord = async (userId: string, {searchKeyword, checkedF
         throw error
       }
     return {data, count};
-    // 지출 정보를 불러오는 함수(세션을 인자로 받아서 세션의 유저id로 지출 정보를 불러옴)
-    // dynamic query를 사용하기 위해 query를 반환함
+    // 지출 정보를 불러오는 함수(유저id를 인자로 받아서 지출 정보를 불러옴)
+    // dynamic query를 사용하기 위해 query를 반환함 (searchKeyword, checkedFilterMenuValue, start, end를 인자로 받아서 해당 조건에 맞는 지출 정보를 불러옴)
     // expenseList에서는 range를 사용해야 하는데, query에 붙여서 사용 가능
 }
 
-export const selectClickedExpenseRecord = async (session: Session, id: number) => {
+export const readClickedExpenseRecord = async (userId: string, id: number) => {
     const { data, error } = await supabase
         .from("expenserecord")
         .select("*")
-        .eq("user_id", session.user.id)
+        .eq("user_id", userId)
         .eq("id", id);
         if(error){
           throw error
          }
-    return {data};
+    return data;
     // 업데이트를 위해 클릭한 expenseReocord를 id를 이용해 불러오는 함수
     // (세션과 id를 인자로 받아서 해당 id의 지출 정보를 불러옴)
 }
@@ -84,7 +83,7 @@ export const readMontlyExpenseRecord = async (userId: string, month: string) => 
     }
 
 
-export const updateExpenseRecord = async ({session, id, name, place, price, rating, date, category} : {session: Session, id: number, name: string, place: string | null, price: number, rating: string, date: string, category: string}) => {
+export const updateExpenseRecord = async ({userId, id, name, place, price, rating, date, category} : {userId: string, id: number, name: string, place: string | null, price: number, rating: string, date: string, category: string}) => {
     const { data, error } = await supabase
         .from("expenserecord")
         .update({
@@ -95,7 +94,7 @@ export const updateExpenseRecord = async ({session, id, name, place, price, rati
             date: date,
             category: category
         })
-        .eq("user_id", session.user.id)
+        .eq("user_id", userId)
         .eq("id", id)
         .select("*");
 
@@ -126,11 +125,11 @@ export const insertExpenseRecord = async ({userId, name, place, price, rating, d
     // 지출 정보를 추가하는 함수(세션과 지출 정보를 인자로 받아서 지출 정보를 추가함)
 }
 
-export const deleteExpenseRecord = async (session: Session, id: number) => {
+export const deleteExpenseRecord = async ({userId, id} : {userId: string, id: number}) => {
     const { data, error } = await supabase
         .from("expenserecord")
         .delete()
-        .eq("user_id", session.user.id)
+        .eq("user_id", userId)
         .eq("id", id)
         .select("*");
        if(error){

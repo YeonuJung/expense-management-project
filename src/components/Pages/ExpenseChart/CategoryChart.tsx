@@ -13,11 +13,13 @@ import {
   DoughnutController,
 } from "chart.js";
 import { Chart } from "react-chartjs-2";
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo } from "react";
 import moment from "moment";
 import { MontlyExpenseRecord } from "../../../types/auth";
-import supabase from "../../../api/base";
 import { useAuth } from "../../../hooks/useAuth";
+import { useQuery } from "@tanstack/react-query";
+import { readMontlyExpenseRecord } from "../../../api/expenseRecord";
+import Loading from "../../Atoms/Loading/Loading";
 
 ChartJS.register(
   LinearScale,
@@ -69,42 +71,66 @@ function CategoryChart() {
   const [priceByCategory, setPriceByCategory] = useState<{
     [key: string]: number;
   }>({});
-  const [checkdPriceResult, setCheckdPriceResult] = useState<string>("");
+  const [expenseMonth, setExpenseMonth] = useState<string>("");
   const session = useAuth();
 
-  const fetchMontlyExpenseRecord = useCallback(async () => {
-    const priceByCategory: { [key: string]: number } = {};
-    labels.forEach((label) => {
-      priceByCategory[label] = 0;
-    });
-    if (session) {
-      const { data } = await supabase
-        .from("expenserecord")
-        .select("price, date, category")
-        .eq("user_id", session.user.id)
-        .gte("date", moment(month).startOf("month").format("YYYY-MM-DD"))
-        .lte("date", moment(month).endOf("month").format("YYYY-MM-DD"));
-
-      if (data && data.length > 0) {
-        data.forEach((record: MontlyExpenseRecord) => {
-          if (priceByCategory[record.category]) {
-            priceByCategory[record.category] += record.price;
-          } else {
-            priceByCategory[record.category] = record.price;
-          }
-        });
-      }
+  const {
+    data,
+    isError,
+    isPending,
+    refetch: refetchReadMontlyExpenseRecord,
+    isStale,
+  } = useQuery({
+    queryKey: ["monthlyExpenseRecord", month],
+    queryFn: () => readMontlyExpenseRecord(session?.user.id as string, month),
+    staleTime: 1000 * 60 * 2,
+    enabled: !!session,
+  });
+  useEffect(() => {
+    if (!session) {
+      setPriceByCategory({});
+      setExpenseMonth("로그인이 필요합니다.");
     }
-    const result = labels.every((label) => priceByCategory[label] === 0)
-      ? "지출내역이 없습니다"
-      : month;
-    setCheckdPriceResult(result);
-    setPriceByCategory(priceByCategory);
-  }, [session, month]);
+    if (data && data.length > 0) {
+      const priceByCategory: { [key: string]: number } = {};
+
+      labels.forEach((label) => {
+        priceByCategory[label] = 0;
+      });
+
+      data.forEach((record: MontlyExpenseRecord) => {
+        priceByCategory[record.category] += record.price;
+      });
+      const result = labels.every((label) => priceByCategory[label] === 0)
+        ? "지출내역이 없습니다"
+        : month;
+      setExpenseMonth(result);
+      setPriceByCategory(priceByCategory);
+    }
+    if (data && data.length === 0) {
+      setPriceByCategory({});
+      setExpenseMonth("지출내역이 없습니다");
+    }
+
+    if (isError) {
+      alert("지출내역을 불러오는데 실패했습니다.");
+    }
+  }, [data, isError, month, session]);
 
   useEffect(() => {
-    fetchMontlyExpenseRecord();
-  }, [fetchMontlyExpenseRecord]);
+    if (isStale) {
+      refetchReadMontlyExpenseRecord();
+    }
+  }, [month, refetchReadMontlyExpenseRecord, isStale]);
+
+  useEffect(() => {
+    const plugin = createCenterTextPlugin(expenseMonth);
+    ChartJS.register(plugin);
+
+    return () => {
+      ChartJS.unregister(plugin);
+    };
+  }, [expenseMonth]);
 
   const ChartData = {
     labels,
@@ -174,19 +200,10 @@ function CategoryChart() {
             },
           },
         },
-        centerText: createCenterTextPlugin(checkdPriceResult),
+        centerText: createCenterTextPlugin(expenseMonth),
       },
     };
-  }, [checkdPriceResult]);
-
-  useEffect(() => {
-    const plugin = createCenterTextPlugin(checkdPriceResult);
-    ChartJS.register(plugin);
-
-    return () => {
-      ChartJS.unregister(plugin);
-    };
-  }, [checkdPriceResult]);
+  }, [expenseMonth]);
 
   const startDate = moment(new Date()).startOf("year").format("YYYY-MM");
   const incresedMonth = [];
@@ -222,7 +239,11 @@ function CategoryChart() {
           alignItems: "center",
         }}
       >
-        <Chart type="doughnut" data={ChartData} options={options} />
+        {session && isPending ? (
+          <Loading />
+        ) : (
+          <Chart type="doughnut" data={ChartData} options={options} />
+        )}
       </div>
     </>
   );

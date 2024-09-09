@@ -39,11 +39,11 @@ function Sidebar() {
     ]);
     return [memberData, expenseData] as [Member[], ExpenseRecord[]];
   };
-  const { data, isError, isPending } = useQuery({
+  const { data, isError, isPending, isStale, refetch } = useQuery({
     queryKey: ["member", "montlyExpense"],
     queryFn: () => handleReadAll(session?.user.id as string, month),
     enabled: !!session,
-    staleTime: 1000 * 60 * 3,
+    staleTime: 1000 * 60 * 2,
   });
 
   useEffect(() => {
@@ -60,7 +60,10 @@ function Sidebar() {
     if (isError) {
       alert("설정한도를 불러오는데 실패했습니다. 다시 시도해주세요.");
     }
-  }, [data, isError]);
+    if(isStale){
+      refetch();
+    }
+  }, [data, isError, isStale, refetch]);
 
   return (
     <div className="sidebar__container">

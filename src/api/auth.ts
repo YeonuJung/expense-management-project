@@ -1,5 +1,5 @@
 import supabase from "./base";
-import { Session } from "@supabase/supabase-js";
+
 
 export const logout = async () => {
     await supabase.auth.signOut();
@@ -28,8 +28,8 @@ export const signUp = async (email: string, password: string) => {
       // 회원가입 함수
 }
 
-export const isMemberDeleted = async (session: Session) => {
-    const {data, error} = await supabase.auth.getUser(session.access_token);
+export const checkMemberDeleted = async (access_token: string) => {
+    const {data, error} = await supabase.auth.getUser(access_token);
     const isMemberDeleted = data.user?.user_metadata.status
 
     return {isMemberDeleted, error}
