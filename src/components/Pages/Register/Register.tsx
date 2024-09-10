@@ -3,8 +3,8 @@ import Input from "../../Atoms/Input/Input";
 import Button from "../../Atoms/Button/Button";
 import Divider from "../../Atoms/Divider/Divider";
 import { useInputRef } from "../../../hooks/useInputRef";
-import { RegisterInputValue } from "../../../types/auth";
-import {useState } from "react";
+import { RegisterInputValue } from "../../../types/general";
+import { useState } from "react";
 import Terms from "./Terms";
 import Alert from "../../Atoms/Alert/Alert";
 import { useNavigate } from "react-router-dom";
@@ -24,9 +24,8 @@ function Register() {
   const handleTermsClick = () => {
     setIsModalOpen(!isModalOpen);
   };
-  const {handleRegister} = useRegister(); 
+  const { handleRegister } = useRegister();
 
-  
   return (
     <>
       <div className="register__container">
@@ -82,7 +81,14 @@ function Register() {
               <Button
                 variant="filled"
                 size="large"
-                onClick={() => handleRegister(inputValueRef.current.email, inputValueRef.current.password, setIsEmailValid, setErrors)} 
+                onClick={() =>
+                  handleRegister(
+                    inputValueRef.current.email,
+                    inputValueRef.current.password,
+                    setIsEmailValid,
+                    setErrors
+                  )
+                }
                 disabled={!checked}
               >
                 회원가입

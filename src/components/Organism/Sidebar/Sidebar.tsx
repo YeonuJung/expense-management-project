@@ -20,6 +20,8 @@ import { ExpenseRecord, Member } from "../../../types/model";
 import Loading from "../../Atoms/Loading/Loading";
 import { readMemberRecord } from "../../../api/member";
 import { readMontlyExpenseRecord } from "../../../api/expenseRecord";
+import { MontlyExpenseRecord } from "../../../types/general";
+import Alert from "../../Atoms/Alert/Alert";
 
 function Sidebar() {
   const [expenseLimit, setExpenseLimit] = useState<number | null>(null);
@@ -32,38 +34,59 @@ function Sidebar() {
   const session: Session | null = useAuth();
   const month: string = moment().format("YYYY-MM");
 
-  const handleReadAll = async (userId: string, month: string) => {
-    const [memberData, expenseData] = await Promise.all([
-      readMemberRecord(userId),
-      readMontlyExpenseRecord(userId, month),
-    ]);
-    return [memberData, expenseData] as [Member[], ExpenseRecord[]];
-  };
-  const { data, isError, isPending, isStale, refetch } = useQuery({
-    queryKey: ["member", "montlyExpense"],
-    queryFn: () => handleReadAll(session?.user.id as string, month),
+  const {
+    data: memberData,
+    isError: memberError,
+    isPending: memberIsPending,
+    isStale: memberIsStale,
+    refetch: memberRefetch,
+  } = useQuery({
+    queryKey: ["member"],
+    queryFn: () => readMemberRecord(session?.user.id as string),
+    enabled: !!session,
+    staleTime: 1000 * 60 * 2,
+  });
+  const {
+    data: expenseData,
+    isError: expenseError,
+    isPending: expenseIsPending,
+    isStale: expenseIsStale,
+    refetch: expenseRefetch,
+  } = useQuery({
+    queryKey: ["expenseRecord", month],
+    queryFn: () => readMontlyExpenseRecord(session?.user.id as string, month),
     enabled: !!session,
     staleTime: 1000 * 60 * 2,
   });
 
   useEffect(() => {
-    if (data && data[0].length > 0) {
-      setExpenseLimit(data[0][0].expense_limit);
-    }
-    if (data && data[1].length > 0) {
-      const totalExpense: number = data[1].reduce(
-        (acc: number, cur: ExpenseRecord): number => acc + cur.price,
+    if (
+      memberData &&
+      memberData.length > 0 &&
+      expenseData &&
+      expenseData.length > 0
+    ) {
+      setExpenseLimit(memberData[0].expense_limit);
+      const totalExpense: number = expenseData.reduce(
+        (acc: number, cur: MontlyExpenseRecord): number => acc + cur.price,
         0
       );
       setTotalExpense(totalExpense);
     }
-    if (isError) {
-      alert("설정한도를 불러오는데 실패했습니다. 다시 시도해주세요.");
+    if (memberIsStale) {
+      memberRefetch();
     }
-    if(isStale){
-      refetch();
+    if (expenseIsStale) {
+      expenseRefetch();
     }
-  }, [data, isError, isStale, refetch]);
+  }, [
+    expenseData,
+    memberData,
+    memberIsStale,
+    expenseIsStale,
+    expenseRefetch,
+    memberRefetch,
+  ]);
 
   return (
     <div className="sidebar__container">
@@ -73,8 +96,14 @@ function Sidebar() {
       {session ? (
         <div className="sidebar__expense-container">
           <div className="sidebar__expense-wrapper">
-            {isPending ? (
-              <div style={{height: "80px", width: "200px"}}><Loading size="small" /></div>
+            {memberIsPending || expenseIsPending ? (
+              <div style={{ height: "80px", width: "200px"}}>
+                <Loading size="small" />
+              </div>
+            ) : (memberError || expenseError) ? (
+              <div style={{height: "84px", width: "200px", display: "flex", alignItems: "center"}}>
+              <Alert type="error" content="데이터를 불러오는데 실패했습니다." />
+              </div>
             ) : (
               <div className="sidebar__expense-text">
                 <div className="sidebar__expense-amount">
@@ -84,6 +113,7 @@ function Sidebar() {
                   지출금액 : {totalExpense?.toLocaleString()}원
                 </div>
                 <div className="expenseDivider" />
+
                 <div className="sidebar__expense-title">
                   잔여한도 :{" "}
                   {expenseLimit !== null && totalExpense !== null

@@ -1,14 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import { resetPassword } from "../api/auth";
 import { validatePassword } from "../utils/validation";
-import { SecurityPassword } from "../types/auth";
+import { SecurityPassword } from "../types/general";
 
 export const usePasswordReset = () => {
   const navigate = useNavigate();
   const handlePasswordReset = async (
     password: string,
     setIsPasswordVaild: React.Dispatch<React.SetStateAction<boolean>>,
-    setErrors: React.Dispatch<React.SetStateAction<SecurityPassword | null>>,
+    setErrors: React.Dispatch<React.SetStateAction<SecurityPassword | null>>
   ) => {
     const validateResult = validatePassword(password);
     if (validateResult.password === "") {

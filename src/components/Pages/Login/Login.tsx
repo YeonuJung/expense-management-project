@@ -5,7 +5,7 @@ import Alert from "../../Atoms/Alert/Alert";
 import Divider from "../../Atoms/Divider/Divider";
 import { Link, useNavigate } from "react-router-dom";
 import { useInputRef } from "../../../hooks/useInputRef";
-import { LoginInputValue } from "../../../types/auth";
+import { LoginInputValue } from "../../../types/general";
 import { useEffect, useState } from "react";
 import { selectIpAndAgent } from "../../../api/loginHistory";
 import { useQuery } from "@tanstack/react-query";
@@ -21,25 +21,31 @@ function Login() {
   });
   const navigate = useNavigate();
   const session = useAuth();
-  const {data} = useQuery({queryKey: ["LoginHistory"], queryFn: selectIpAndAgent,})
-  const {handleLogin} = useLogin()
-  
+  const { data } = useQuery({
+    queryKey: ["LoginHistory"],
+    queryFn: selectIpAndAgent,
+  });
+  const { handleLogin } = useLogin();
 
   const activeEnter = (e: React.KeyboardEvent): void => {
     if (e.key === "Enter") {
-      handleLogin(inputValueRef.current.email, inputValueRef.current.password, inputValueRef, data, setIsEmailAndPasswordValid, setErrors)
+      handleLogin(
+        inputValueRef.current.email,
+        inputValueRef.current.password,
+        inputValueRef,
+        data,
+        setIsEmailAndPasswordValid,
+        setErrors
+      );
     }
   };
 
   useEffect(() => {
-  
     if (session) {
       navigate("/");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
-
-  
 
   return (
     <div className="login__container">
@@ -85,7 +91,16 @@ function Login() {
             <Button
               variant="filled"
               size="large"
-              onClick={() => handleLogin(inputValueRef.current.email, inputValueRef.current.password, inputValueRef, data, setIsEmailAndPasswordValid, setErrors)}
+              onClick={() =>
+                handleLogin(
+                  inputValueRef.current.email,
+                  inputValueRef.current.password,
+                  inputValueRef,
+                  data,
+                  setIsEmailAndPasswordValid,
+                  setErrors
+                )
+              }
             >
               로그인
             </Button>

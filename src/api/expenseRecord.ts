@@ -1,5 +1,4 @@
 import supabase from "./base"
-import { Session } from "@supabase/supabase-js"
 import moment from "moment";
 
 interface ReadExpenseRecordParams {

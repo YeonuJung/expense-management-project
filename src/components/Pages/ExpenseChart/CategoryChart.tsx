@@ -15,7 +15,7 @@ import {
 import { Chart } from "react-chartjs-2";
 import { useState, useEffect, useMemo } from "react";
 import moment from "moment";
-import { MontlyExpenseRecord } from "../../../types/auth";
+import { MontlyExpenseRecord } from "../../../types/general";
 import { useAuth } from "../../../hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { readMontlyExpenseRecord } from "../../../api/expenseRecord";
@@ -81,7 +81,7 @@ function CategoryChart() {
     refetch: refetchReadMontlyExpenseRecord,
     isStale,
   } = useQuery({
-    queryKey: ["monthlyExpenseRecord", month],
+    queryKey: ["expenseRecord", month],
     queryFn: () => readMontlyExpenseRecord(session?.user.id as string, month),
     staleTime: 1000 * 60 * 2,
     enabled: !!session,

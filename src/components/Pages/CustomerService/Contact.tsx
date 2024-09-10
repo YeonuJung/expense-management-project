@@ -1,8 +1,8 @@
 import "./Contact.scss";
-import { Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import Input from "../../Atoms/Input/Input";
 import { useInputRef } from "../../../hooks/useInputRef";
-import { ContactInputValue } from "../../../types/auth";
+import { ContactInputValue } from "../../../types/general";
 import Button from "../../Atoms/Button/Button";
 import { useState } from "react";
 import Alert from "../../Atoms/Alert/Alert";

@@ -4,7 +4,7 @@ import {
   LoginInputValue,
   RegisterInputValue,
   SecurityPassword,
-} from "../types/auth";
+} from "../types/general";
 
 export const validateName = (name: string) => {
   const error: Pick<AccountInputValue, "name"> = { name: "" };

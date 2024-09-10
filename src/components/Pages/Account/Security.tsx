@@ -2,7 +2,7 @@ import Input from "../../Atoms/Input/Input";
 import "./Security.scss";
 import { Link } from "react-router-dom";
 import { useInputRef } from "../../../hooks/useInputRef";
-import { SecurityPassword } from "../../../types/auth";
+import { SecurityPassword } from "../../../types/general";
 import Button from "../../Atoms/Button/Button";
 import { useAuth } from "../../../hooks/useAuth";
 import { Session } from "@supabase/supabase-js";
@@ -27,7 +27,7 @@ function Security() {
     queryKey: ["loginHistory"],
     queryFn: () => selectLoginHistoryRecord(session?.user.id as string),
     enabled: !!session,
-    staleTime: (1000 * 60 * 2)
+    staleTime: 1000 * 60 * 2,
   });
 
   useEffect(() => {
@@ -36,9 +36,9 @@ function Security() {
     }
     if (isError) {
       alert("로그인 기록을 불러오는데 실패했습니다. 다시 시도해주세요.");
-    } 
+    }
   }, [data, isError]);
-  
+
   return (
     <div className="account__main-container">
       <div className="account__title-container">

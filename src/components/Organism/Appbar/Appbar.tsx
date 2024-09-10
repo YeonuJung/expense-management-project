@@ -11,6 +11,7 @@ import { logout } from "../../../api/auth";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { readMemberRecord } from "../../../api/member";
 import Loading from "../../Atoms/Loading/Loading";
+import Alert from "../../Atoms/Alert/Alert";
 
 function Appbar() {
   const [isDropdownClicked, setIsDropdownClicked] = useState(false);
@@ -43,6 +44,11 @@ function Appbar() {
           <div style={{ width: "260px", height: "40px" }}>
             <Loading size="small" />
           </div>
+        ) : isError ? (
+          <div style={{ height: "40px", marginTop: "16px" }}>
+            <Alert type="error" content="데이터를 불러오는데 실패했습니다."/>
+          </div>
+          
         ) : (
           <>
             {data && data[0] && data[0].name ? (
