@@ -1,17 +1,16 @@
-import { useMutation} from "@tanstack/react-query";
+import { useMutation, useQueryClient} from "@tanstack/react-query";
 import { deleteExpenseRecord } from "../../api/expenseRecord";
 import { useAuth } from "../useAuth";
 
 export const useDeleteExpense = () => {
   const session = useAuth();
-//   const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
   const deleteExpense = useMutation({
     mutationFn: deleteExpenseRecord,
     onSuccess: (data) => {
-    //   queryClient.setQueryData(["expenseRecord"], data);
+      queryClient.invalidateQueries({ queryKey: ["expenseRecord"] });
       alert("삭제가 완료되었습니다.");
-      window.location.reload();
     },
     onError: () => {
       alert("삭제에 실패했습니다.");

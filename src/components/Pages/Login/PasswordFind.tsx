@@ -4,9 +4,9 @@ import Button from "../../Atoms/Button/Button";
 import Alert from "../../Atoms/Alert/Alert";
 import Divider from "../../Atoms/Divider/Divider";
 import { useInputRef } from "../../../hooks/useInputRef";
-import { LoginInputValue } from "../../../types/auth";
+import { LoginInputValue } from "../../../types/general";
 import { useNavigate } from "react-router-dom";
-import {useState } from "react";
+import { useState } from "react";
 import { usePasswordFind } from "../../../hooks/usePasswordFind";
 
 function PasswordFind() {
@@ -20,10 +20,8 @@ function PasswordFind() {
     email: "",
   });
   const navigate = useNavigate();
-  const {handlePasswordFind} = usePasswordFind();
- 
+  const { handlePasswordFind } = usePasswordFind();
 
-  
   return (
     <div className="login__container">
       <div className="login__main-container">
@@ -56,7 +54,13 @@ function PasswordFind() {
             <Button
               variant="filled"
               size="large"
-              onClick={() => handlePasswordFind(inputValueRef.current.email, setIsEmailValid, setErrors)}
+              onClick={() =>
+                handlePasswordFind(
+                  inputValueRef.current.email,
+                  setIsEmailValid,
+                  setErrors
+                )
+              }
             >
               비밀번호 찾기
             </Button>

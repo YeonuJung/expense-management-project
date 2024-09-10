@@ -12,7 +12,7 @@ import {
 } from "chart.js";
 import { Chart } from "react-chartjs-2";
 import moment from "moment";
-import { ExpenseRecordForChart } from "../../../types/auth";
+import { ExpenseRecordForChart } from "../../../types/general";
 import { useMemo } from "react";
 import { useAuth } from "../../../hooks/useAuth";
 
@@ -161,8 +161,9 @@ function MontlyChart(props: MontlyChartProps) {
 
   const monthlyExpenditures: { [key: string]: number } =
     groupByMonth(expenseRecord);
-  
-  const chartData = useMemo(() => ({
+
+  const chartData = useMemo(
+    () => ({
       labels,
       datasets: [
         {
@@ -186,9 +187,15 @@ function MontlyChart(props: MontlyChartProps) {
           borderWidth: 2,
         },
       ],
-  }), [monthlyExpenditures]);
+    }),
+    [monthlyExpenditures]
+  );
 
-  return !session? <div className = "montlyChart__box">로그인이 필요합니다.</div> : <Chart type="bar" data={chartData} options={options} />;
+  return !session ? (
+    <div className="montlyChart__box">로그인이 필요합니다.</div>
+  ) : (
+    <Chart type="bar" data={chartData} options={options} />
+  );
 }
 
 export default MontlyChart;

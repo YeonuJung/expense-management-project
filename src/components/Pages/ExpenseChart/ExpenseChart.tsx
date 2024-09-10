@@ -4,7 +4,7 @@ import CategoryChart from "./CategoryChart";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../../hooks/useAuth";
 import { Session } from "@supabase/supabase-js";
-import { ExpenseRecordForChart } from "../../../types/auth";
+import { ExpenseRecordForChart } from "../../../types/general";
 import { useToggleButton } from "../../../hooks/useToggleButton";
 import { useQuery } from "@tanstack/react-query";
 import { readExpenseRecord } from "../../../api/expenseRecord";
@@ -20,26 +20,28 @@ function ExpenseChart() {
   );
 
   const session: Session | null = useAuth();
-    
+
   const { data, isError, isPending } = useQuery({
     queryKey: ["expenseRecord"],
     queryFn: () => readExpenseRecord(session?.user.id as string, {}),
     staleTime: 1000 * 60 * 2,
     enabled: !!session,
   });
- 
+
   useEffect(() => {
-    if(data && data.data && data.data.length > 0){
-      setExpenseRecord(data.data)
+    if (data && data.data && data.data.length > 0) {
+      setExpenseRecord(data.data);
     }
-    if(isError){
-      alert("지출내역을 불러오는데 실패했습니다.")
+    if (isError) {
+      alert("지출내역을 불러오는데 실패했습니다.");
     }
-  }, [data, isError])
-  
+  }, [data, isError]);
+
   const { handleButtonClick } = useToggleButton(toggle, setToggle);
 
-  return (session && isPending) ? <Loading/> : (
+  return session && isPending ? (
+    <Loading />
+  ) : (
     <div className="expenseChart__main-container">
       <div className="expenseChart__detail-container">
         <div className="expenseChart__title">지출내역 추이</div>

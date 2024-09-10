@@ -7,7 +7,7 @@ import { MdAutorenew } from "react-icons/md";
 import { FaPlus } from "react-icons/fa6";
 import { FaChevronDown } from "react-icons/fa";
 import { HiSearch } from "react-icons/hi";
-import { useNavigate } from "react-router-dom";
+import { URLSearchParamsInit, useNavigate, useSearchParams } from "react-router-dom";
 import { ExpenseRecord } from "../../../types/model";
 import { useAuth } from "../../../hooks/useAuth";
 import { readExpenseRecord } from "../../../api/expenseRecord";
@@ -52,6 +52,7 @@ function ExpenseList() {
   const [filteredData, setFilteredData] = useState<ExpenseRecord[]>([]);
   const [startPage, setStartPage] = useState<number>(1);
   const [endPage, setEndPage] = useState<number>(1);
+  const [_, setUrlSearchParams]= useSearchParams()
   const inputDataRef = useRef<string>("");
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -101,6 +102,7 @@ function ExpenseList() {
     enabled: !!session,
     staleTime: 1000 * 60 * 2,
   });
+
 
   useEffect(() => {
     if(isStale){
@@ -245,6 +247,7 @@ function ExpenseList() {
   // 필터메뉴의 어떤값이 체크되었는지를 계산해주는 로직
   // true인 값을 ret배열에 담아서 리턴
   // 그럼 checkedFilterMenuValue에 이 ret배열을 할당한다.
+ 
   const calculateCheckedFilterMenuValue = (): CheckedFilterMenuValue => {
     const ret: CheckedFilterMenuValue = { category: [], rating: [], date: [] };
     let listIdx: number = 0;
@@ -262,8 +265,20 @@ function ExpenseList() {
     }
     return ret;
   };
+  const convertToUrlSearchParamsInit = (checkedFilterMenuValue: CheckedFilterMenuValue): URLSearchParamsInit => {
+    const params: Record<string, string | string[]> = {};
+    for (const key in checkedFilterMenuValue) {
+      if (checkedFilterMenuValue.hasOwnProperty(key)) {
+        params[key] = checkedFilterMenuValue[key as keyof CheckedFilterMenuValue].join(',');
+      }
+    }
+    return params;
+  };
+  
   // 적용하기 클릭했을 때 checkedFilterMenuValue state에 계산된 값 할당
   const filterOnClick = (): void => {
+    const checkedFilterMenuValue= calculateCheckedFilterMenuValue()
+    setUrlSearchParams(convertToUrlSearchParamsInit(checkedFilterMenuValue))
     setCheckedFilterMenuValue(calculateCheckedFilterMenuValue());
     setopenFilterMenu({
       Category: false,

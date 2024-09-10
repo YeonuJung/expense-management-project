@@ -1,6 +1,6 @@
 import { passwordFind } from "../api/auth";
 import { checkIsMember } from "../api/member";
-import { LoginInputValue } from "../types/auth";
+import { LoginInputValue } from "../types/general";
 import { validateEmail } from "../utils/validation";
 
 export const usePasswordFind = () => {

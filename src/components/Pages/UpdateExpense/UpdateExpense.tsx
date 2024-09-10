@@ -1,7 +1,7 @@
 import Button from "../../Atoms/Button/Button";
 import Input from "../../Atoms/Input/Input";
 import { useInputRef } from "../../../hooks/useInputRef";
-import { AddExpenseInputValue } from "../../../types/auth";
+import { AddExpenseInputValue } from "../../../types/general";
 import Select from "../../Atoms/Select/Select";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -64,7 +64,7 @@ function UpdateExpense() {
   };
 
   const location = useLocation();
-  const {id} = location.state;
+  const { id } = location.state;
   const { data, isError, isPending } = useQuery({
     queryKey: ["expenseRecord", id],
     queryFn: () => readClickedExpenseRecord(session?.user.id as string, id),
@@ -81,7 +81,7 @@ function UpdateExpense() {
       if (isError) {
         alert("데이터를 불러오는데 실패했습니다. 다시 시도해주세요!");
       }
-    } 
+    }
   }, [session, data, isError, navigate]);
 
   if (expenseRecord) {

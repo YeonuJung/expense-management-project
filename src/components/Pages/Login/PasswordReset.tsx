@@ -5,8 +5,8 @@ import Alert from "../../Atoms/Alert/Alert";
 import Divider from "../../Atoms/Divider/Divider";
 import { useNavigate } from "react-router-dom";
 import { useInputRef } from "../../../hooks/useInputRef";
-import { SecurityPassword } from "../../../types/auth";
-import { useState} from "react";
+import { SecurityPassword } from "../../../types/general";
+import { useState } from "react";
 import { usePasswordReset } from "../../../hooks/usePasswordReset";
 
 function PasswordReset() {
@@ -16,9 +16,7 @@ function PasswordReset() {
     password: "",
   });
   const navigate = useNavigate();
-  const {handlePasswordReset} = usePasswordReset();
-
-
+  const { handlePasswordReset } = usePasswordReset();
 
   return (
     <div className="login__container">
@@ -54,7 +52,13 @@ function PasswordReset() {
             <Button
               variant="filled"
               size="large"
-              onClick={() => handlePasswordReset(inputValueRef.current.password, setIsPasswordVaild, setErrors)}
+              onClick={() =>
+                handlePasswordReset(
+                  inputValueRef.current.password,
+                  setIsPasswordVaild,
+                  setErrors
+                )
+              }
             >
               비밀번호 재설정
             </Button>

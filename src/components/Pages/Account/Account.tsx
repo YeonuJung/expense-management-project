@@ -3,7 +3,7 @@ import Button from "../../Atoms/Button/Button";
 import Input from "../../Atoms/Input/Input";
 import "./Account.scss";
 import { useInputRef } from "../../../hooks/useInputRef";
-import { AccountInputValue } from "../../../types/auth";
+import { AccountInputValue } from "../../../types/general";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../../hooks/useAuth";
 import { useEffect, useState } from "react";

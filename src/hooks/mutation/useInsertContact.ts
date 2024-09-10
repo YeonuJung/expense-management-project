@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { insertContactRecord } from "../../api/contact";
 import { useNavigate } from "react-router-dom";
 import { validateContactForm } from "../../utils/validation";
-import { ContactInputValue } from "../../types/auth";
+import { ContactInputValue } from "../../types/general";
 
 export const useInsertContact = () => {
   const navigate = useNavigate();

@@ -2,7 +2,7 @@ import "./AddExpense.scss";
 import Button from "../../Atoms/Button/Button";
 import Input from "../../Atoms/Input/Input";
 import { useInputRef } from "../../../hooks/useInputRef";
-import { AddExpenseInputValue } from "../../../types/auth";
+import { AddExpenseInputValue } from "../../../types/general";
 import Select from "../../Atoms/Select/Select";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
