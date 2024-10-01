@@ -121,19 +121,19 @@ function Sidebar() {
             ) : (
               <div className="sidebar__expense-text">
                 <div className="sidebar__expense-amount">
-                  설정한도 :{" "}
+                  이번달 한도 :{" "}
                   {expenseLimit !== null ? expenseLimit?.toLocaleString() : 0}{" "}
                   원
                 </div>
                 <div className="sidebar__expense-amount">
-                  지출금액 :{" "}
+                  이번달 지출 :{" "}
                   {totalExpense !== null ? totalExpense?.toLocaleString() : 0}{" "}
                   원
                 </div>
                 <div className="expenseDivider" />
 
                 <div className="sidebar__expense-title">
-                  잔여한도 :{" "}
+                  잔여 한도 :{" "}
                   {expenseLimit !== null && totalExpense !== null
                     ? (expenseLimit - totalExpense).toLocaleString()
                     : expenseLimit !== null && totalExpense === null? expenseLimit.toLocaleString() : expenseLimit === null && totalExpense !== null ? `-${totalExpense.toLocaleString()}` : 0}
