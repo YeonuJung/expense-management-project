@@ -114,18 +114,16 @@ function ExpenseList() {
     // searchKeyword가 존재하고 결과가 없는 경우 빈 배열 반환
     if (dataWithCount && dataWithCount.data.length !== 0) {
       const { data, count } = dataWithCount;
-      if (searchKeyword.length > 0 && (!data || data.length === 0)) {
-        setFilteredData([]);
-        setEndPage(1);
-        return;
-      }
-
       if (!isError && count) {
         setFilteredData(data);
         setEndPage(Math.ceil(count / contentPerPage));
       } else {
         setFilteredData([]);
       }
+    }else {
+      // dataWithCount.data가 빈 배열인 경우
+      setFilteredData([]);
+      setEndPage(1);
     }
   }, [dataWithCount, isError, searchKeyword]);
 
