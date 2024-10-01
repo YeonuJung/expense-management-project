@@ -16,7 +16,6 @@ import { Session } from "@supabase/supabase-js";
 import { useState, useEffect } from "react";
 import moment from "moment";
 import { useQuery } from "@tanstack/react-query";
-import { ExpenseRecord, Member } from "../../../types/model";
 import Loading from "../../Atoms/Loading/Loading";
 import { readMemberRecord } from "../../../api/member";
 import { readMontlyExpenseRecord } from "../../../api/expenseRecord";
@@ -58,20 +57,26 @@ function Sidebar() {
     enabled: !!session,
     staleTime: 1000 * 60 * 2,
   });
-
   useEffect(() => {
     if (
       memberData &&
       memberData.length > 0 &&
-      expenseData &&
-      expenseData.length > 0
+      memberData[0].expense_limit !== 0
     ) {
-      setExpenseLimit(memberData[0].expense_limit);
+      setExpenseLimit(memberData[0].expense_limit); 
+    }else{
+      setExpenseLimit(null);
+    }
+
+    if(expenseData && expenseData.length > 0){
       const totalExpense: number = expenseData.reduce(
         (acc: number, cur: MontlyExpenseRecord): number => acc + cur.price,
         0
       );
       setTotalExpense(totalExpense);
+    }else{
+      setTotalExpense(null);
+
     }
     if (memberIsStale) {
       memberRefetch();
@@ -87,7 +92,6 @@ function Sidebar() {
     expenseRefetch,
     memberRefetch,
   ]);
-
   return (
     <div className="sidebar__container">
       <div className="sidebar__logo-container">
@@ -97,20 +101,34 @@ function Sidebar() {
         <div className="sidebar__expense-container">
           <div className="sidebar__expense-wrapper">
             {memberIsPending || expenseIsPending ? (
-              <div style={{ height: "80px", width: "200px"}}>
+              <div style={{ height: "80px", width: "200px" }}>
                 <Loading size="small" />
               </div>
-            ) : (memberError || expenseError) ? (
-              <div style={{height: "84px", width: "200px", display: "flex", alignItems: "center"}}>
-              <Alert type="error" content="데이터를 불러오는데 실패했습니다." />
+            ) : memberError || expenseError ? (
+              <div
+                style={{
+                  height: "84px",
+                  width: "200px",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <Alert
+                  type="error"
+                  content="데이터를 불러오는데 실패했습니다."
+                />
               </div>
             ) : (
               <div className="sidebar__expense-text">
                 <div className="sidebar__expense-amount">
-                  설정한도 : {expenseLimit?.toLocaleString()}원
+                  설정한도 :{" "}
+                  {expenseLimit !== null ? expenseLimit?.toLocaleString() : 0}{" "}
+                  원
                 </div>
                 <div className="sidebar__expense-amount">
-                  지출금액 : {totalExpense?.toLocaleString()}원
+                  지출금액 :{" "}
+                  {totalExpense !== null ? totalExpense?.toLocaleString() : 0}{" "}
+                  원
                 </div>
                 <div className="expenseDivider" />
 
@@ -118,8 +136,8 @@ function Sidebar() {
                   잔여한도 :{" "}
                   {expenseLimit !== null && totalExpense !== null
                     ? (expenseLimit - totalExpense).toLocaleString()
-                    : null}
-                  원
+                    : expenseLimit !== null && totalExpense === null? expenseLimit.toLocaleString() : expenseLimit === null && totalExpense !== null ? `-${totalExpense.toLocaleString()}` : 0}
+                  {" "}원
                 </div>
               </div>
             )}

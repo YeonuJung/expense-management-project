@@ -1,7 +1,7 @@
 import supabase from "./base";
 
 export const selectLoginHistoryRecord = async (userId : string) => {
-    const { data, error } = await supabase.from("loginhistory").select("*").eq("user_id", userId).order("created_at", {ascending: false}).limit(1);
+    const { data, error } = await supabase.from("loginhistory").select("*").eq("user_id", userId).order("id", {ascending: false}).limit(1);
    if(error){
     throw error
    }

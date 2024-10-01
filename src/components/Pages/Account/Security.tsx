@@ -38,7 +38,7 @@ function Security() {
       alert("로그인 기록을 불러오는데 실패했습니다. 다시 시도해주세요.");
     }
   }, [data, isError]);
-
+  console.log(loginHistory)
   return (
     <div className="account__main-container">
       <div className="account__title-container">
@@ -98,9 +98,6 @@ function Security() {
               <div className="account__detail-table-data">
                 <div className="account__detail-table-loginType">
                   <div className="account__detail-table-loginType-info-container">
-                    <div className="account__detail-table-loginType-type">
-                      {loginHistory && "Email-login"}
-                    </div>
                     <div className="account__detail-table-loginType-time">
                       {loginHistory
                         ? loginHistory[0].created_at
