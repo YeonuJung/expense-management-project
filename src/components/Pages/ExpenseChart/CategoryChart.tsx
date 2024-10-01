@@ -236,7 +236,6 @@ function CategoryChart() {
           height: "550px",
           display: "flex",
           justifyContent: "center",
-          alignItems: "center",
         }}
       >
         {session && isPending ? (
