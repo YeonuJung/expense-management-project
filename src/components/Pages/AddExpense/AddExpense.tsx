@@ -6,7 +6,7 @@ import { AddExpenseInputValue } from "../../../types/general";
 import Select from "../../Atoms/Select/Select";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import Dialog from "../../Organism/Dialog/Dialog";
+import Dialog from "../../Molecules/Dialog/Dialog";
 import {
   LoadScriptNext,
   Autocomplete,
