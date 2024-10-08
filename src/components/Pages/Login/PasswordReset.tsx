@@ -25,7 +25,7 @@ function PasswordReset() {
           <div className="login__title-container">
             <div className="login__title-logo-container">
               <img
-                src="로고.png"
+                src="로고2.png"
                 className="login__logo"
                 alt="logo"
                 onClick={() => navigate("/")}

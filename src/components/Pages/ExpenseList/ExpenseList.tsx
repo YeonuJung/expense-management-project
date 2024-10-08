@@ -114,18 +114,16 @@ function ExpenseList() {
     // searchKeyword가 존재하고 결과가 없는 경우 빈 배열 반환
     if (dataWithCount && dataWithCount.data.length !== 0) {
       const { data, count } = dataWithCount;
-      if (searchKeyword.length > 0 && (!data || data.length === 0)) {
-        setFilteredData([]);
-        setEndPage(1);
-        return;
-      }
-
       if (!isError && count) {
         setFilteredData(data);
         setEndPage(Math.ceil(count / contentPerPage));
       } else {
         setFilteredData([]);
       }
+    }else {
+      // dataWithCount.data가 빈 배열인 경우
+      setFilteredData([]);
+      setEndPage(1);
     }
   }, [dataWithCount, isError, searchKeyword]);
 
@@ -204,6 +202,10 @@ function ExpenseList() {
   // 서치키워드도 마찬가지로 6개로 제한하고 6개가 넘어가면 알림창 띄워주고 마지막 요소 삭제
   // 그 다음에는 인풋데이터를 초기화 시켜주기 때문에 계속해서 버튼을 눌렀을 때 추가되는 것을 방지.
   const handleInputData = (): void => {
+    if(!session){
+      alert("로그인이 필요합니다.");
+      return
+    }
     if (!inputDataRef.current) {
       alert("키워드를 입력하세요!");
     } else {

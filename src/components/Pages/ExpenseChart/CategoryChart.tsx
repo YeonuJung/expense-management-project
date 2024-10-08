@@ -233,7 +233,7 @@ function CategoryChart() {
       <div
         style={{
           width: "100%",
-          height: "550px",
+          height: "560px",
           display: "flex",
           justifyContent: "center",
         }}
@@ -241,7 +241,11 @@ function CategoryChart() {
         {session && isPending ? (
           <Loading />
         ) : (
-          <Chart type="doughnut" data={ChartData} options={options} />
+          <Chart
+            type="doughnut"
+            data={ChartData}
+            options={{ ...options, maintainAspectRatio: false }}
+          />
         )}
       </div>
     </>

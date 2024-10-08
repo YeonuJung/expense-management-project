@@ -7,7 +7,7 @@ import { AccountInputValue } from "../../../types/general";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../../hooks/useAuth";
 import { useEffect, useState } from "react";
-import Dialog from "../../Organism/Dialog/Dialog";
+import Dialog from "../../Molecules/Dialog/Dialog";
 import Alert from "../../Atoms/Alert/Alert";
 import { readMemberRecord } from "../../../api/member";
 import { useQuery } from "@tanstack/react-query";

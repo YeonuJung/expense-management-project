@@ -19,7 +19,7 @@ function Terms({ setIsModalOpen, isModalOpen, setChecked }: TermsProps) {
       <div className="terms__main-container">
         <div className="terms__title">
           <img
-            src="로고.png"
+            src="로고2.png"
             className="register__logo"
             alt="logo"
             onClick={() => navigate("/")}
