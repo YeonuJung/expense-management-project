@@ -95,7 +95,7 @@ function Sidebar() {
   return (
     <div className="sidebar__container">
       <div className="sidebar__logo-container">
-        <img src="/로고.png" className="sidebar__logo" alt="logo"></img>
+        <img src="/로고2.png" className="sidebar__logo" alt="logo"></img>
       </div>
       {session ? (
         <div className="sidebar__expense-container">

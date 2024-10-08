@@ -34,7 +34,7 @@ function Register() {
             <div className="register__title-container">
               <div className="register__title-logo-container">
                 <img
-                  src="로고.png"
+                  src="로고2.png"
                   className="register__logo"
                   alt="logo"
                   onClick={() => navigate("/")}
