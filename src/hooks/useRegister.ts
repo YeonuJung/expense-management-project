@@ -22,7 +22,7 @@ export const useRegister = () => {
         alert("회원가입에 실패했습니다. 다시 시도해주세요.");
         return;
       }
-      alert("이메일을 확인해주세요!");
+      alert("이메일을 확인해주세요!(스팸메일함도 확인해주세요)");
     } else {
       setIsEmailValid(true);
       setErrors(validateResult);

@@ -25,7 +25,7 @@ export const usePasswordFind = () => {
         alert("비밀번호 찾기에 실패했습니다. 다시 시도해주세요!");
         return;
       } else {
-        alert("이메일로 비밀번호 재설정 링크를 보냈습니다.");
+        alert("이메일로 비밀번호 재설정 링크를 보냈습니다(스팸메일함도 확인해주세요)");
       }
     } else {
       setErrors(validateResult);
