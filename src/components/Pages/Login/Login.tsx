@@ -6,11 +6,11 @@ import Divider from "../../Atoms/Divider/Divider";
 import { Link, useNavigate } from "react-router-dom";
 import { useInputRef } from "../../../hooks/useInputRef";
 import { LoginInputValue } from "../../../types/general";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { selectIpAndAgent } from "../../../api/loginHistory";
 import { useQuery } from "@tanstack/react-query";
 import { useLogin } from "../../../hooks/useLogin";
-import { useAuth } from "../../../hooks/useAuth";
+
 
 function Login() {
   const [errors, setErrors] = useState<LoginInputValue | null>(null);
@@ -20,7 +20,6 @@ function Login() {
     password: "",
   });
   const navigate = useNavigate();
-  const session = useAuth();
   const { data } = useQuery({
     queryKey: ["LoginHistory"],
     queryFn: selectIpAndAgent,
@@ -40,12 +39,6 @@ function Login() {
     }
   };
 
-  useEffect(() => {
-    if (session) {
-      navigate("/");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session]);
 
   return (
     <div className="login__container">
