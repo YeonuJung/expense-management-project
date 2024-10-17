@@ -6,7 +6,7 @@ import Divider from "../../Atoms/Divider/Divider";
 import { useInputRef } from "../../../hooks/useInputRef";
 import { LoginInputValue } from "../../../types/general";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePasswordFind } from "../../../hooks/usePasswordFind";
 
 function PasswordFind() {
@@ -21,6 +21,14 @@ function PasswordFind() {
   });
   const navigate = useNavigate();
   const { handlePasswordFind } = usePasswordFind();
+
+  useEffect(() => {
+    const loginTime = localStorage.getItem("loginTime");
+    if (loginTime) {
+      alert("이미 로그인 되어있습니다.");
+      navigate("/");
+    }
+  }, [navigate]);
 
   return (
     <div className="login__container">

@@ -4,7 +4,7 @@ import Button from "../../Atoms/Button/Button";
 import Divider from "../../Atoms/Divider/Divider";
 import { useInputRef } from "../../../hooks/useInputRef";
 import { RegisterInputValue } from "../../../types/general";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Terms from "./Terms";
 import Alert from "../../Atoms/Alert/Alert";
 import { useNavigate } from "react-router-dom";
@@ -25,7 +25,14 @@ function Register() {
     setIsModalOpen(!isModalOpen);
   };
   const { handleRegister } = useRegister();
-
+  
+  useEffect(() => {
+    const loginTime = localStorage.getItem("loginTime");
+    if (loginTime) {
+      alert("이미 로그인 되어있습니다.");
+      navigate("/");
+    }
+  }, [navigate]);
   return (
     <>
       <div className="register__container">

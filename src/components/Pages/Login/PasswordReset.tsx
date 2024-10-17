@@ -6,7 +6,7 @@ import Divider from "../../Atoms/Divider/Divider";
 import { useNavigate } from "react-router-dom";
 import { useInputRef } from "../../../hooks/useInputRef";
 import { SecurityPassword } from "../../../types/general";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePasswordReset } from "../../../hooks/usePasswordReset";
 
 function PasswordReset() {
@@ -17,7 +17,13 @@ function PasswordReset() {
   });
   const navigate = useNavigate();
   const { handlePasswordReset } = usePasswordReset();
-
+  useEffect(() => {
+    const loginTime = localStorage.getItem("loginTime");
+    if (loginTime) {
+      alert("이미 로그인 되어있습니다.");
+      navigate("/");
+    }
+  }, [navigate]);
   return (
     <div className="login__container">
       <div className="login__main-container">

@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import AddExpense from "./components/Pages/AddExpense/AddExpense";
 import ExpenseList from "./components/Pages/ExpenseList/ExpenseList";
@@ -18,11 +18,16 @@ import PasswordFind from "./components/Pages/Login/PasswordFind";
 import PasswordReset from "./components/Pages/Login/PasswordReset";
 import Sidebar from "./components/Organism/Sidebar/Sidebar";
 import Appbar from "./components/Organism/Appbar/Appbar";
+import { useCallback, useEffect } from "react";
+import { logout } from "./api/auth";
+import { useQueryClient } from "@tanstack/react-query";
 
 
 
 function App() {
   const location = useLocation();
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const pageWithoutSidebarAndAppbar: string[] = [
     "/login",
     "/register",
@@ -31,6 +36,31 @@ function App() {
   ];
   const isPageWithoutSidebarAndAppbar: boolean =
     pageWithoutSidebarAndAppbar.includes(location.pathname);
+
+    const handleLogout = useCallback(async (): Promise<void> => {
+      await logout();
+      queryClient.clear();
+      localStorage.clear();
+      navigate("/");
+    }, [queryClient, navigate]);
+
+    const checkLoginTime = useCallback(() => {
+      const loginTime = localStorage.getItem("loginTime");
+      if(loginTime){
+        const loginTimeNumber = Number(loginTime)
+        const currentTime = new Date().getTime();
+        const timeDifference = currentTime - loginTimeNumber;
+        if(timeDifference > 1000 * 60 * 30){
+          alert("세션이 만료되었습니다. 다시 로그인해주세요!")
+          handleLogout()
+        }
+      }
+    }, [handleLogout])
+
+  useEffect(() => {
+    checkLoginTime()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <>
     <Helmet>

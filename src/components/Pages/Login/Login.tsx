@@ -6,11 +6,10 @@ import Divider from "../../Atoms/Divider/Divider";
 import { Link, useNavigate } from "react-router-dom";
 import { useInputRef } from "../../../hooks/useInputRef";
 import { LoginInputValue } from "../../../types/general";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { selectIpAndAgent } from "../../../api/loginHistory";
 import { useQuery } from "@tanstack/react-query";
 import { useLogin } from "../../../hooks/useLogin";
-
 
 function Login() {
   const [errors, setErrors] = useState<LoginInputValue | null>(null);
@@ -38,7 +37,13 @@ function Login() {
       );
     }
   };
-
+  useEffect(() => {
+    const loginTime = localStorage.getItem("loginTime");
+    if (loginTime) {
+      alert("이미 로그인 되어있습니다.");
+      navigate("/");
+    }
+  }, [navigate]);
 
   return (
     <div className="login__container">

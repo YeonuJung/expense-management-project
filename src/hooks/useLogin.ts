@@ -42,6 +42,7 @@ export const useLogin = () => {
         inputValueRef.current.password
       );
       if (loginData) {
+        localStorage.setItem("loginTime", new Date().getTime().toString());
         const session = loginData.session;
         const { isMemberDeleted } = await checkMemberDeleted(
           session?.access_token as string
