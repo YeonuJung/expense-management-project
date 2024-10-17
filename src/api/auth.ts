@@ -21,7 +21,7 @@ export const signUp = async (email: string, password: string) => {
         email: email,
         password: password,
         options: {
-          emailRedirectTo: "http://localhost:3000/login",
+          emailRedirectTo: process.env.REACT_APP_SIGNUP_REDIRECT_URL,
         },
       });
       return {error}
@@ -49,7 +49,7 @@ export const changePassword = async (password: string) => {
 export const passwordFind = async (email: string) => {
     const { error } = await supabase.auth.resetPasswordForEmail(
         email,
-        { redirectTo: "http://localhost:3000/passwordReset" }
+        { redirectTo: process.env.REACT_APP_PASSWORD_FIND_REDIRECT_URL }
       );
       return {error}
       // 비밀번호 찾기 함수
