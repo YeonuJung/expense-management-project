@@ -1,46 +1,30 @@
-# Getting Started with Create React App
+## 프로젝트 소개🙌
+지출요정은 국비수료 후 스스로의 실력에 부족함을 느끼고, 이 부족함을 채우기 위해 제작했던 프로젝트입니다.<br>
+더불어 당시 저에게 어떤 서비스가 필요한지에 대한 고민 끝에 제작했던 프로젝트이기도 합니다.<br>
+실무환경과 유사하게 작업해보고 싶어 Figma 기반의 디자인 파일을 구비했고, 이를 바탕으로 UI를
+개선했습니다.<br>
+재사용 가능한 컴포넌트를 직접 설계해보기 위해 구글시트를 활용하여 공용 컴포넌트를 설계 및 적용했습니다.<br>
+컴포넌트 내부의 복잡한 로직을 커스텀 훅으로 추출하여 비즈니스 로직과 UI를 분리하고 가독성을
+개선했습니다.<br>
+불필요한 서버 요청을 줄이기 위해  React Query를 도입했고, 데이터 캐싱을 통해 서버 리소스를 절약하고
+효율적인 데이터 관리를 가능하도록 했습니다.<br>
+<br>
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 개발업무🧑🏻‍💻
+- Figma 기반 디자인 적용 및 아토믹 디자인 패턴 적용
+- 구글시트 및 조건부 프롭스를 활용한 공용 컴포넌트 설계
+- 이메일 기반 사용자 인증 시스템 도입
+- Context API와 Supabase를 연동한 로그인 세션 관리
+- 리액트 쿼리를 활용한 서버상태 관리 및 데이터 캐싱
+- 카테고리 및 검색어 기반 지출 분류 시스템 구현
+- 캘린더, 차트, 지도 라이브러리를 활용한 데이터 시각화
+- 비제어 컴포넌트 기반 유효성 검사 수행
+- SEO 및 소셜 미디어 공유를 위한 메타데이터 최적화
+<br>
 
-## Available Scripts
+## 담당업무📌
+- 프로젝트 기획
+- Supabase 활용 서버리스 풀스택 개발
+- 전반적인 페이지 디자인 설계 및 구현
 
-In the project directory, you can run:
 
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
